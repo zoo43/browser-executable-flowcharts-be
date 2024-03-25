@@ -1,0 +1,18 @@
+.flowChartDiv {
+  overflow: scroll;
+}
+
+#flowChartOutputDiv {
+  color: white;
+  background-color: #262626;
+  font-family: monospace;
+  overflow: scroll;
+}
+
+.flowChartWarningDiv {
+  margin-top: 10px;
+}
+
+.flowchartInfoDiv {
+  color: #494949
+}
