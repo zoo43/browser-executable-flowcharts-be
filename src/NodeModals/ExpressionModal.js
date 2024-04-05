@@ -53,6 +53,7 @@ class ExpressionModal extends React.Component {
     this.deleteNode = this.deleteNode.bind(this)
     this.showVariableFeedback = this.showVariableFeedback.bind(this)
     this.getCurrentVariables = this.getCurrentVariables.bind(this)
+    this.expressionCounter = 0
   }
 
   componentDidMount () {
@@ -160,7 +161,6 @@ class ExpressionModal extends React.Component {
 
   addExpression () {
     const currentExpression = _.trim(this.state.currentExpression)
-
     const expressions = this.state.expressions
     const expressionErrors = this.state.expressionErrors
     expressions.push(currentExpression)
@@ -171,6 +171,9 @@ class ExpressionModal extends React.Component {
       expressions,
       expressionErrors
     }, this.validate)
+
+    this.expressionCounter ++
+    console.log(this.expressionCounter)
   }
 
   removeExpression (idxToRemove) {
@@ -232,7 +235,6 @@ class ExpressionModal extends React.Component {
       start: this.props.node,
       end: this.props.node
     }
-
     this.props.deleteNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
 

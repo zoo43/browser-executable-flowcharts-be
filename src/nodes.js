@@ -549,6 +549,7 @@ function findAllNodesBetween (start, end, nodes, result) {
   return result
 }
 
+//function that handles the removal of nodes
 function deleteNode (data, allNodes) {
   const nodesToDelete = findAllNodesBetween(data.start, data.end, allNodes, [])
   const startParent = _.find(allNodes, n => { return n.id === data.start.parents[0].id })

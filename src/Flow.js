@@ -90,6 +90,10 @@ class Flow extends React.Component {
     this.loadPredefinedNodes = this.loadPredefinedNodes.bind(this)
     this.deleteSelectedFunction = this.deleteSelectedFunction.bind(this)
     this.undo = this.undo.bind(this)
+
+    //Variables that I want to keep track
+
+    this.deleteCounter = 0
   }
 
   undo () {
@@ -199,7 +203,6 @@ class Flow extends React.Component {
     pushLimit(previousStates, _.cloneDeep(nodes))
 
     delete nodes[this.state.selectedFunc]
-
     this.setState({
       nodes,
       previousStates,
@@ -337,7 +340,8 @@ class Flow extends React.Component {
   deleteNode (data, done) {
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
     nodesUtils.deleteNode(data, selectedFuncNodes)
-
+    this.deleteCounter = this.deleteCounter + 1;
+    console.log(this.deleteCounter)
     return done()
   }
 
@@ -348,7 +352,6 @@ class Flow extends React.Component {
 
     const selectedFuncNodes = nodes[this.state.selectedFunc]
     const newExpressionNode = nodesUtils.getNewNode('expression', data)[0]
-
     for (const parentInfo of data.parents) {
       const newNodeParent = _.find(selectedFuncNodes, { id: parentInfo.id })
       const newSubGraph = {
@@ -601,6 +604,9 @@ class Flow extends React.Component {
     (this.state.newNodeType === 'functionCall')
   }
 
+
+  /* Node modals folder contains all the components of the node*/
+  /* Expression modals handles multiple expression  (Inside expression modals)*/
   render () {
     return (
       <div>
