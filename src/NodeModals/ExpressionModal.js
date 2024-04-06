@@ -53,7 +53,6 @@ class ExpressionModal extends React.Component {
     this.deleteNode = this.deleteNode.bind(this)
     this.showVariableFeedback = this.showVariableFeedback.bind(this)
     this.getCurrentVariables = this.getCurrentVariables.bind(this)
-    this.expressionCounter = 0
   }
 
   componentDidMount () {
@@ -166,19 +165,19 @@ class ExpressionModal extends React.Component {
     expressions.push(currentExpression)
     expressionErrors.push(false)
 
+
     this.setState({
       currentExpression: '',
       expressions,
       expressionErrors
     }, this.validate)
-
-    this.expressionCounter ++
-    console.log(this.expressionCounter)
+    console.log("Expression counter: "+ (expressions.length))
   }
 
   removeExpression (idxToRemove) {
     const expressions = this.state.expressions
     const expressionErrors = this.state.expressionErrors
+    //To remove it filters all expressions that have different id to the one that we want to remove
     const newExpressions = _.filter(expressions, (v, idx) => { return idx !== idxToRemove})
     const newExpressionErrors = _.filter(expressionErrors, (v, idx) => { return idx !== idxToRemove})
 
@@ -186,6 +185,8 @@ class ExpressionModal extends React.Component {
       expressions: newExpressions,
       expressionErrors: newExpressionErrors
     }, this.validate)
+
+    console.log("Expression counter: "+ (newExpressions.length))
   }
 
   validate () {

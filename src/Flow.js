@@ -94,6 +94,7 @@ class Flow extends React.Component {
     //Variables that I want to keep track
 
     this.deleteCounter = 0
+    this.nodeCounter = 0
   }
 
   undo () {
@@ -214,6 +215,7 @@ class Flow extends React.Component {
   }
 
   executeFlowchart () {
+    
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
     comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
 
@@ -306,6 +308,8 @@ class Flow extends React.Component {
     }, this.renderDiagram)
   }
 
+
+  //When the window on adding node is closed
   unselectNode (updated) {
     for (const func in this.state.nodes) {
       for (const node of this.state.nodes[func]) node.selected = false
@@ -314,11 +318,18 @@ class Flow extends React.Component {
     if (updated) {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     }
-
+    
     this.setState({
       newNodeType: '',
       selectedNodeObj: null
     }, this.renderDiagram)
+  }
+
+
+  updateNodeCounter()
+  {
+   // this.nodeCounter ++
+    console.log("Node counter: " + this.state.nodes["main"].length)
   }
 
   addNode (type, parent, branch) {
@@ -340,8 +351,9 @@ class Flow extends React.Component {
   deleteNode (data, done) {
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
     nodesUtils.deleteNode(data, selectedFuncNodes)
-    this.deleteCounter = this.deleteCounter + 1;
-    console.log(this.deleteCounter)
+    this.deleteCounter ++
+    console.log("Delete counter: " + this.deleteCounter)
+    this.updateNodeCounter()
     return done()
   }
 
@@ -371,6 +383,7 @@ class Flow extends React.Component {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
+    this.updateNodeCounter()
   }
 
   addConditionNode (data) {
@@ -403,6 +416,7 @@ class Flow extends React.Component {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
+    this.updateNodeCounter()
   }
 
   addLoopNode (data) {
@@ -437,6 +451,7 @@ class Flow extends React.Component {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
+    this.updateNodeCounter()
   }
 
   addLoopForNode (data) {
@@ -471,6 +486,7 @@ class Flow extends React.Component {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
+    this.updateNodeCounter()
   }
 
   addOutputNode (data) {
@@ -499,6 +515,7 @@ class Flow extends React.Component {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
+    this.updateNodeCounter()
   }
 
   addReturnValueNode (data) {
@@ -527,6 +544,7 @@ class Flow extends React.Component {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
+    this.updateNodeCounter()
   }
 
   addFunction (data) {
@@ -607,6 +625,9 @@ class Flow extends React.Component {
 
   /* Node modals folder contains all the components of the node*/
   /* Expression modals handles multiple expression  (Inside expression modals)*/
+  /* Add new node callback is the specific window of the node based on its type */
+  /* add child  opens the window where you choose which node to add */
+  
   render () {
     return (
       <div>

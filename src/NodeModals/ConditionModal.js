@@ -33,7 +33,6 @@ function cleanupConditionString (val) {
 class ConditionModal extends React.Component {
   constructor (props) {
     super(props)
-
     this.state = _.cloneDeep(baseState)
 
     this.resetState = this.resetState.bind(this)

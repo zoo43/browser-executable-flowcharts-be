@@ -7,7 +7,6 @@ import { Calculator, SignpostSplit, Printer, ArrowRepeat, BoxArrowUp } from 'rea
 class AddChildButtons extends React.Component {
   constructor (props) {
     super(props)
-
     this.state = {}
   }
 
