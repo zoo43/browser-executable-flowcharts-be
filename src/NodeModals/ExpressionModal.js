@@ -38,9 +38,7 @@ function cleanupExpressionString (val) {
 class ExpressionModal extends React.Component {
   constructor (props) {
     super(props)
-
     this.state = _.cloneDeep(baseState)
-
     this.resetState = this.resetState.bind(this)
     this.updateExpression = this.updateExpression.bind(this)
     this.updateSavedExpression = this.updateSavedExpression.bind(this)
@@ -171,7 +169,6 @@ class ExpressionModal extends React.Component {
       expressions,
       expressionErrors
     }, this.validate)
-    console.log("Expression counter: "+ (expressions.length))
   }
 
   removeExpression (idxToRemove) {
@@ -185,8 +182,6 @@ class ExpressionModal extends React.Component {
       expressions: newExpressions,
       expressionErrors: newExpressionErrors
     }, this.validate)
-
-    console.log("Expression counter: "+ (newExpressions.length))
   }
 
   validate () {

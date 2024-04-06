@@ -384,6 +384,7 @@ class Flow extends React.Component {
       this.renderDiagram()
     })
     this.updateNodeCounter()
+    console.log("The node with id: " + newExpressionNode.id + " has " + newExpressionNode["expressions"].length + " expressions")
   }
 
   addConditionNode (data) {
