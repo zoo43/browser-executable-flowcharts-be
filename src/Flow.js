@@ -94,7 +94,6 @@ class Flow extends React.Component {
     //Variables that I want to keep track
 
     this.deleteCounter = 0
-    this.nodeCounter = 0
   }
 
   undo () {
@@ -623,6 +622,18 @@ class Flow extends React.Component {
     (this.state.newNodeType === 'functionCall')
   }
 
+  clear()
+  {
+    this.setState(baseState)
+    /*
+    this.setState({
+      nodes,
+      previousStates
+    }, () => {
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      this.renderDiagram()
+    })*/
+  }
 
   /* Node modals folder contains all the components of the node*/
   /* Expression modals handles multiple expression  (Inside expression modals)*/
@@ -653,6 +664,9 @@ class Flow extends React.Component {
               </Button>
               <Button variant='dark' onClick={() => { this.addNode('functionCall') }}>
                 <Plus /> Aggiungi funzione
+              </Button>
+              <Button variant='info' onClick={() => { this.clear() }}>
+                 Clear
               </Button>
               {this.state.selectedFunc !== 'main' &&
               <Button variant='danger' onClick={this.deleteSelectedFunction} disabled={this.state.selectedFunc === 'main'}>
