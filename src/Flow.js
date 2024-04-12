@@ -6,7 +6,7 @@ import Tab from 'react-bootstrap/Tab'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { Play, ArrowCounterclockwise, Plus, Trash } from 'react-bootstrap-icons'
+import { Play, ArrowCounterclockwise, Plus, Trash, Eraser } from 'react-bootstrap-icons'
 import mermaid from 'mermaid'
 import MemoryStates from './MemoryStates'
 import StartModal from './NodeModals/StartModal'
@@ -672,7 +672,7 @@ class Flow extends React.Component {
                 <Plus /> Aggiungi funzione
               </Button>
               <Button variant='info' onClick={() => { this.clear() }}>
-                 Clear
+                 <Eraser /> Clear
               </Button>
               {this.state.selectedFunc !== 'main' &&
               <Button variant='danger' onClick={this.deleteSelectedFunction} disabled={this.state.selectedFunc === 'main'}>
