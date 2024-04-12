@@ -145,7 +145,7 @@ class Flow extends React.Component {
     stateNodes[func].push(startNode)
     stateNodes[func].push(endNode)
 
-    nodesUtils.connectNodes(startNode, func, endNode, this.state.nodes[func])
+    nodesUtils.connectNodes(startNode, 'main', endNode, this.state.nodes[func])
   }
 
   componentDidMount () {
@@ -545,6 +545,7 @@ class Flow extends React.Component {
     })
     this.updateNodeCounter()
   }
+
 
   addFunction (data) {
     const functionName = data.functionName
