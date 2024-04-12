@@ -31,15 +31,15 @@ const utils = require('./utils')
 const baseState = {
   exerciseid: '',
   exerciseData: null,
-  nodes: { main: [] },
-  functions: { main: { params: [], signature: 'main' }},
-  previousStates: [],
-  diagramStr: { main: '' },
+  nodes: { main: [] }, //list of nodes of the program
+  functions: { main: { params: [], signature: 'main' }}, //List of other functions, name is important. Not all clear
+  previousStates: [], //Used on undo button
+  diagramStr: { main: '' }, 
   selectedNodeObj: null,
-  newNodeType: '',
+  newNodeType: '', 
   newNodeParent: null,
-  outputToShow: '',
-  memoryStates: [],
+  outputToShow: '', //the output window on the right
+  memoryStates: [], //What happens in the memory, appears when an execution is launched
   selectedFunc: 'main',
   selectedExampleProgram: _.keys(examplePrograms)[0],
   showDemo: false
@@ -327,7 +327,6 @@ class Flow extends React.Component {
 
   updateNodeCounter()
   {
-   // this.nodeCounter ++
     console.log("Node counter: " + this.state.nodes["main"].length)
   }
 
@@ -622,24 +621,31 @@ class Flow extends React.Component {
     (this.state.newNodeType === 'functionCall')
   }
 
+
+
   clear()
   {
-    this.setState(baseState)
-    /*
+    //I take the previous nodes to rember that for the undo function
+    const nodes = this.state.nodes
+    const previousStates = this.state.previousStates
+    pushLimit(previousStates, _.cloneDeep(nodes)) //I adjust the limit and overwrite the old version of previous states
+    
+    nodes['main'].length = 0 //Empty an array, I read online that is the fastest version
+
     this.setState({
-      nodes,
-      previousStates
-    }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
-      this.renderDiagram()
-    })*/
+      nodes, //Empty list of nodes
+      previousStates, //PreviousStates for undo
+      selectedFunc: 'main', //TO DO
+      memoryStates: [], //I want to empty the window with memory
+      outputToShow: '' //Clear also the output
+      //Do I need to clear newNodeType...? I think no, I saw that is cleared only when a node is added, for example addNode or undo or unselectNode. For expression node, when you want to add a new node you click and the window gives you the type of the previous node by default
+    }, () => { //What happens after the update of the state
+      this.setupFunctionBaseNodes("main") //create the "main" version with only start and end nodes
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions)) //I don't know why we need that
+      this.renderDiagram() //Render the new diagram starting from actual state
+    })
   }
 
-  /* Node modals folder contains all the components of the node*/
-  /* Expression modals handles multiple expression  (Inside expression modals)*/
-  /* Add new node callback is the specific window of the node based on its type */
-  /* add child  opens the window where you choose which node to add */
-  
   render () {
     return (
       <div>

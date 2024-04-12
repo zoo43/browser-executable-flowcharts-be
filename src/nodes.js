@@ -160,7 +160,6 @@ function createNewNode (type) {
   newNode.parents = []
   newNode.children = { main: -1 }
   newNode.selected = false
-  console.log(newNode.id)
   return newNode
 }
 
