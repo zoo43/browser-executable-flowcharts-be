@@ -145,7 +145,7 @@ class Flow extends React.Component {
     stateNodes[func].push(startNode)
     stateNodes[func].push(endNode)
 
-    nodesUtils.connectNodes(startNode, 'main', endNode, this.state.nodes[func])
+    nodesUtils.connectNodes(startNode, func, endNode, this.state.nodes[func])
   }
 
   componentDidMount () {
@@ -628,19 +628,20 @@ class Flow extends React.Component {
     //I take the previous nodes to rember that for the undo function
     const nodes = this.state.nodes
     const previousStates = this.state.previousStates
+    const selectedFunction = this.state.selectedFunc
     pushLimit(previousStates, _.cloneDeep(nodes)) //I adjust the limit and overwrite the old version of previous states
     
-    nodes['main'].length = 0 //Empty an array, I read online that is the fastest version
+    nodes[selectedFunction].length = 0 //Empty an array, I read online that is the fastest version
 
     this.setState({
       nodes, //Empty list of nodes
       previousStates, //PreviousStates for undo
-      selectedFunc: 'main', //TO DO
+      //selectedFunc: 'main', //TO DO
       memoryStates: [], //I want to empty the window with memory
       outputToShow: '' //Clear also the output
       //Do I need to clear newNodeType...? I think no, I saw that is cleared only when a node is added, for example addNode or undo or unselectNode. For expression node, when you want to add a new node you click and the window gives you the type of the previous node by default
     }, () => { //What happens after the update of the state
-      this.setupFunctionBaseNodes("main") //create the "main" version with only start and end nodes
+      this.setupFunctionBaseNodes(selectedFunction) //create the "main" version with only start and end nodes
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions)) //I don't know why we need that
       this.renderDiagram() //Render the new diagram starting from actual state
     })
