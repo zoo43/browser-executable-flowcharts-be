@@ -210,7 +210,9 @@ class Flow extends React.Component {
     }, () => {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
+      this.updateNodeCounter()
     })
+    
   }
 
   executeFlowchart () {
@@ -325,10 +327,7 @@ class Flow extends React.Component {
   }
 
 
-  updateNodeCounter()
-  {
-    console.log("Node counter: " + this.state.nodes["main"].length)
-  }
+
 
   addNode (type, parent, branch) {
     this.selectNode(-1)
@@ -380,9 +379,9 @@ class Flow extends React.Component {
     }, () => {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
+      this.updateNodeCounter()
+      console.log("The node with id: " + newExpressionNode.id + " has " + newExpressionNode["expressions"].length + " expressions")
     })
-    this.updateNodeCounter()
-    console.log("The node with id: " + newExpressionNode.id + " has " + newExpressionNode["expressions"].length + " expressions")
   }
 
   addConditionNode (data) {
@@ -414,8 +413,9 @@ class Flow extends React.Component {
     }, () => {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
+      this.updateNodeCounter()
     })
-    this.updateNodeCounter()
+    
   }
 
   addLoopNode (data) {
@@ -449,8 +449,9 @@ class Flow extends React.Component {
     }, () => {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
+      this.updateNodeCounter()
     })
-    this.updateNodeCounter()
+    
   }
 
   addLoopForNode (data) {
@@ -484,8 +485,9 @@ class Flow extends React.Component {
     }, () => {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
+      this.updateNodeCounter()
     })
-    this.updateNodeCounter()
+    
   }
 
   addOutputNode (data) {
@@ -513,8 +515,9 @@ class Flow extends React.Component {
     }, () => {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
+      this.updateNodeCounter()
     })
-    this.updateNodeCounter()
+    
   }
 
   addReturnValueNode (data) {
@@ -542,8 +545,9 @@ class Flow extends React.Component {
     }, () => {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
+      this.updateNodeCounter()
     })
-    this.updateNodeCounter()
+    
   }
 
 
@@ -557,6 +561,7 @@ class Flow extends React.Component {
 
       nodes[functionName] = []
       functions[functionName] = { params: data.functionParameters, signature: utils.getFunctionSignature(data.functionName, data.functionParameters) }
+      //this is async
       this.setState({
         nodes,
         functions,
@@ -565,8 +570,21 @@ class Flow extends React.Component {
         this.setupFunctionBaseNodes(functionName)
         comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
         this.renderDiagram()
+        this.updateNodeCounter()
       })
+      //this.updateNodeCounter() here the update is not correct, I assume this.setState async
+    }    
+  }
+
+
+  //object is dictionary
+  updateNodeCounter()
+  {
+    let nodesNumber = 0
+    for (const [key, value] of Object.entries(this.state.nodes)) {
+      nodesNumber += value.length
     }
+    console.log("Node counter: " + nodesNumber)
   }
 
   shouldShowStartModal () {

@@ -114,8 +114,6 @@ class LoopModal extends React.Component {
     }
 
     this.props.addNewNodeCallback(data)
-    this.nodeCounter++
-    console.log("Node counter: " + this.nodeCounter)
     this.props.closeCallback()
   }
 

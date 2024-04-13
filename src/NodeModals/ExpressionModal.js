@@ -222,7 +222,7 @@ class ExpressionModal extends React.Component {
       parents: _.clone(this.state.currentlySelectedParents),
       expressions: _.cloneDeep(this.state.expressions)
     }
-
+    console.log("The node with id: " + this.props.node.id + " has " + this.state.expressions.length + " expressions")
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
 
