@@ -350,7 +350,7 @@ class Flow extends React.Component {
 
 
   //count how many children a node have (I used that to understand how many node I delete so I can count correctly)
-  //TO FIX
+  //TO FIX, children? The issues are on github
   countChildren(father)
   {
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
