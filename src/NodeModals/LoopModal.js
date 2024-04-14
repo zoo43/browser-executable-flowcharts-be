@@ -113,7 +113,7 @@ class LoopModal extends React.Component {
       variables: _.cloneDeep(this.state.usedVariables)
     }
 
-    this.props.addNewNodeCallback(data)
+    this.props.addNewNodeCallback(data) 
     this.props.closeCallback()
   }
 
