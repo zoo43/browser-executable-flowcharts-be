@@ -345,10 +345,26 @@ class Flow extends React.Component {
     return done()
   }
 
+
+  //count how many children a node have (I used that to understand how many node I delete so I can count correctly)
+  countChildren(father)
+  {
+    const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
+    let childrenCounter = 0
+    for (const child of Object.entries(father["children"])) {
+      const node = _.find(selectedFuncNodes, { id: child[1] })
+      if (typeof(node) != "undefined" && node["type"]!="nop")
+      {
+        childrenCounter = childrenCounter+1
+      }
+    }
+    return childrenCounter
+  }
+
   deleteNode (data, done) {
+    this.deleteCounter += this.countChildren(data["start"])+1
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
     nodesUtils.deleteNode(data, selectedFuncNodes)
-    this.deleteCounter ++
     console.log("Delete counter: " + this.deleteCounter)
     this.updateNodeCounter()
     return done()
@@ -581,7 +597,7 @@ class Flow extends React.Component {
   updateNodeCounter()
   {
     let nodesNumber = 0
-    for (const [key, value] of Object.entries(this.state.nodes)) {
+    for (const value of Object.entries(this.state.nodes)) {
       nodesNumber += value.length
     }
     console.log("Node counter: " + nodesNumber)
