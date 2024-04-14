@@ -351,10 +351,9 @@ class Flow extends React.Component {
   {
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
     let childrenCounter = 0
-    for (const child of Object.entries(father["children"])) {
+    for (const child of father["children"]) {
       const node = _.find(selectedFuncNodes, { id: child[1] })
-      if (typeof(node) != "undefined" && node["type"]!="nop")
-      {
+      if (typeof(node) != "undefined" && node["type"]!="nop"){ //undefined means it does not exist (10001) and nop is no operation, I don't count this nodes
         childrenCounter = childrenCounter+1
       }
     }
@@ -597,7 +596,7 @@ class Flow extends React.Component {
   updateNodeCounter()
   {
     let nodesNumber = 0
-    for (const value of Object.entries(this.state.nodes)) {
+    for (const value of this.state.nodes) {
       nodesNumber += value.length
     }
     console.log("Node counter: " + nodesNumber)
