@@ -349,41 +349,33 @@ class Flow extends React.Component {
   }
 
 
-  //count how many children a node have (I used that to understand how many node I delete so I can count correctly)
-  //TO FIX, children? The issues are on github
-  countChildren(father)
+  //count how many children a node have (I used that to understand how many node I delete so I can count correctly, used in condition and loops)
+
+  countChildren(idToSearch, nodes)
   {
-    const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
-    let childrenCounter = 0
-    let i = 0
-    while(selectedFuncNodes[i].id != father.id)
-    {
-      i++
-    }
-    while(selectedFuncNodes[i].type!="nop")
-    {
-      i++
-      childrenCounter++ 
-    }
-    /*for (const node of selectedFuncNodes) {
-      if(father.id==node.id)
-      {
-        //while print until 
-      }
-      const node = _.find(selectedFuncNodes, { id: child[1] })
-      if (typeof(node) != "undefined" && node["type"]!="nop"){ //undefined means it does not exist (10001) and nop is no operation, I don't count this nodes
-        childrenCounter = childrenCounter+1 //+this.countChildren(node) //
-      }
-    }*/
-    return childrenCounter
+    let initialValue = 0
+    const res = nodes //array of array of nodes.
+      .map((parentsPerNode) =>({ id:parentsPerNode.id , presence:parentsPerNode.parents //Here I have an array of nodes that are the fathers of each node
+      .some(parent => parent.id === idToSearch)})) //Here I have an array where each position indicates if the node that I'm searching is a father of node
+      .reduce(((count, element) =>(element.presence === true? count+this.countChildren(element.id,nodes)+1 : count)),initialValue) //If it's true it means that the node I'm searching is a father, add one children.
+    return res
   }
 
-  deleteNode (data, done) {
-    this.deleteCounter += this.countChildren(data["start"])+1
+  countDeletedNodes(parentToSearch)
+  {
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
-    console.log(data)
-    nodesUtils.deleteNode(data, selectedFuncNodes)
+    const activeNodes = selectedFuncNodes.filter(node => node.type !== "nop" && node.type !== "nopNoModal" && node.type!=="end")
+    console.log(activeNodes)
+    const nodes = activeNodes.map((node)=> ({id:node.id , parents:node.parents}))
+    return this.countChildren(parentToSearch.id, nodes)
+  }
+
+
+  deleteNode (data, done) {
+    this.deleteCounter += this.countDeletedNodes(data["start"])+1
+    const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
     console.log("Delete counter: " + this.deleteCounter)
+    nodesUtils.deleteNode(data, selectedFuncNodes)
     this.printNodeNumber()
     return done()
   }
