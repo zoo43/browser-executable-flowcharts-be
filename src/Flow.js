@@ -201,6 +201,7 @@ class Flow extends React.Component {
 
   deleteSelectedFunction () {
     const nodes = this.state.nodes
+    this.deleteCounter += this.getActiveNodes(nodes[this.state.selectedFunc]).length - 2 //When I delete a function I consider all the nodes deleted - 2 that are start and end
     const previousStates = this.state.previousStates
     pushLimit(previousStates, _.cloneDeep(nodes))
 
@@ -213,8 +214,8 @@ class Flow extends React.Component {
       comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
       this.printNodeNumber()
+      console.log("Delete counter: " + this.deleteCounter)
     })
-    
   }
 
   executeFlowchart () {
@@ -363,8 +364,7 @@ class Flow extends React.Component {
   countChildrenToDelete(parentToSearch)
   {
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
-    const activeNodes = selectedFuncNodes.filter(node => node.type !== "nop" && node.type !== "nopNoModal" && node.type!=="end")  //Select the "active Nodes"
-    console.log(activeNodes)
+    const activeNodes = selectedFuncNodes.filter(node => node.type !== "nop" && node.type !== "nopNoModal" && node.type !== "end")//Select the "active Nodes" 
     const nodes = activeNodes.map((node)=> ({id:node.id , parents:node.parents})) //I use an array of object where every object is the id of the node + parents
     return this.countChildren(parentToSearch.id, nodes)
   }
@@ -372,16 +372,21 @@ class Flow extends React.Component {
 //TO DO, check
   deleteNode (data, done) {
     this.deleteCounter++
-    console.log(data)
     //data["start"] is the first node to delete. if nodeType is condition that means that the node is a loop or a if and it has children
     if(data["start"].nodeType === "condition")
     {
-      this.deleteCounter += this.countChildrenToDelete(data["start"])+1 //if node has no children, only 1 added to counter
+      this.deleteCounter += this.countChildrenToDelete(data["start"]) //if node has no children, only 1 added to counter
     }
+    
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
+    const nodesNumberOld = this.getActiveNodes(selectedFuncNodes).length
+
     console.log("Delete counter: " + this.deleteCounter)
     nodesUtils.deleteNode(data, selectedFuncNodes)
     this.printNodeNumber()
+    
+    const nodesNumberNew  =this.getActiveNodes(this.state.nodes[this.state.selectedFunc]).length
+    console.log("Delete counter alternative version: " + (nodesNumberOld - nodesNumberNew)) //better version...? Doesn't work with deleting functions, easy to fix
     return done()
   }
 
@@ -621,13 +626,19 @@ class Flow extends React.Component {
     }    
   }
 
+  getActiveNodes(nodes)
+  {
+    return nodes.filter(node => node.type !== "nop" && node.type !== "nopNoModal")
+  }
+
 
   //object is dictionary
   printNodeNumber()
   {
     let nodesNumber = 0
     for (const value of Object.entries(this.state.nodes)) {
-      nodesNumber += value.length
+      const activeNodes = this.getActiveNodes(value[1])
+      nodesNumber += activeNodes.length
     }
     console.log("Node counter: " + nodesNumber)
   }
