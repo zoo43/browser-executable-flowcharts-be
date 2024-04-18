@@ -3,6 +3,8 @@ import axios from 'axios'
 const _ = require('lodash')
 const config = require('./config')
 const exercises = require('./exercises')
+axios.defaults.baseURL = 'http://127.0.0.1:5000';
+
 
 function getExercise (exerciseid, done) {
   const localData = _.find(exercises, { id: exerciseid, type: 'control' })
@@ -52,13 +54,13 @@ function executeFlowchart (exerciseid, nodes, functions) {
 }
 
 function updateFlowchart (exerciseid, nodes, functions) {
+  
   if (!config.communications.enable) return
   const data = {
     exId: exerciseid,
     nodes: nodes,
     functions: functions
   }
-
   axios.post('/flowchart/updateFlowchart', data)
     .then(() => {
     })

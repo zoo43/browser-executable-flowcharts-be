@@ -5,6 +5,8 @@
   "dependencies": {
     "acorn": "^8.11.3",
     "axios": "1.6.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
     "lodash": "^4.17.21",
     "mermaid": "^10.8.0",
     "prop-types": "^15.8.1",
