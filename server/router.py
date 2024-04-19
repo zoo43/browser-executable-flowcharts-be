@@ -23,7 +23,8 @@ def hello_world():
 def getFlowchart():
     if(request.method == "POST"):
         data = request.data.decode()
-        print(json.loads(data)["nodes"])
+        print(json.loads(data))#["nodes"])
+        
 
     print("\n")
     return "<p>Hello, World!</p>"
