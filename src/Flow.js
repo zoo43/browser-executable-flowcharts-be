@@ -28,6 +28,7 @@ const executer = require('./executer')
 const examplePrograms = require('./examplePrograms')
 const utils = require('./utils')
 
+//Change this when predefined exercises is ok
 const baseState = {
   exerciseid: '',
   exerciseData: null,

@@ -5,6 +5,8 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+def decodeData(req):
+    return json.loads(request.data.decode())
 
 #Handle cors problems
 @app.before_request
@@ -19,12 +21,27 @@ def handle_preflight():
 def hello_world():
     return "<p>Hello, World!</p>"
 
+@app.route("/flowchart/getInTouch")#Happens when there are no datas on the exercise
+def getInTouch():
+    if(request.method == "POST"):
+        print(decodeData(request))#["exId'] should be NONE_DATA
+        return "success"
+
+@app.route("/flowchart/getExercise",methods=["POST"])
+def getExercise(): #use the get exercise id on component did mount
+    if(request.method == "POST"):
+        print(decodeData(request))#["exId']
+        return "success"
+
 @app.route("/flowchart/updateFlowchart",methods=["POST"])
 def getFlowchart():
     if(request.method == "POST"):
-        data = request.data.decode()
-        print(json.loads(data))#["nodes"])
-        
+        print(decodeData(request))#['exId'] ['nodes'] ['functions']
+        return "success"
 
-    print("\n")
-    return "<p>Hello, World!</p>"
+#similar on above but happens on execution 
+@app.route("/flowchart/executeFlowchart",methods=["POST"])
+def getExecution():
+    return getFlowchart()
+        
+        
