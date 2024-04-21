@@ -5,6 +5,9 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+
+userCount = 0
+
 def decodeData(req):
     return json.loads(request.data.decode())
 
@@ -21,11 +24,21 @@ def handle_preflight():
 def hello_world():
     return "<p>Hello, World!</p>"
 
-@app.route("/flowchart/getInTouch")#Happens when there are no datas on the exercise
+@app.route("/flowchart/getInTouch",methods=["POST"])#Happens when there are no datas on the exercise
 def getInTouch():
     if(request.method == "POST"):
         print(decodeData(request))#["exId'] should be NONE_DATA
-        return "success"
+        return "ok"
+
+
+@app.route("/flowchart/getUserId",methods=["POST"])#Happens when there are no datas on the exercise
+def getUserId():
+    global userCount
+    if(request.method == "POST"):
+        userCount += 1
+        print("users : " + str(userCount))
+        return {"userId" : userCount}
+
 
 @app.route("/flowchart/getExercise",methods=["POST"])
 def getExercise(): #use the get exercise id on component did mount

@@ -91,6 +91,7 @@ class Flow extends React.Component {
     this.loadPredefinedNodes = this.loadPredefinedNodes.bind(this)
     this.deleteSelectedFunction = this.deleteSelectedFunction.bind(this)
     this.undo = this.undo.bind(this)
+    this.userId = 0
   }
 
   undo () {
@@ -150,6 +151,9 @@ class Flow extends React.Component {
       mermaid.initialize(mermaidOptions.initialize)
     }
     const urlParams = new URLSearchParams(window.location.search)
+    comm.getUserId(data => {
+      this.userId = data.userId
+    })
     const exId = urlParams.get('exerciseid')
     if (!_.isNil(exId)) {
       if (exId === 'demoloader') {
@@ -164,7 +168,7 @@ class Flow extends React.Component {
       } else {
         comm.getExercise(exId, exData => {
           if (_.isNil(exData)) {
-            comm.getInTouch(exId + 'NO_DATA')
+            comm.getInTouch(this.state.exerciseid)
             this.setupFunctionBaseNodes('main')
             this.renderDiagram()
           } else {
@@ -214,7 +218,7 @@ class Flow extends React.Component {
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
     comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
-
+    console.log(this.userId)
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(

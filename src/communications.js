@@ -23,10 +23,25 @@ function getExercise (exerciseid, done) {
     })
 }
 
-function getInTouch (exerciseid) {
+
+function getUserId(done)
+{
+  if (!config.communications.enable) return
+  axios.post('flowchart/getUserId').
+    then((response) => {
+      return done(response.data)
+    })
+    .catch(err => {
+      if (config.communications.printErrors) {
+        console.error(err)      
+    }})
+}
+
+function getInTouch (exerciseid,done) {
   if (!config.communications.enable) return
   axios.post('/flowchart/getInTouch', { exId: exerciseid })
-    .then(() => {
+    .then((response) => {
+      return(done(response.data))
     })
     .catch(err => {
       if (config.communications.printErrors) {
@@ -74,6 +89,7 @@ function updateFlowchart (exerciseid, nodes, functions) {
 const comm = {
   getExercise,
   getInTouch,
+  getUserId,
   executeFlowchart,
   updateFlowchart
 }
