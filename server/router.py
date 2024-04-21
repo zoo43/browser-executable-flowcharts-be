@@ -1,5 +1,6 @@
 from flask import Flask, request, Response
 from flask_cors import CORS
+from saveFile import saveFile
 import json
 
 app = Flask(__name__)
@@ -22,7 +23,7 @@ def handle_preflight():
 
 @app.route("/")
 def hello_world():
-    return "<p>Hello, World!</p>"
+    return "<h1> Sei bellissima <3 </h1>"
 
 @app.route("/flowchart/getInTouch",methods=["POST"])#Happens when there are no datas on the exercise
 def getInTouch():
@@ -49,7 +50,8 @@ def getExercise(): #use the get exercise id on component did mount
 @app.route("/flowchart/updateFlowchart",methods=["POST"])
 def getFlowchart():
     if(request.method == "POST"):
-        print(decodeData(request))#['exId'] ['nodes'] ['functions']
+        print(decodeData(request))#['exId'] ['nodes'] ['functions'] ['userId']
+        saveFile(decodeData(request))
         return "success"
 
 #similar on above but happens on execution 

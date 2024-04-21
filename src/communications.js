@@ -50,12 +50,13 @@ function getInTouch (exerciseid,done) {
     })
 }
 
-function executeFlowchart (exerciseid, nodes, functions) {
+function executeFlowchart (exerciseid, nodes, functions, userId) {
   if (!config.communications.enable) return
   const data = {
     exId: exerciseid,
     nodes: nodes,
-    functions: functions
+    functions: functions,
+    userId : userId
   }
 
   axios.post('/flowchart/executeFlowchart', data)
@@ -68,13 +69,14 @@ function executeFlowchart (exerciseid, nodes, functions) {
     })
 }
 
-function updateFlowchart (exerciseid, nodes, functions) {
+function updateFlowchart (exerciseid, nodes, functions, userId) {
   
   if (!config.communications.enable) return
   const data = {
     exId: exerciseid,
     nodes: nodes,
-    functions: functions
+    functions: functions,
+    userId: userId
   }
   axios.post('/flowchart/updateFlowchart', data)
     .then(() => {

@@ -151,9 +151,13 @@ class Flow extends React.Component {
       mermaid.initialize(mermaidOptions.initialize)
     }
     const urlParams = new URLSearchParams(window.location.search)
-    comm.getUserId(data => {
-      this.userId = data.userId
-    })
+    if (localStorage.getItem("id")=== null)
+    {
+      comm.getUserId(data => {
+        this.userId = data.userId
+        localStorage.setItem("id",this.userId)
+      })
+    }else this.userId = localStorage.getItem("id")
     const exId = urlParams.get('exerciseid')
     if (!_.isNil(exId)) {
       if (exId === 'demoloader') {
@@ -217,7 +221,7 @@ class Flow extends React.Component {
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+    comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
     console.log(this.userId)
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
