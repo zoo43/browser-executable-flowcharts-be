@@ -104,7 +104,7 @@ class Flow extends React.Component {
       newNodeType: '',
       newNodeParent: null
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
       this.renderDiagram()
     })
   }
@@ -214,7 +214,7 @@ class Flow extends React.Component {
       previousStates,
       selectedFunc: 'main'
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
       this.renderDiagram()
     })
   }
@@ -318,7 +318,7 @@ class Flow extends React.Component {
     }
 
     if (updated) {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
     }
 
     this.setState({
@@ -374,7 +374,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
       this.renderDiagram()
     })
   }
@@ -440,7 +440,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
       this.renderDiagram()
     })
   }
@@ -474,7 +474,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
       this.renderDiagram()
     })
   }
@@ -502,7 +502,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
       this.renderDiagram()
     })
   }
@@ -530,7 +530,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
       this.renderDiagram()
     })
   }
@@ -551,7 +551,7 @@ class Flow extends React.Component {
         previousStates
       }, () => {
         this.setupFunctionBaseNodes(functionName)
-        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
         this.renderDiagram()
       })
     }
@@ -635,7 +635,7 @@ class Flow extends React.Component {
         outputToShow: '' //Clear also the output
       }, () => { //What happens after the update of the state
         //this.setupFunctionBaseNodes(selectedFunction) //create the "main" version with only start and end nodes
-        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions)) //I don't know why we need that
+        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
         this.renderDiagram() //Render the new diagram starting from actual state
       })
   }

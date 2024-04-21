@@ -1,0 +1,1 @@
+{'nodes': {'main': [{'type': 'start', 'nodeType': 'start', 'id': 1, 'parents': [], 'children': {'main': 2}, 'selected': False, 'variables': [{'name': 'params', 'op': 'write'}]}, {'type': 'end', 'nodeType': 'end', 'id': 2, 'parents': [{'id': 1, 'branch': 'main'}], 'children': {'main': -1}, 'selected': False}]}, 'functions': {'main': {'params': [], 'signature': 'main'}}}

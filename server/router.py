@@ -51,12 +51,13 @@ def getExercise(): #use the get exercise id on component did mount
 def getFlowchart():
     if(request.method == "POST"):
         print(decodeData(request))#['exId'] ['nodes'] ['functions'] ['userId']
-        saveFile(decodeData(request))
+        saveFile(decodeData(request),"modifications")
         return "success"
 
 #similar on above but happens on execution 
 @app.route("/flowchart/executeFlowchart",methods=["POST"])
 def getExecution():
+    saveFile(decodeData(request),"executions")
     return getFlowchart()
         
         
