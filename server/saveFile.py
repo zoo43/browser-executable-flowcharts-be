@@ -1,6 +1,15 @@
 import os
 import glob
 
+def checkIfDirectoryExist(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
+
+def writeOnFile(path, content):
+    f = open(path,"w")
+    f.write(content)
+    f.close()
+
 #type can be "modifications" or "executions"
 def saveFile(data, type):
     exId = data['exId']
@@ -9,35 +18,19 @@ def saveFile(data, type):
 
     del data['userId']
     del data['exId']
-    
-    path = f'Files/Class/' + userId  
-    if not os.path.exists(path):
-        os.mkdir(path)
 
-    path = f'Files/Class/' + userId  + "/" + exId
-    if not os.path.exists(path):
-        os.mkdir(path)
+    path = f'files/class/' + userId  + "/" + exId+ "/"+ type
+    accumulator = ""
+    for directory in path.split("/"):
+        accumulator += directory + "/"
+        checkIfDirectoryExist(accumulator)
 
-    path = f'Files/Class/' + userId  + "/" + exId+ "/"+ type
-    if not os.path.exists(path):
-        os.mkdir(path)
-    
     lastFileCounter = 1
     lastFilepath = path + "/lastFile.txt"
     if os.path.isfile(lastFilepath) : 
-        print("Ciao")
         f = open(lastFilepath, "r")
         lastFileCounter = int(f.read()) + 1
         f.close()
-        f = open(lastFilepath, "w")
-        f.write(str(lastFileCounter))
-        f.close()
-    else:
-        f = open(lastFilepath,"w")
-        f.write("1")
-        f.close()
 
-    
-    f = open(path +"/" + str(lastFileCounter) +".json", "w")
-    f.write(str(data))
-    f.close()
+    writeOnFile(lastFilepath,str(lastFileCounter))
+    writeOnFile(path +"/" + str(lastFileCounter) +".json" ,str(data) )
