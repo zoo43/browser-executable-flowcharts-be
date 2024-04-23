@@ -53,10 +53,13 @@ function getInTouch (exerciseid,done) {
 function executeFlowchart (exerciseid, nodes, functions, userId) {
   if (!config.communications.enable) return
   const data = {
+    classId: "3A",
+    userId : userId,
     exId: exerciseid,
-    nodes: nodes,
-    functions: functions,
-    userId : userId
+    type: "execution",
+    data:{ 
+      nodes: nodes,
+      functions: functions}
   }
 
   axios.post('/flowchart/executeFlowchart', data)
@@ -73,11 +76,14 @@ function updateFlowchart (exerciseid, nodes, functions, userId) {
   
   if (!config.communications.enable) return
   const data = {
+    classId: "3A",//Should arrive from a file or some sort of initialization before the start of the experiment
+    userId : userId,
     exId: exerciseid,
-    nodes: nodes,
-    functions: functions,
-    userId: userId
-  }
+    type: "modification",
+    data:{ 
+      nodes: nodes,
+      functions: functions}
+  } 
   axios.post('/flowchart/updateFlowchart', data)
     .then(() => {
     })

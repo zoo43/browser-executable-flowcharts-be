@@ -142,7 +142,6 @@ class Flow extends React.Component {
     const stateNodes = this.state.nodes
     stateNodes[func].push(startNode)
     stateNodes[func].push(endNode)
-
     nodesUtils.connectNodes(startNode, 'main', endNode, this.state.nodes[func])
   }
 
@@ -178,7 +177,7 @@ class Flow extends React.Component {
           } else {
             const nodes = exData.data.nodes
             const functions = exData.data.functions
-
+            
             this.setState({
               exerciseid: exId,
               exerciseData: exData
@@ -222,7 +221,6 @@ class Flow extends React.Component {
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
     comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
-    console.log(this.userId)
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
