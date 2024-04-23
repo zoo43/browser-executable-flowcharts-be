@@ -1,6 +1,6 @@
 from flask import Flask, request, Response
 from flask_cors import CORS
-from saveFile import saveFile
+from server.saveData import saveData
 import json
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def handle_preflight():
 
 @app.route("/")
 def hello_world():
-    return "<h1> Sei bellissima <3 </h1>"
+    return "<h1> Hello World </h1>"
 
 @app.route("/flowchart/getInTouch",methods=["POST"])#Happens when there are no datas on the exercise
 def getInTouch():
@@ -50,14 +50,18 @@ def getExercise(): #use the get exercise id on component did mount
 @app.route("/flowchart/updateFlowchart",methods=["POST"])
 def getFlowchart():
     if(request.method == "POST"):
-        print(decodeData(request))#['exId'] ['nodes'] ['functions'] ['userId']
-        saveFile(decodeData(request),"modifications")
+      #  print(decodeData(request))#['exId'] ['nodes'] ['functions'] ['userId']
+        dataToSend = decodeData(request.data)
+        if dataToSend["type"] == "modification": #When I execute the flowchart the platform automatically send a request to updateFlowChart; I filter that
+            saveData(dataToSend)
         return "success"
 
 #similar on above but happens on execution 
 @app.route("/flowchart/executeFlowchart",methods=["POST"])
 def getExecution():
-    saveFile(decodeData(request),"executions")
-    return getFlowchart()
+   # saveFile(decodeData(request))
+    if(request.method == "POST"):
+        saveData(decodeData(request.data))
+        return getFlowchart()
         
         
