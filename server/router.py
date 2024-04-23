@@ -1,6 +1,6 @@
 from flask import Flask, request, Response
 from flask_cors import CORS
-from server.saveData import saveData
+from saveData import saveData
 import json
 
 app = Flask(__name__)

@@ -4,10 +4,11 @@ import pymongo
 
 
 def saveData(data):
-    client = pymongo.MongoClient( "mongodb+srv://matteomartini6:4ioPQXy5ba67qqUd@cluster0.jpkdcgi.mongodb.net/?retryWrites=true&w=majority")
-    dbName = client["Experiment-Data"]
+
+    client = pymongo.MongoClient("mongodb://localhost:27017")
+    dbName = client["local"]
     collection = dbName["Collection"]
-    #collection.insert_one(data) Insert into mongodb
+   # collection.insert_one(data) #Insert into mongodb
 
 
 
