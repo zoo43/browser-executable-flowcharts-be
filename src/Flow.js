@@ -252,7 +252,6 @@ class Flow extends React.Component {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
-
     this.setState({ outputToShow: fullOutput, memoryStates: data.memoryStates })
   }
 
