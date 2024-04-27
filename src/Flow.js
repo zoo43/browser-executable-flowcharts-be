@@ -213,7 +213,8 @@ class Flow extends React.Component {
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
     comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
-
+   // console.log((this.props.memoryStates[this.state.currentState]))
+    //utils.translateMemoryStateToHtml
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(

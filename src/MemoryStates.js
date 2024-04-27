@@ -4,6 +4,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
+
+import Dropdown from 'react-bootstrap/Dropdown';
 import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons'
 import nodesUtils from './nodes'
 
@@ -80,6 +82,23 @@ class MemoryStates extends React.Component {
     nodesUtils.drawFlowCharts(diagrams, 'diagramDiv', '', true)
   }
 
+  getVariablesName()
+  {
+    let variablesName = []
+    let cont = 0
+    for (const x in this.props.memoryStates)
+    {
+      const state = this.props.memoryStates[x].memory['main']
+      for (const y in state[0])
+      { 
+        const stringToAdd = y
+        variablesName.push({"id":cont , "name":stringToAdd})
+        cont++
+      }
+    }
+    return variablesName
+  }
+
   render () {
     return (
       <Card style={{ width: '100%' }}>
@@ -124,6 +143,18 @@ class MemoryStates extends React.Component {
             </Col>
             <Col xs={3} style={{ borderLeft: '2px solid black' }}>
               <h3>Memoria</h3>
+
+              <Dropdown>
+                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                  Lista variabili
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu>
+                  {this.getVariablesName().map((variable) => (
+                      <Dropdown.Item key={variable.id}> {variable.name} </Dropdown.Item>
+                    ))}
+                </Dropdown.Menu>
+              </Dropdown>
               {this.state.currentState >= 0 &&
                 <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState]) }}></div>
               }
