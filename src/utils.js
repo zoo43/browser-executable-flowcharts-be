@@ -180,27 +180,34 @@ function checkIfOnlyAddingParents (oldParents, newParents) {
   return true
 }
 
-function translateMemoryStateToHtml (memoryState) {
+function translateMemoryStateToHtml (memoryState, variableFilter="") {
   let htmlStr = ''
+  console.log(variableFilter)
   for (const func in memoryState.memory) {
     htmlStr += '<strong> --- ' + func + ' --- </strong><br/>'
     htmlStr += '<p style="font-family=monospace;">'
+    htmlStr += "<div id='memory'>"
     for (let i = 0; i < memoryState.memory[func].length; i++) {
       const layer = memoryState.memory[func][i]
       if (i > 0) htmlStr += '>> Ricorsione: ' + i + '<br/>'
       for (const varName in layer) {
-        if (typeof layer[varName] === 'function') continue
-        let varType = 'int'
-        if (typeof layer[varName] === 'boolean') varType = 'bool'
-        else if (Array.isArray(layer[varName])) varType = 'collection'
-        // Highlight variables updated in this memory state
-        if (memoryState.updatedVariables[func][i].indexOf(varName) >= 0) htmlStr += '<strong>'
-        htmlStr += varName + '&nbsp;=&nbsp;' + getVariableStringRepresentation(varType, layer[varName])
-        if (memoryState.updatedVariables[func][i].indexOf(varName) >= 0) htmlStr += '</strong>'
-        htmlStr += '<br/>'
+        console.log(varName)
+        if(variableFilter==="" || variableFilter===varName)
+        {
+          if (typeof layer[varName] === 'function') continue
+          let varType = 'int'
+          if (typeof layer[varName] === 'boolean') varType = 'bool'
+          else if (Array.isArray(layer[varName])) varType = 'collection'
+          // Highlight variables updated in this memory state
+          if (memoryState.updatedVariables[func][i].indexOf(varName) >= 0) htmlStr += '<strong>'
+          htmlStr += varName + '&nbsp;=&nbsp;' + getVariableStringRepresentation(varType, layer[varName])
+          if (memoryState.updatedVariables[func][i].indexOf(varName) >= 0) htmlStr += '</strong>'
+          htmlStr += '<br/>'
+        }
       }
     }
     htmlStr += '</p><hr/>'
+    htmlStr += "</div>"
   }
   return htmlStr
 }

@@ -25,6 +25,7 @@ class MemoryStates extends React.Component {
     this.goToPreviousState = this.goToPreviousState.bind(this)
     this.goToNextState = this.goToNextState.bind(this)
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
+    this.filterMemory = this.filterMemory.bind(this)
   }
 
   componentDidMount () {
@@ -85,18 +86,25 @@ class MemoryStates extends React.Component {
   getVariablesName()
   {
     let variablesName = []
-    let cont = 0
     for (const x in this.props.memoryStates)
     {
       const state = this.props.memoryStates[x].memory['main']
       for (const y in state[0])
       { 
         const stringToAdd = y
-        variablesName.push({"id":cont , "name":stringToAdd})
-        cont++
+        if(!variablesName.includes(y))
+          variablesName.push(stringToAdd)
       }
     }
+    variablesName = variablesName.map((x,index) => ( {"id":index+1 , "name":x} ))
     return variablesName
+  }
+
+  filterMemory(ev)
+  {
+    const variable = ev.target.text[1]
+    const res = utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState],variable )
+    document.getElementById("memory").innerHTML=res
   }
 
   render () {
@@ -144,19 +152,20 @@ class MemoryStates extends React.Component {
             <Col xs={3} style={{ borderLeft: '2px solid black' }}>
               <h3>Memoria</h3>
 
-              <Dropdown>
+              <Dropdown >
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                   Lista variabili
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu>
+
+                <Dropdown.Menu onClick={this.filterMemory}>
                   {this.getVariablesName().map((variable) => (
-                      <Dropdown.Item key={variable.id}> {variable.name} </Dropdown.Item>
+                      <Dropdown.Item key={variable.id} onChange={this.filterMemory}> {variable.name} </Dropdown.Item>
                     ))}
                 </Dropdown.Menu>
               </Dropdown>
               {this.state.currentState >= 0 &&
-                <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState]) }}></div>
+                <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState]), }}></div>
               }
             </Col>
           </Row>
