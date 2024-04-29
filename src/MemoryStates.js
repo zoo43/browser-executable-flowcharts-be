@@ -48,7 +48,8 @@ class MemoryStates extends React.Component {
     this.goToState(currentState + 1)
   }
 
-  goToState (idx) {
+  goToState (idx, filterVariable="") {
+    
     const currentState = this.props.memoryStates[idx]
 
     const diagrams = []
@@ -60,17 +61,17 @@ class MemoryStates extends React.Component {
       if (_.isFinite(highlightNode)) {
         _.find(nodes, n => { return n.id === highlightNode }).selected = true
 
-        const nodesStr = nodesUtils.convertToDiagramStr(nodes, false)
+        const nodesStr = nodesUtils.convertToDiagramStr(nodes, false,filterVariable)
         const diagramData = {
           func: openFunc.func,
           lvl: openFunc.lvl,
           str: nodesStr
         }
-
+        console.log(diagramData)
         diagrams.push(diagramData)
       }
     }
-
+    
     this.setState({
       currentState: idx,
       diagrams
@@ -83,7 +84,7 @@ class MemoryStates extends React.Component {
     nodesUtils.drawFlowCharts(diagrams, 'diagramDiv', '', true)
   }
 
-  getVariablesName()
+  getVariablesName() //Maybe I can check only in current state (better)
   {
     let variablesName = []
     for (const x in this.props.memoryStates)
@@ -103,8 +104,26 @@ class MemoryStates extends React.Component {
   filterMemory(ev)
   {
     const variable = ev.target.text[1]
-    const res = utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState],variable )
-    document.getElementById("memory").innerHTML=res
+    this.goToState(1, variable)
+    /*
+    const diagrams = []
+    const variable = ev.target.text[1]
+    const nodesStr = nodesUtils.convertToDiagramStr(this.props.nodes['main'], false, variable)
+    //console.log(nodesStr)
+      const diagramData = {
+        func: 'main',
+        lvl: 0,
+        str: nodesStr
+    }
+    diagrams.push(diagramData)
+    //Check diagram differences
+    console.log(diagramData)
+      this.setState({
+        diagrams
+    })*/
+
+   // const res = utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState],variable )
+   // document.getElementById("memory").innerHTML=res
   }
 
   render () {
