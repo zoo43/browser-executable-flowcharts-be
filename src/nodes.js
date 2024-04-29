@@ -67,6 +67,7 @@ function cleanupExpression (expression) {
 }
 
 function getNodeText (type, data) {
+
   let newNodeText = ''
   if (type === 'start') {
     newNodeText = 'Start'
@@ -107,7 +108,7 @@ function cleanupOutputNodeText (text) {
   return dataToOutput
 }
 
-function getNodeTextMermaid (type, data) {
+function getNodeTextMermaid (type, data, filterVariable="") {
   let newNodeText = '"'
   if (type === 'start') {
     newNodeText += '<strong>Start</strong>'
@@ -116,8 +117,11 @@ function getNodeTextMermaid (type, data) {
   } else if (type === 'expression') {
     for (let i = 0; i < data.expressions.length; i++) {
       const expression = data.expressions[i]
-      newNodeText += cleanupExpression(expression)
-      if (i < data.expressions.length - 1) newNodeText += '<br/>'
+      if(expression.split("=")[0].split(" ")[0]===filterVariable || filterVariable==="")
+      { 
+        newNodeText += cleanupExpression(expression)
+        if (i < data.expressions.length - 1) newNodeText += '<br/>'
+      }
     }
   } else if (type === 'condition') {
     if (data.condition.indexOf('//') === 0) {
@@ -442,6 +446,7 @@ function convertToConnLine (node, nodes) {
 }
 
 function convertToDiagramStrFlowchartJS (nodes) {
+
   let nodeStr = ''
   let connStr = ''
 
@@ -455,19 +460,23 @@ function convertToDiagramStrFlowchartJS (nodes) {
   return diagramStr
 }
 
-function convertToDiagramStrMermaidJS (nodes, clickable) {
+function convertToDiagramStrMermaidJS (nodes, clickable, filterVariable) {
   const endNode = _.find(nodes, { type: 'end' })
   let diagramStr = 'flowchart TD\n'
   for (const node of nodes) {
     let nodeStr = node.id
     if (node.nodeType === 'condition') {
-      nodeStr += '{{' + getNodeTextMermaid(node.type, node) + '}}'
+      nodeStr += '{{' + getNodeTextMermaid(node.type, node) + '}}' //condition nodes
     } else if (['nop', 'nopNoModal'].indexOf(node.type) >= 0) {
-      nodeStr += '[' + getNodeTextMermaid(node.type, node) + ']'
+      nodeStr += '[' + getNodeTextMermaid(node.type, node) + ']'  //nop, "sink state" of loops and if
     } else if (['start', 'end'].indexOf(node.type) >= 0) {
-      nodeStr += '([' + getNodeTextMermaid(node.type, node) + '])'
+      nodeStr += '([' + getNodeTextMermaid(node.type, node) + '])'  //Start or end node
     } else {
-      nodeStr += '(' + getNodeTextMermaid(node.type, node) + ')'
+      const assign = getNodeTextMermaid(node.type, node, filterVariable)
+      if(assign !== '"')
+      {
+        nodeStr += '(' + assign + ')' //Here are the variables
+      }
     }
     if (node.children.main >= 0) {
       let arrow = ' ==> '
@@ -511,9 +520,9 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
   return diagramStr
 }
 
-function convertToDiagramStr (nodes, clickable) {
+function convertToDiagramStr (nodes, clickable,filterVariable="") {
   if (config.renderer === 'flowchartJS') return convertToDiagramStrFlowchartJS(nodes, clickable)
-  else if (config.renderer === 'mermaid') return convertToDiagramStrMermaidJS(nodes, clickable)
+  else if (config.renderer === 'mermaid') return convertToDiagramStrMermaidJS(nodes, clickable,filterVariable)
 }
 
 function initialize (reactThis) {

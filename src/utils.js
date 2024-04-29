@@ -185,6 +185,7 @@ function translateMemoryStateToHtml (memoryState) {
   for (const func in memoryState.memory) {
     htmlStr += '<strong> --- ' + func + ' --- </strong><br/>'
     htmlStr += '<p style="font-family=monospace;">'
+    htmlStr += "<div id='memory'>"
     for (let i = 0; i < memoryState.memory[func].length; i++) {
       const layer = memoryState.memory[func][i]
       if (i > 0) htmlStr += '>> Ricorsione: ' + i + '<br/>'
@@ -201,6 +202,7 @@ function translateMemoryStateToHtml (memoryState) {
       }
     }
     htmlStr += '</p><hr/>'
+    htmlStr += "</div>"
   }
   return htmlStr
 }
