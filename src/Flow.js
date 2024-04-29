@@ -40,6 +40,7 @@ const baseState = {
   newNodeParent: null,
   outputToShow: '',
   memoryStates: [],
+  filteredMemoryStates: [],
   selectedFunc: 'main',
   selectedExampleProgram: _.keys(examplePrograms)[0],
   showDemo: false
@@ -246,7 +247,6 @@ class Flow extends React.Component {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
-
     this.setState({ outputToShow: fullOutput, memoryStates: data.memoryStates })
   }
 
@@ -667,7 +667,7 @@ class Flow extends React.Component {
           <Col xs={1}></Col>
           <Col xs={10}>
             {this.state.memoryStates.length > 0 &&
-              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)} />
+              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)} filteredMemoryStates={_.cloneDeep(this.state.filteredMemoryStates)} />
             }
           </Col>
           <Col xs={1}></Col>

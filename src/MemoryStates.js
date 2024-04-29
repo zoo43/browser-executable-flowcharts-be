@@ -25,6 +25,7 @@ class MemoryStates extends React.Component {
     this.goToPreviousState = this.goToPreviousState.bind(this)
     this.goToNextState = this.goToNextState.bind(this)
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
+    this.filterMemory = this.filterMemory.bind(this)
   }
 
   componentDidMount () {
@@ -47,14 +48,28 @@ class MemoryStates extends React.Component {
     this.goToState(currentState + 1)
   }
 
-  goToState (idx) {
-    const currentState = this.props.memoryStates[idx]
+  //If I have a filter on, I call this method to shows only the variables that I want to. I Should assign the filter on a var on the event to keep this so that the filter can remain
+  goToState (idx, variableToFilter="") {
+    let currentState = this.props.memoryStates[idx]
 
     const diagrams = []
+    
+    if(variableToFilter!=="")
+    {
+      const Oldvars = currentState.memory['main'][0] // 0 is the level
+      const newVars = Object.keys(Oldvars).filter(objKey =>
+        objKey === variableToFilter).reduce((newElement, key) =>
+        {
+            newElement[key] = Oldvars[key];
+            return newElement;
+        }, {})
+      
+        this.props.filterMemoryStates.memory['main'][0] = newVars
+    }
     for (const openFunc of currentState.callOrder) {
       const nodes = _.cloneDeep(this.props.nodes[openFunc.func])
       const highlightNode = currentState.onNode[openFunc.func][openFunc.lvl]
-
+      
       // TODO qui dopo l'esecuzione di End highlightNode diventa undefined
       if (_.isFinite(highlightNode)) {
         _.find(nodes, n => { return n.id === highlightNode }).selected = true
@@ -86,17 +101,21 @@ class MemoryStates extends React.Component {
   {
     let variablesName = []
     let cont = 0
-    for (const x in this.props.memoryStates)
-    {
-      const state = this.props.memoryStates[x].memory['main']
-      for (const y in state[0])
-      { 
-        const stringToAdd = y
-        variablesName.push({"id":cont , "name":stringToAdd})
-        cont++
-      }
+    const currentState = this.state.currentState===-1? 0 : this.state.currentState
+    const state = this.props.memoryStates[currentState].memory['main']
+    for (const y in state[0])
+    { 
+      const stringToAdd = y
+      variablesName.push({"id":cont , "name":stringToAdd})
+      cont++
     }
+    
     return variablesName
+  }
+
+  filterMemory(ev)
+  {
+    this.goToState(1,ev.target.text.trim(" "))
   }
 
   render () {
@@ -149,7 +168,7 @@ class MemoryStates extends React.Component {
                   Lista variabili
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu>
+                <Dropdown.Menu onClick={this.filterMemory}>
                   {this.getVariablesName().map((variable) => (
                       <Dropdown.Item key={variable.id}> {variable.name} </Dropdown.Item>
                     ))}

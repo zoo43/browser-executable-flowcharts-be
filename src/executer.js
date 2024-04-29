@@ -105,7 +105,6 @@ function executeFromNode (node, nodes, functions, func, calcData) {
       const result = function (str) {
         return eval(str)
       }.call(calcData.scope[func][currentFunc], parsedExpr)
-
       // const lastCall = calcData.callOrder[calcData.callOrder.length - 1]
       // if (lastCall.func !== func || lastCall.lvl < currentFunc) {
       //  calcData.callOrder.push({ func, lvl: currentFunc })
