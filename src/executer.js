@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const utils = require('./utils')
 const parseExpressions = require('./parseExpressions')
+const { memo } = require('react')
 
 const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
@@ -66,11 +67,11 @@ function findUpdatedVariables (previousStates, currentState) {
           previousStates[previousStates.length - 1].memory[func].length <= i ||
           _.isNil(previousStates[previousStates.length - 1].memory[func][i][variable]) ||
           !_.isEqual(previousStates[previousStates.length - 1].memory[func][i][variable], currentState.memory[func][i][variable])
-          ) updatedVariables[func][i].push(variable)
+          ) 
+          updatedVariables[func][i].push(variable)
       }
     }
   }
-
   return updatedVariables
 }
 
@@ -163,14 +164,13 @@ function executeFromNode (node, nodes, functions, func, calcData) {
       memory: _.cloneDeep(calcData.scope),
       callOrder: _.cloneDeep(calcData.callOrder)
     }
-
     memoryStateSnapshot.updatedVariables = findUpdatedVariables(calcData.memoryStates, memoryStateSnapshot)
 
     calcData.memoryStates.push(memoryStateSnapshot)
   }
 
   calcData.onNode[func].pop()
-
+  calcData.scope['main'][0]['c'] = 15
   if (node.type === 'end') {
     calcData.callOrder.pop()
     return calcData
