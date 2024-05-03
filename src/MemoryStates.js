@@ -26,6 +26,7 @@ class MemoryStates extends React.Component {
     this.goToNextState = this.goToNextState.bind(this)
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
     this.filterMemory = this.filterMemory.bind(this)
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
     this.filterVariable = ""
   }
 
@@ -55,18 +56,6 @@ class MemoryStates extends React.Component {
 
     const diagrams = []
     
-    if(variableToFilter!=="")
-    {
-      const Oldvars = currentState.memory['main'][0] // 0 is the level
-      const newVars = Object.keys(Oldvars).filter(objKey =>
-        objKey === variableToFilter).reduce((newElement, key) =>
-        {
-            newElement[key] = Oldvars[key];
-            return newElement;
-        }, {})
-      
-        currentState.memory['main'][0] = newVars
-    }
     for (const openFunc of currentState.callOrder) {
       const nodes = _.cloneDeep(this.props.nodes[openFunc.func])
       const highlightNode = currentState.onNode[openFunc.func][openFunc.lvl]
@@ -98,10 +87,12 @@ class MemoryStates extends React.Component {
     nodesUtils.drawFlowCharts(diagrams, 'diagramDiv', '', true)
   }
 
+
+
   getVariablesName()
   {
     let variablesName = []
-    let cont = 0
+    let cont = 1
     const currentState = this.state.currentState===-1? 0 : this.state.currentState
     const state = this.props.memoryStates[currentState].memory['main']
     for (const y in state[0])
@@ -116,7 +107,52 @@ class MemoryStates extends React.Component {
 
   filterMemory(ev)
   {
-    this.filterVariable = ev.target.text.trim(" ")
+    //Try except because if I click the blank space there's an error
+    //this.filterVariable = ev.target.text.trim(" ")
+   // this.props.filteredVariables
+    
+   /*
+
+       if(variableToFilter!=="")
+    {
+      const Oldvars = currentState.memory['main'][0] // 0 is the level
+      const newVars = Object.keys(Oldvars).filter(objKey =>
+        objKey === variableToFilter).reduce((newElement, key) =>
+        {
+            newElement[key] = Oldvars[key];
+            return newElement;
+        }, {})
+      
+        currentState.memory['main'][0] = newVars
+    }
+
+   */
+    const filter = ev.target.text.trim(" ")
+    console.log(ev.target.text.trim(" "))
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates) //this to undo eventually previous filters
+    for (const x in this.filteredMemoryStates)
+    {
+      const Oldvars = this.filteredMemoryStates[x].memory['main'][0] // 0 is the level
+      const newVars = Object.keys(Oldvars).filter(objKey =>
+        objKey === filter).reduce((newElement, key) =>
+        {
+            newElement[key] = Oldvars[key];
+            return newElement;
+        }, {})
+      
+      this.filteredMemoryStates[x].memory['main'][0] = newVars
+    }
+    /*for(const x in this.filteredMemoryStates)
+    {
+      delete this.filteredMemoryStates[x]['memory']['main'][0][filter] //for all functions...?
+    }*/
+
+    this.setState({
+      currentState: this.state.currentState //WORKS!!!! Fix up. On this event i have to filter that object and then pass the filtered one, when the state changes a remains away, delete all except a.
+      //After that insert a button that allows the user to clear the filter
+    })
+
+
   }
 
   render () {
@@ -170,13 +206,14 @@ class MemoryStates extends React.Component {
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu onClick={this.filterMemory}>
+                <Dropdown.Item key={0}> Clear </Dropdown.Item>
                   {this.getVariablesName().map((variable) => (
                       <Dropdown.Item key={variable.id}> {variable.name} </Dropdown.Item>
                     ))}
                 </Dropdown.Menu>
               </Dropdown>
               {this.state.currentState >= 0 &&
-                <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState]) }}></div>
+                <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.filteredMemoryStates[this.state.currentState])}}></div>
               }
             </Col>
           </Row>

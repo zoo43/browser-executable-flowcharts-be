@@ -170,7 +170,6 @@ function executeFromNode (node, nodes, functions, func, calcData) {
   }
 
   calcData.onNode[func].pop()
-  calcData.scope['main'][0]['c'] = 15
   if (node.type === 'end') {
     calcData.callOrder.pop()
     return calcData

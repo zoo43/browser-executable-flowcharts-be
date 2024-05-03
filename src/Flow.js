@@ -40,7 +40,6 @@ const baseState = {
   newNodeParent: null,
   outputToShow: '',
   memoryStates: [],
-  filteredMemoryStates: [],
   selectedFunc: 'main',
   selectedExampleProgram: _.keys(examplePrograms)[0],
   showDemo: false
@@ -247,9 +246,7 @@ class Flow extends React.Component {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
-    data.memoryStates[1]["memory"]["main"][0]['d'] = 28 //I CAN APPLY THE FILTER HERE, I take the data and modify what I want to
-    console.log(data.memoryStates)
-    this.setState({ outputToShow: fullOutput, memoryStates: data.memoryStates })
+    this.setState({ outputToShow: fullOutput, memoryStates:data.memoryStates })
   }
 
   renderDiagram () {
@@ -669,7 +666,7 @@ class Flow extends React.Component {
           <Col xs={1}></Col>
           <Col xs={10}>
             {this.state.memoryStates.length > 0 &&
-              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)} filteredMemoryStates={_.cloneDeep(this.state.filteredMemoryStates)} />
+              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)}  />
             }
           </Col>
           <Col xs={1}></Col>
