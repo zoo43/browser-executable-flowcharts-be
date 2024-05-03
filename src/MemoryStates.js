@@ -26,8 +26,9 @@ class MemoryStates extends React.Component {
     this.goToNextState = this.goToNextState.bind(this)
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
     this.filterMemory = this.filterMemory.bind(this)
+    this.removeFilter = this.removeFilter.bind(this)
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
-    this.filterVariable = ""
+    this.filter = ""
   }
 
   componentDidMount () {
@@ -51,7 +52,7 @@ class MemoryStates extends React.Component {
   }
 
   //If I have a filter on, I call this method to shows only the variables that I want to. I Should assign the filter on a var on the event to keep this so that the filter can remain
-  goToState (idx, variableToFilter="") {
+  goToState (idx) {
     let currentState = this.props.memoryStates[idx]
 
     const diagrams = []
@@ -101,55 +102,39 @@ class MemoryStates extends React.Component {
       variablesName.push({"id":cont , "name":stringToAdd})
       cont++
     }
-    
     return variablesName
   }
 
+  removeFilter()
+  {
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
+    this.filter = ""
+    this.setState({
+      currentState: this.state.currentState
+    })
+  }
+
+//TO DO: for all functions
   filterMemory(ev)
   {
-    //Try except because if I click the blank space there's an error
-    //this.filterVariable = ev.target.text.trim(" ")
-   // this.props.filteredVariables
-    
-   /*
-
-       if(variableToFilter!=="")
+    this.filter = ev.target.text.trim(" ")
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)//this to undo eventually previous filters
+    for (const x in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
     {
-      const Oldvars = currentState.memory['main'][0] // 0 is the level
-      const newVars = Object.keys(Oldvars).filter(objKey =>
-        objKey === variableToFilter).reduce((newElement, key) =>
+      const Oldvars = this.filteredMemoryStates[x].memory['main'][0] // Think on what to do on different levels
+      const newVars = Object.keys(Oldvars).filter(variable =>
+        variable === this.filter).reduce((newElement, variable) =>
         {
-            newElement[key] = Oldvars[key];
-            return newElement;
-        }, {})
-      
-        currentState.memory['main'][0] = newVars
-    }
-
-   */
-    const filter = ev.target.text.trim(" ")
-    console.log(ev.target.text.trim(" "))
-    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates) //this to undo eventually previous filters
-    for (const x in this.filteredMemoryStates)
-    {
-      const Oldvars = this.filteredMemoryStates[x].memory['main'][0] // 0 is the level
-      const newVars = Object.keys(Oldvars).filter(objKey =>
-        objKey === filter).reduce((newElement, key) =>
-        {
-            newElement[key] = Oldvars[key];
+            newElement[variable] = Oldvars[variable];
             return newElement;
         }, {})
       
       this.filteredMemoryStates[x].memory['main'][0] = newVars
     }
-    /*for(const x in this.filteredMemoryStates)
-    {
-      delete this.filteredMemoryStates[x]['memory']['main'][0][filter] //for all functions...?
-    }*/
+
 
     this.setState({
-      currentState: this.state.currentState //WORKS!!!! Fix up. On this event i have to filter that object and then pass the filtered one, when the state changes a remains away, delete all except a.
-      //After that insert a button that allows the user to clear the filter
+      currentState: this.state.currentState
     })
 
 
@@ -202,13 +187,13 @@ class MemoryStates extends React.Component {
 
               <Dropdown>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  Lista variabili
+                  Filtro : { this.filter }
                 </Dropdown.Toggle>
 
-                <Dropdown.Menu onClick={this.filterMemory}>
-                <Dropdown.Item key={0}> Clear </Dropdown.Item>
+                <Dropdown.Menu>
+                <Dropdown.Item key={0} onClick={this.removeFilter}> Remove Filter </Dropdown.Item>
                   {this.getVariablesName().map((variable) => (
-                      <Dropdown.Item key={variable.id}> {variable.name} </Dropdown.Item>
+                      <Dropdown.Item key={variable.id} onClick={this.filterMemory}> {variable.name} </Dropdown.Item>
                     ))}
                 </Dropdown.Menu>
               </Dropdown>
