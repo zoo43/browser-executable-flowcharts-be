@@ -94,13 +94,21 @@ class MemoryStates extends React.Component {
   {
     let variablesName = []
     let cont = 1
-    const currentState = this.state.currentState===-1? 0 : this.state.currentState
-    const state = this.props.memoryStates[currentState].memory['main']
-    for (const y in state[0])
-    { 
-      const stringToAdd = y
-      variablesName.push({"id":cont , "name":stringToAdd})
-      cont++
+    const currentState = this.state.currentState===-1? 0 : this.state.currentState //Start is -1
+    //TO DO: not put two times a variable with two names
+    //const state = this.props.memoryStates[currentState].memory['main']
+    for(const functionMemory of Object.values(this.props.memoryStates[currentState].memory))
+    {
+      console.log(functionMemory)
+      for (const y in functionMemory[0])
+      { 
+        const stringToAdd = y
+        if (typeof(functionMemory[0][y]) !== 'function')
+        {
+          variablesName.push({"id":cont , "name":stringToAdd})
+          cont++
+        }
+      }
     }
     return variablesName
   }
@@ -118,24 +126,22 @@ class MemoryStates extends React.Component {
   {
     const filter = ev.target.text.trim(" ")
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)//this to undo eventually previous filters
-    console.log(this.filteredMemoryStates)
- //   this.filteredMemoryStates[4].memory.array
-    for (const x in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
+    for (const memoryStateIndex in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
     {
-      for(const [func,value] of Object.entries(this.filterMemoryStates[x].memory))
+      for(const functionMemory of Object.values(this.filteredMemoryStates[memoryStateIndex].memory))
       {
-        console.log(func)
-        console.log(value)
-      } 
-      const Oldvars = this.filteredMemoryStates[x].memory['main'][0] // Think on what to do on different levels
-      const newVars = Object.keys(Oldvars).filter(variable =>
-        variable === filter).reduce((newElement, variable) =>
+        if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
         {
-            newElement[variable] = Oldvars[variable];
-            return newElement;
-        }, {})
-      
-      this.filteredMemoryStates[x].memory['main'][0] = newVars
+          const oldvars = functionMemory[0] // Think on what to do on different levels
+          const newVars = Object.keys(oldvars).filter(variable =>
+            variable === filter).reduce((newElement, variable) =>
+            {
+                newElement[variable] = oldvars[variable];
+                return newElement;
+            }, {})
+            functionMemory[0] = newVars
+        }
+      } 
     }
 
 
@@ -193,7 +199,7 @@ class MemoryStates extends React.Component {
 
               <Dropdown>
                 <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  Filtro : { this.filter }
+                  Filtro : { this.state.filter }
                 </Dropdown.Toggle>
 
                 <Dropdown.Menu>
