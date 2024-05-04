@@ -28,7 +28,6 @@ const executer = require('./executer')
 const examplePrograms = require('./examplePrograms')
 const utils = require('./utils')
 
-//Change this when predefined exercises is ok
 const baseState = {
   exerciseid: '',
   exerciseData: null,
@@ -91,7 +90,6 @@ class Flow extends React.Component {
     this.loadPredefinedNodes = this.loadPredefinedNodes.bind(this)
     this.deleteSelectedFunction = this.deleteSelectedFunction.bind(this)
     this.undo = this.undo.bind(this)
-    this.userId = 0
   }
 
   undo () {
@@ -104,7 +102,7 @@ class Flow extends React.Component {
       newNodeType: '',
       newNodeParent: null
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
   }
@@ -142,6 +140,7 @@ class Flow extends React.Component {
     const stateNodes = this.state.nodes
     stateNodes[func].push(startNode)
     stateNodes[func].push(endNode)
+
     nodesUtils.connectNodes(startNode, 'main', endNode, this.state.nodes[func])
   }
 
@@ -150,13 +149,6 @@ class Flow extends React.Component {
       mermaid.initialize(mermaidOptions.initialize)
     }
     const urlParams = new URLSearchParams(window.location.search)
-    if (localStorage.getItem("id")=== null)
-    {
-      comm.getUserId(data => {
-        this.userId = data.userId
-        localStorage.setItem("id",this.userId)
-      })
-    }else this.userId = localStorage.getItem("id")
     const exId = urlParams.get('exerciseid')
     if (!_.isNil(exId)) {
       if (exId === 'demoloader') {
@@ -171,13 +163,13 @@ class Flow extends React.Component {
       } else {
         comm.getExercise(exId, exData => {
           if (_.isNil(exData)) {
-            comm.getInTouch(this.state.exerciseid)
+            comm.getInTouch(exId + 'NO_DATA')
             this.setupFunctionBaseNodes('main')
             this.renderDiagram()
           } else {
             const nodes = exData.data.nodes
             const functions = exData.data.functions
-            
+
             this.setState({
               exerciseid: exId,
               exerciseData: exData
@@ -213,14 +205,14 @@ class Flow extends React.Component {
       previousStates,
       selectedFunc: 'main'
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
   }
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+    comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
@@ -252,7 +244,7 @@ class Flow extends React.Component {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
-    this.setState({ outputToShow: fullOutput, memoryStates: data.memoryStates })
+    this.setState({ outputToShow: fullOutput, memoryStates:data.memoryStates })
   }
 
   renderDiagram () {
@@ -315,7 +307,7 @@ class Flow extends React.Component {
     }
 
     if (updated) {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     }
 
     this.setState({
@@ -371,7 +363,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
   }
@@ -437,7 +429,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
   }
@@ -471,7 +463,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
   }
@@ -499,7 +491,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
   }
@@ -527,7 +519,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
   }
@@ -548,7 +540,7 @@ class Flow extends React.Component {
         previousStates
       }, () => {
         this.setupFunctionBaseNodes(functionName)
-        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
+        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
         this.renderDiagram()
       })
     }
@@ -607,36 +599,6 @@ class Flow extends React.Component {
     (this.state.newNodeType === 'functionCall')
   }
 
-
-  //Will be load from file
-  createDiagramFromFile()
-  {
-    
-    const es = {'exId': '', 'nodes': {'main': [{'type': 'start', 'nodeType': 'start', 'id': 1, 'parents': [], 'children': {'main': 7}, 'selected': false, 'variables': [{'name': 'params', 'op': 'write'}]}, {'type': 'end', 'nodeType': 'end', 'id': 2, 'parents': [{'id': 7, 'branch': 'main'}], 'children': {'main': -1}, 'selected': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 7, 'parents': [{'id': 1, 'branch': 'main'}], 'children': {'main': 2}, 'selected': false, 'expressions': ['dsa'], 'variables': [{'name': 'dsa', 'op': 'read'}]}], 'ddd': [{'type': 'start', 'nodeType': 'start', 'id': 8, 'parents': [], 'children': {'main': 10}, 'selected': false, 'variables': [{'name': 'params', 'op': 'write'}]}, {'type': 'end', 'nodeType': 'end', 'id': 9, 'parents': [{'id': 10, 'branch': 'main'}], 'children': {'main': -1}, 'selected': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 10, 'parents': [{'id': 8, 'branch': 'main'}], 'children': {'main': 9}, 'selected': false, 'expressions': ['das'], 'variables': [{'name': 'das', 'op': 'read'}]}]}, 'functions': {'main': {'params': [], 'signature': 'main'}, 'ddd': {'params': [], 'signature': 'ddd()'}}}
-      //I take the previous nodes to rember that for the undo function
-    const nodes = es['nodes']
-    const functions = es['functions']
-    const nodesOld = this.state.nodes
-    const previousStates = this.state.previousStates
-    const selectedFunction = this.state.selectedFunc
-    pushLimit(previousStates, _.cloneDeep(nodesOld)) //I adjust the limit and overwrite the old version of previous states
-      
-
-  
-      this.setState({
-        nodes, 
-        previousStates, //PreviousStates for undo
-        functions,
-        //selectedFunc: 'main', //TO DO
-        memoryStates: [], //I want to empty the window with memory
-        outputToShow: '' //Clear also the output
-      }, () => { //What happens after the update of the state
-        //this.setupFunctionBaseNodes(selectedFunction) //create the "main" version with only start and end nodes
-        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
-        this.renderDiagram() //Render the new diagram starting from actual state
-      })
-  }
-
   render () {
     return (
       <div>
@@ -661,9 +623,6 @@ class Flow extends React.Component {
               </Button>
               <Button variant='dark' onClick={() => { this.addNode('functionCall') }}>
                 <Plus /> Aggiungi funzione
-              </Button>
-              <Button variant='dark' onClick={() => { this.createDiagramFromFile() }}>
-                 Test
               </Button>
               {this.state.selectedFunc !== 'main' &&
               <Button variant='danger' onClick={this.deleteSelectedFunction} disabled={this.state.selectedFunc === 'main'}>
@@ -705,7 +664,7 @@ class Flow extends React.Component {
           <Col xs={1}></Col>
           <Col xs={10}>
             {this.state.memoryStates.length > 0 &&
-              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)} />
+              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)}  />
             }
           </Col>
           <Col xs={1}></Col>
