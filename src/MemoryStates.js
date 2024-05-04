@@ -18,7 +18,8 @@ class MemoryStates extends React.Component {
 
     this.state = {
       currentState: -1,
-      diagrams: []
+      diagrams: [],
+      filter: "",
     }
 
     this.goToState = this.goToState.bind(this)
@@ -28,7 +29,6 @@ class MemoryStates extends React.Component {
     this.filterMemory = this.filterMemory.bind(this)
     this.removeFilter = this.removeFilter.bind(this)
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
-    this.filter = ""
   }
 
   componentDidMount () {
@@ -108,22 +108,28 @@ class MemoryStates extends React.Component {
   removeFilter()
   {
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
-    this.filter = ""
     this.setState({
-      currentState: this.state.currentState
+      filter: ""
     })
   }
 
-//TO DO: for all functions
+
   filterMemory(ev)
   {
-    this.filter = ev.target.text.trim(" ")
+    const filter = ev.target.text.trim(" ")
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)//this to undo eventually previous filters
+    console.log(this.filteredMemoryStates)
+ //   this.filteredMemoryStates[4].memory.array
     for (const x in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
     {
+      for(const [func,value] of Object.entries(this.filterMemoryStates[x].memory))
+      {
+        console.log(func)
+        console.log(value)
+      } 
       const Oldvars = this.filteredMemoryStates[x].memory['main'][0] // Think on what to do on different levels
       const newVars = Object.keys(Oldvars).filter(variable =>
-        variable === this.filter).reduce((newElement, variable) =>
+        variable === filter).reduce((newElement, variable) =>
         {
             newElement[variable] = Oldvars[variable];
             return newElement;
@@ -134,7 +140,7 @@ class MemoryStates extends React.Component {
 
 
     this.setState({
-      currentState: this.state.currentState
+      filter : filter
     })
 
 
