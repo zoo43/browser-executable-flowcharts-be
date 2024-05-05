@@ -95,18 +95,20 @@ class MemoryStates extends React.Component {
     let variablesName = []
     let cont = 1
     const currentState = this.state.currentState===-1? 0 : this.state.currentState //Start is -1
-    //TO DO: not put two times a variable with two names
-    //const state = this.props.memoryStates[currentState].memory['main']
     for(const functionMemory of Object.values(this.props.memoryStates[currentState].memory))
     {
-      console.log(functionMemory)
-      for (const y in functionMemory[0])
+      for (const stringToAdd in functionMemory[0])
       { 
-        const stringToAdd = y
-        if (typeof(functionMemory[0][y]) !== 'function')
+        if (typeof(functionMemory[0][stringToAdd]) !== 'function')
         {
-          variablesName.push({"id":cont , "name":stringToAdd})
-          cont++
+          let presence = false
+          //Check if a variable with the same name was already added
+          variablesName.forEach((element) => { if(element['name']===stringToAdd) presence=true }) 
+          if (presence===false)
+          {
+            variablesName.push({"id":cont , "name":stringToAdd})
+            cont++
+          }
         }
       }
     }
