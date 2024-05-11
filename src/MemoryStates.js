@@ -19,7 +19,7 @@ class MemoryStates extends React.Component {
     this.state = {
       currentState: -1,
       diagrams: [],
-      filter: "",
+      filter: [],
     }
 
     this.goToState = this.goToState.bind(this)
@@ -95,7 +95,7 @@ class MemoryStates extends React.Component {
     let variablesName = []
     let cont = 1
     const currentState = this.state.currentState===-1? 0 : this.state.currentState //Start is -1
-    for(const functionMemory of Object.values(this.props.memoryStates[currentState].memory))
+    for(const [func, functionMemory] of Object.entries(this.props.memoryStates[currentState].memory))
     {
       for (const stringToAdd in functionMemory[0])
       { 
@@ -103,12 +103,19 @@ class MemoryStates extends React.Component {
         {
           let presence = false
           //Check if a variable with the same name was already added
-          variablesName.forEach((element) => { if(element['name']===stringToAdd) presence=true }) 
-          if (presence===false)
+          variablesName.forEach((element) => { 
+            if(element['name']===stringToAdd) 
+            {
+              variablesName.push({"id":cont , "name":stringToAdd, "func":func, "duplicate":true})
+              element["duplicate"] = true
+              presence = true
+            }
+           }) 
+          if (presence===false) 
           {
-            variablesName.push({"id":cont , "name":stringToAdd})
-            cont++
+            variablesName.push({"id":cont , "name":stringToAdd, "func":func, "duplicate":false})
           }
+          cont++
         }
       }
     }
@@ -119,40 +126,70 @@ class MemoryStates extends React.Component {
   {
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
     this.setState({
-      filter: ""
+      filter: []
     })
   }
 
 
   filterMemory(ev)
   {
-    const filter = ev.target.text.trim(" ")
+    const filter = ev.target.text.trim(" ").split(":") //pos 0: func name, pos 1: var name
+    const funcFilter = filter.length === 1 ? false : true //for vars with the same name in different functions 
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)//this to undo eventually previous filters
     for (const memoryStateIndex in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
     {
-      for(const functionMemory of Object.values(this.filteredMemoryStates[memoryStateIndex].memory))
+      for(const [func,functionMemory] of Object.entries(this.filteredMemoryStates[memoryStateIndex].memory))
       {
         if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
         {
           const oldvars = functionMemory[0] // Think on what to do on different levels
-          const newVars = Object.keys(oldvars).filter(variable =>
-            variable === filter).reduce((newElement, variable) =>
+          functionMemory[0] = {}
+          for(const value of Object.entries(oldvars))
+          {
+            if(funcFilter===false)
             {
-                newElement[variable] = oldvars[variable];
-                return newElement;
-            }, {})
-            functionMemory[0] = newVars
-        }
-      } 
+              if(value[0] === filter[0])
+              {
+                functionMemory[0][value[0]] = value[1]
+              }
+            }
+            else
+            {
+              if(value[0] === filter[1].trim(" ") && func === filter[0].trim(" "))
+              {
+                functionMemory[0][value[0]] = value[1]
+              }
+            }
+          }
+        } 
+      }
     }
-
-
     this.setState({
       filter : filter
     })
 
 
   }
+/*
+
+        if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
+        {
+          const oldvars = functionMemory[0] // Think on what to do on different levels
+          if(funcFilter === false)
+          {
+          const newVars = Object.keys(oldvars).filter(variable =>
+            (variable === filter[0])).reduce((newElement, variable) =>
+            {
+                //console.log(variable)
+                newElement[variable] = oldvars[variable];
+                return newElement;
+            }, {})
+            console.log(functionMemory[0])
+            functionMemory[0] = newVars
+          }
+        }*/
+
+
 
   render () {
     return (
@@ -207,7 +244,7 @@ class MemoryStates extends React.Component {
                 <Dropdown.Menu>
                 <Dropdown.Item key={0} onClick={this.removeFilter}> Remove Filter </Dropdown.Item>
                   {this.getVariablesName().map((variable) => (
-                      <Dropdown.Item key={variable.id} onClick={this.filterMemory}> {variable.name} </Dropdown.Item>
+                      <Dropdown.Item key={variable.id} onClick={this.filterMemory}> {variable.duplicate === true? variable.func + " : " + variable.name : variable.name} </Dropdown.Item>
                     ))}
                 </Dropdown.Menu>
               </Dropdown>
