@@ -4,13 +4,13 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
-
-import Dropdown from 'react-bootstrap/Dropdown';
 import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons'
+import Multiselect from 'multiselect-react-dropdown';
 import nodesUtils from './nodes'
 
 const _ = require('lodash')
 const utils = require('./utils')
+
 
 class MemoryStates extends React.Component {
   constructor (props) {
@@ -20,6 +20,7 @@ class MemoryStates extends React.Component {
       currentState: -1,
       diagrams: [],
       filter: [],
+      options:[]
     }
 
     this.goToState = this.goToState.bind(this)
@@ -27,6 +28,7 @@ class MemoryStates extends React.Component {
     this.goToNextState = this.goToNextState.bind(this)
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
     this.filterMemory = this.filterMemory.bind(this)
+    this.onSelect = this.onSelect.bind(this)
     this.removeFilter = this.removeFilter.bind(this)
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
   }
@@ -75,9 +77,10 @@ class MemoryStates extends React.Component {
         diagrams.push(diagramData)
       }
     }
-
+    const variables = this.getVariablesName()
     this.setState({
       currentState: idx,
+      options:variables,
       diagrams
     }, this.drawFlowCharts)
   }
@@ -89,35 +92,21 @@ class MemoryStates extends React.Component {
   }
 
 
-
   getVariablesName()
   {
     let variablesName = []
+    const currentState = this.state.currentState===-1? 0 : this.state.currentState+1//Start is -1
     let cont = 1
-    const currentState = this.state.currentState===-1? 0 : this.state.currentState //Start is -1
     for(const [func, functionMemory] of Object.entries(this.props.memoryStates[currentState].memory))
     {
       for (const stringToAdd in functionMemory[0])
       { 
         if (typeof(functionMemory[0][stringToAdd]) !== 'function')
         {
-          let presence = false
-          //Check if a variable with the same name was already added
-          variablesName.forEach((element) => { 
-            if(element['name']===stringToAdd) 
-            {
-              variablesName.push({"id":cont , "name":stringToAdd, "func":func, "duplicate":true})
-              element["duplicate"] = true
-              presence = true
-            }
-           }) 
-          if (presence===false) 
-          {
-            variablesName.push({"id":cont , "name":stringToAdd, "func":func, "duplicate":false})
-          }
+          variablesName.push({"func":func, "value":cont+") "+stringToAdd, "id":cont})
           cont++
         }
-      }
+      }      
     }
     return variablesName
   }
@@ -130,7 +119,7 @@ class MemoryStates extends React.Component {
     })
   }
 
-
+//TO DO: FUNCTION IS NOT GOOD LOOKING
   filterMemory(ev)
   {
     const filter = ev.target.text.trim(" ").split(":") //pos 0: func name, pos 1: var name
@@ -170,6 +159,23 @@ class MemoryStates extends React.Component {
 
 
   }
+
+  onSelect(ev)
+  {
+    //Modify options
+    console.log(ev)
+    const newVariables = []
+    this.state.options.map(x => //Not here, but on memoryStates filtered
+      {
+        ev.forEach((element) => {
+          if(x["value"] === element["value"])
+            newVariables.push(element)
+        })
+      })
+    this.setState(
+      {} //Change filtered memory states
+    )
+  }
 /*
 
         if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
@@ -189,7 +195,7 @@ class MemoryStates extends React.Component {
           }
         }*/
 
-
+// <Dropdown.Item key={variable.id} onClick={this.filterMemory}> {variable.duplicate === true? variable.func + " : " + variable.name : variable.name} </Dropdown.Item>
 
   render () {
     return (
@@ -236,18 +242,16 @@ class MemoryStates extends React.Component {
             <Col xs={3} style={{ borderLeft: '2px solid black' }}>
               <h3>Memoria</h3>
 
-              <Dropdown>
-                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                  Filtro : { this.state.filter }
-                </Dropdown.Toggle>
+              <Multiselect
+              options={this.state.options} // Options to display in the dropdown
+              onSelect={this.onSelect} // Function will trigger on select event
+              onRemove={this.onRemove} // Function will trigger on remove event
+              displayValue="value"
+              groupBy="func"
+              isObject={true}
+              showCheckbox
+              />
 
-                <Dropdown.Menu>
-                <Dropdown.Item key={0} onClick={this.removeFilter}> Remove Filter </Dropdown.Item>
-                  {this.getVariablesName().map((variable) => (
-                      <Dropdown.Item key={variable.id} onClick={this.filterMemory}> {variable.duplicate === true? variable.func + " : " + variable.name : variable.name} </Dropdown.Item>
-                    ))}
-                </Dropdown.Menu>
-              </Dropdown>
               {this.state.currentState >= 0 &&
                 <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.filteredMemoryStates[this.state.currentState])}}></div>
               }
