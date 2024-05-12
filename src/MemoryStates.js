@@ -29,7 +29,7 @@ class MemoryStates extends React.Component {
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
     this.filterMemory = this.filterMemory.bind(this)
     this.onSelect = this.onSelect.bind(this)
-    this.removeFilter = this.removeFilter.bind(this)
+    //this.removeFilter = this.removeFilter.bind(this)
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
   }
 
@@ -77,7 +77,8 @@ class MemoryStates extends React.Component {
         diagrams.push(diagramData)
       }
     }
-    const variables = this.getVariablesName()
+    
+    const variables = this.getVariablesName(idx)
     this.setState({
       currentState: idx,
       options:variables,
@@ -92,10 +93,10 @@ class MemoryStates extends React.Component {
   }
 
 
-  getVariablesName()
+  getVariablesName(idx)
   {
     let variablesName = []
-    const currentState = this.state.currentState===-1? 0 : this.state.currentState+1//Start is -1
+    const currentState = idx//Start is -1
     let cont = 1
     for(const [func, functionMemory] of Object.entries(this.props.memoryStates[currentState].memory))
     {
@@ -110,14 +111,15 @@ class MemoryStates extends React.Component {
     }
     return variablesName
   }
-
-  removeFilter()
+/*
+  removeFilter(ev)
   {
+    console.log(ev)
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
     this.setState({
       filter: []
     })
-  }
+  }*/
 
 //TO DO: FUNCTION IS NOT GOOD LOOKING
   filterMemory(ev)
@@ -153,8 +155,9 @@ class MemoryStates extends React.Component {
         } 
       }
     }
+    
     this.setState({
-      filter : filter
+      filter : this.state.filter.push(filter)
     })
 
 
@@ -163,17 +166,40 @@ class MemoryStates extends React.Component {
   onSelect(ev)
   {
     //Modify options
-    console.log(ev)
-    const newVariables = []
-    this.state.options.map(x => //Not here, but on memoryStates filtered
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
+    const filter = ev.map((x) => ({"value":x["value"].split(")")[1].trim(" "), "func" : x["func"]}))
+   // const newFilter = this.state.filter.push(filter)
+
+    for (const memoryStateIndex in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
+    {
+      for(const [func,functionMemory] of Object.entries(this.filteredMemoryStates[memoryStateIndex].memory))
       {
+        if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
+        {
+          const oldvars = functionMemory[0] // Think on what to do on different levels
+          functionMemory[0] = {}
+          for(const value of Object.entries(oldvars))
+          {//filter
+            filter.forEach((element) => {
+              if(value[0] === element["value"] && func === element["func"])
+                functionMemory[0][value[0]] = value[1]
+            }) 
+          }
+        }
+      }
+    }
+    
+
+    /*
         ev.forEach((element) => {
           if(x["value"] === element["value"])
             newVariables.push(element)
-        })
-      })
+        })*/
+    
     this.setState(
-      {} //Change filtered memory states
+      {
+        filter:filter
+      } //Change filtered memory states
     )
   }
 /*
@@ -245,7 +271,7 @@ class MemoryStates extends React.Component {
               <Multiselect
               options={this.state.options} // Options to display in the dropdown
               onSelect={this.onSelect} // Function will trigger on select event
-              onRemove={this.onRemove} // Function will trigger on remove event
+              onRemove={this.onSelect} // Function will trigger on remove event
               displayValue="value"
               groupBy="func"
               isObject={true}
