@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@coreui/coreui": "^5.0.1",
+    "@coreui/react": "^5.0.0",
     "@syncfusion/ej2-react-dropdowns": "^25.2.3",
     "@syncfusion/ej2-react-grids": "^25.2.3",
     "acorn": "^8.11.3",

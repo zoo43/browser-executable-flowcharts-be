@@ -5,8 +5,8 @@ import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons'
+import Multiselect from 'multiselect-react-dropdown';
 import nodesUtils from './nodes'
-import { MultiSelect } from "react-multi-select-component"
 
 const _ = require('lodash')
 const utils = require('./utils')
@@ -100,13 +100,11 @@ class MemoryStates extends React.Component {
     let cont = 1
     for(const [func, functionMemory] of Object.entries(this.props.memoryStates[currentState].memory))
     {
-      variablesName.push({"label":func , "value":cont, disabled:true})
-      cont++
       for (const stringToAdd in functionMemory[0])
       { 
         if (typeof(functionMemory[0][stringToAdd]) !== 'function')
         {
-          variablesName.push({"label":func + " : "+stringToAdd, "value":cont}) //id is not used, but in the future may be useful
+          variablesName.push({"value":func + " : "+stringToAdd, "function":func,"id":cont}) //id is not used, but in the future may be useful
           cont++
         }
       }      
@@ -194,10 +192,14 @@ class MemoryStates extends React.Component {
             <Col xs={3} style={{ borderLeft: '2px solid black' }}>
               <h3>Memoria</h3>
 
-              <MultiSelect
-                options={this.state.options}
-                labelledBy="Select"
-                disableSearch
+              <Multiselect
+              options={this.state.options} // Options to display in the dropdown
+              groupBy={"function"}
+              onSelect={this.filterMemory} // Function will trigger on select event
+              onRemove={this.filterMemory} // Same as above because the event will be the new selected variables
+              displayValue="value"
+              isObject={true}
+              showCheckbox
               />
 
               {this.state.currentState >= 0 &&
