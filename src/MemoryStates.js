@@ -28,8 +28,6 @@ class MemoryStates extends React.Component {
     this.goToNextState = this.goToNextState.bind(this)
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
     this.filterMemory = this.filterMemory.bind(this)
-    this.onSelect = this.onSelect.bind(this)
-    //this.removeFilter = this.removeFilter.bind(this)
     this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
   }
 
@@ -84,6 +82,8 @@ class MemoryStates extends React.Component {
       options:variables,
       diagrams
     }, this.drawFlowCharts)
+
+    
   }
 
   drawFlowCharts () {
@@ -104,124 +104,48 @@ class MemoryStates extends React.Component {
       { 
         if (typeof(functionMemory[0][stringToAdd]) !== 'function')
         {
-          variablesName.push({"func":func, "value":cont+") "+stringToAdd, "id":cont})
+          variablesName.push({"value":func + " : "+stringToAdd, "id":cont}) //id is not used, but in the future may be useful
           cont++
         }
       }      
     }
     return variablesName
   }
-/*
-  removeFilter(ev)
-  {
-    console.log(ev)
-    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
-    this.setState({
-      filter: []
-    })
-  }*/
 
-//TO DO: FUNCTION IS NOT GOOD LOOKING
   filterMemory(ev)
   {
-    const filter = ev.target.text.trim(" ").split(":") //pos 0: func name, pos 1: var name
-    const funcFilter = filter.length === 1 ? false : true //for vars with the same name in different functions 
-    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)//this to undo eventually previous filters
-    for (const memoryStateIndex in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates) //I restore the old variables to apply the new filter
+    let filter = []
+    if(ev.length!==0)
     {
-      for(const [func,functionMemory] of Object.entries(this.filteredMemoryStates[memoryStateIndex].memory))
+      filter = ev.map((x) => ({"value":x["value"].split(":")[1].trim(" "), "func" : x["value"].split(":")[0].trim(" ")}))
+      for (const memoryStateIndex in this.filteredMemoryStates) //for each state in the memory, With that I can change the state and still see the filter)
       {
-        if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
+        for(const [func,functionMemory] of Object.entries(this.filteredMemoryStates[memoryStateIndex].memory))
         {
-          const oldvars = functionMemory[0] // Think on what to do on different levels
-          functionMemory[0] = {}
-          for(const value of Object.entries(oldvars))
+          if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
           {
-            if(funcFilter===false)
+            const oldVars = functionMemory[0] // Think on what to do on different levels
+            functionMemory[0] = {} //I empty the filtered memory to add the new Variables that pass the filter
+            for(const [variableName,variableValue] of Object.entries(oldVars))
             {
-              if(value[0] === filter[0])
-              {
-                functionMemory[0][value[0]] = value[1]
-              }
+              filter.forEach((element) => { //for each element of the filter
+                if(variableName=== element["value"] && func === element["func"])
+                  functionMemory[0][variableName] = variableValue
+              }) 
             }
-            else
-            {
-              if(value[0] === filter[1].trim(" ") && func === filter[0].trim(" "))
-              {
-                functionMemory[0][value[0]] = value[1]
-              }
-            }
-          }
-        } 
-      }
-    }
-    
-    this.setState({
-      filter : this.state.filter.push(filter)
-    })
-
-
-  }
-
-  onSelect(ev)
-  {
-    //Modify options
-    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
-    const filter = ev.map((x) => ({"value":x["value"].split(")")[1].trim(" "), "func" : x["func"]}))
-   // const newFilter = this.state.filter.push(filter)
-
-    for (const memoryStateIndex in this.filteredMemoryStates) //for each state in the memory, I filter and remove the vars that are not the filter
-    {
-      for(const [func,functionMemory] of Object.entries(this.filteredMemoryStates[memoryStateIndex].memory))
-      {
-        if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
-        {
-          const oldvars = functionMemory[0] // Think on what to do on different levels
-          functionMemory[0] = {}
-          for(const value of Object.entries(oldvars))
-          {//filter
-            filter.forEach((element) => {
-              if(value[0] === element["value"] && func === element["func"])
-                functionMemory[0][value[0]] = value[1]
-            }) 
           }
         }
       }
-    }
-    
 
-    /*
-        ev.forEach((element) => {
-          if(x["value"] === element["value"])
-            newVariables.push(element)
-        })*/
-    
+    }
+
     this.setState(
       {
         filter:filter
-      } //Change filtered memory states
+      } 
     )
   }
-/*
-
-        if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
-        {
-          const oldvars = functionMemory[0] // Think on what to do on different levels
-          if(funcFilter === false)
-          {
-          const newVars = Object.keys(oldvars).filter(variable =>
-            (variable === filter[0])).reduce((newElement, variable) =>
-            {
-                //console.log(variable)
-                newElement[variable] = oldvars[variable];
-                return newElement;
-            }, {})
-            console.log(functionMemory[0])
-            functionMemory[0] = newVars
-          }
-        }*/
-
-// <Dropdown.Item key={variable.id} onClick={this.filterMemory}> {variable.duplicate === true? variable.func + " : " + variable.name : variable.name} </Dropdown.Item>
 
   render () {
     return (
@@ -270,10 +194,9 @@ class MemoryStates extends React.Component {
 
               <Multiselect
               options={this.state.options} // Options to display in the dropdown
-              onSelect={this.onSelect} // Function will trigger on select event
-              onRemove={this.onSelect} // Function will trigger on remove event
+              onSelect={this.filterMemory} // Function will trigger on select event
+              onRemove={this.filterMemory} // Same as above because the event will be the new selected variables
               displayValue="value"
-              groupBy="func"
               isObject={true}
               showCheckbox
               />
