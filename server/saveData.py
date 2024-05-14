@@ -10,7 +10,7 @@ def saveData(data):
     db = client["local"]
     collection = db["Collection"]
     data["timestamp"] = datetime.today() 
-    collection.insert_one(data) #Insert into mongodb
+    #collection.insert_one(data) #Insert into mongodb
     #record = collection.find_one({'classId': '3A'})#Get one record
     
     #collection.delete_many({})#Delete all the records
