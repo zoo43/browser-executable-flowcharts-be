@@ -16,6 +16,7 @@ import LoopModal from './NodeModals/LoopModal'
 import LoopForModal from './NodeModals/LoopForModal'
 import OutputModal from './NodeModals/OutputModal'
 import ReturnValueModal from './NodeModals/ReturnValueModal'
+import AssertModal from './NodeModals/AssertModal'
 import FunctionDefineModal from './NodeModals/FunctionDefineModal'
 import NopModal from './NodeModals/NopModal'
 import comm from './communications'
@@ -68,6 +69,7 @@ class Flow extends React.Component {
     this.deleteNode = this.deleteNode.bind(this)
     this.addExpressionNode = this.addExpressionNode.bind(this)
     this.addConditionNode = this.addConditionNode.bind(this)
+    this.addAssertNode = this.addAssertNode.bind(this)
     this.addLoopNode = this.addLoopNode.bind(this)
     this.addLoopForNode = this.addLoopForNode.bind(this)
     this.addOutputNode = this.addOutputNode.bind(this)
@@ -80,6 +82,7 @@ class Flow extends React.Component {
     this.shouldShowLoopForModal = this.shouldShowLoopForModal.bind(this)
     this.shouldShowOutputModal = this.shouldShowOutputModal.bind(this)
     this.shouldShowReturnValueModal = this.shouldShowReturnValueModal.bind(this)
+    this.shouldShowAssertModal = this.shouldShowAssertModal.bind(this)
     this.shouldShowNopModal = this.shouldShowNopModal.bind(this)
     this.shouldShowFunctionDefineModal = this.shouldShowFunctionDefineModal.bind(this)
     this.showExecutionFeedback = this.showExecutionFeedback.bind(this)
@@ -402,6 +405,39 @@ class Flow extends React.Component {
     })
   }
 
+
+  addAssertNode (data) {
+    const nodes = this.state.nodes
+    const previousStates = this.state.previousStates
+    pushLimit(previousStates, _.cloneDeep(nodes))
+    const selectedFuncNodes = nodes[this.state.selectedFunc]
+    const newConditionNodes = nodesUtils.getNewNode('condition', data)
+
+    const conditionNode = newConditionNodes[0]
+    const closeConditionNode = newConditionNodes[1]
+
+    for (const parentInfo of data.parents) {
+      const newNodeParent = _.find(selectedFuncNodes, { id: parentInfo.id })
+      const newSubGraph = {
+        entry: conditionNode,
+        exit: closeConditionNode
+      }
+      nodesUtils.connectGraphs(newNodeParent, parentInfo.branch, newSubGraph, selectedFuncNodes)
+    }
+
+    selectedFuncNodes.push(conditionNode)
+    selectedFuncNodes.push(closeConditionNode)
+    nodesUtils.markUnreachableNodes(selectedFuncNodes)
+
+    this.setState({
+      nodes,
+      previousStates
+    }, () => {
+      comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+      this.renderDiagram()
+    })
+  }
+
   addLoopNode (data) {
     const nodes = this.state.nodes
     const previousStates = this.state.previousStates
@@ -563,6 +599,12 @@ class Flow extends React.Component {
     return (!_.isNil(this.state.selectedNodeObj) &&
     this.state.selectedNodeObj.type === 'condition') ||
     (this.state.newNodeType === 'condition')
+  }
+
+  shouldShowAssertModal () {
+    return (!_.isNil(this.state.selectedNodeObj) &&
+    this.state.selectedNodeObj.type === 'assert') ||
+    (this.state.newNodeType === 'assert')
   }
 
   shouldShowLoopModal () {
@@ -786,6 +828,21 @@ class Flow extends React.Component {
             closeCallback={this.unselectNode}
             addChildCallback={this.addNode}
             addNewNodeCallback={this.addReturnValueNode}
+            updateNodeCallback={this.updateNode}
+            deleteNodeCallback={this.deleteNode}
+          />
+        }
+
+        {this.shouldShowAssertModal() &&
+          <AssertModal
+            node={this.state.selectedNodeObj}
+            nodes={this.state.nodes[this.state.selectedFunc]}
+            functions={_.keys(this.state.nodes)}
+            parents={this.state.selectedNodeParents}
+            show={this.shouldShowAssertModal()}
+            closeCallback={this.unselectNode}
+            addChildCallback={this.addNode}
+            addNewNodeCallback={this.addAssertNode}
             updateNodeCallback={this.updateNode}
             deleteNodeCallback={this.deleteNode}
           />

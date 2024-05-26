@@ -80,6 +80,8 @@ function getNodeText (type, data) {
     }
   } else if (type === 'condition') {
     newNodeText += cleanupExpression(data.condition)
+  } else if (type === 'assert') {
+    newNodeText += cleanupExpression(data.assertion)
   } else if (type === 'loop') {
     newNodeText += cleanupExpression(data.condition)
   } else if (type === 'output') {
