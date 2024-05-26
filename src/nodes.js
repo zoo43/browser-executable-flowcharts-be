@@ -160,7 +160,7 @@ function createNewNode (type) {
   newNode.parents = []
   newNode.children = { main: -1 }
   newNode.selected = false
-
+  newNode.checked = false
   return newNode
 }
 
@@ -171,7 +171,7 @@ function getNopNode (parent, type) {
   newNode.parents = []
   newNode.children = { main: -1 }
   newNode.selected = false
-
+  newNode.checked = false
   return newNode
 }
 
@@ -498,12 +498,14 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
 
     if (clickable && ['end', 'nopNoModal'].indexOf(node.type) < 0) diagramStr += 'click ' + node.id + ' nodeClickCallbackMermaid\n'
     if (node.selected) diagramStr += 'class ' + node.id + ' selected\n'
+    if (node.checked) diagramStr += 'class ' + node.id + ' checked\n'
     if (node.unreachable) diagramStr += 'class ' + node.id + ' unreachable\n'
     else if (node.type === 'nop') diagramStr += 'class ' + node.id + ' nop\n'
     else if (node.type === 'nopNoModal') diagramStr += 'class ' + node.id + ' nopNoModal\n'
   }
 
   diagramStr += 'classDef selected stroke-width:5px,stroke: #2001aa\n'
+  diagramStr += 'classDef checked stroke-width:5px,stroke: green\n'
   diagramStr += 'classDef unreachable fill:#262626\n'
   // diagramStr += 'classDef nop fill:#a1f1fc\n'
   diagramStr += 'classDef nopNoModal fill:#000000\n'

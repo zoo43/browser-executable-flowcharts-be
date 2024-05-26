@@ -56,7 +56,7 @@ class MemoryStates extends React.Component {
       // TODO qui dopo l'esecuzione di End highlightNode diventa undefined
       if (_.isFinite(highlightNode)) {
         _.find(nodes, n => { return n.id === highlightNode }).selected = true
-
+        nodes[2].checked = true
         const nodesStr = nodesUtils.convertToDiagramStr(nodes, false)
         const diagramData = {
           func: openFunc.func,
