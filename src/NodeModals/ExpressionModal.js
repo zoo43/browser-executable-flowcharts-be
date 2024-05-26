@@ -53,6 +53,7 @@ class ExpressionModal extends React.Component {
     this.deleteNode = this.deleteNode.bind(this)
     this.showVariableFeedback = this.showVariableFeedback.bind(this)
     this.getCurrentVariables = this.getCurrentVariables.bind(this)
+    this.checkNode = this.checkNode.bind(this)
   }
 
   componentDidMount () {
@@ -217,6 +218,12 @@ class ExpressionModal extends React.Component {
     this.props.closeCallback()
   }
 
+  checkNode()
+  {
+    this.props.node.checked = true
+    console.log(this.props.node)
+  }
+
   updateNode () {
     const data = {
       id: this.props.node.id,
@@ -347,9 +354,14 @@ class ExpressionModal extends React.Component {
 
           <ButtonGroup>
             {!_.isNil(this.props.node) &&
+            <ButtonGroup>
               <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.updateNode}>
                 <Pencil /> Aggiorna nodo
               </Button>
+              <Button variant='success'  onClick={this.checkNode}>
+                <Pencil /> Segna nodo come corretto
+              </Button>              
+            </ButtonGroup>
             }
 
             {_.isNil(this.props.node) &&

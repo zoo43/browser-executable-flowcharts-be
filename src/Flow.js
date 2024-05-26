@@ -278,7 +278,6 @@ class Flow extends React.Component {
     const nodeId = parseInt(selectedNode)
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
     const selectedNodeObj = _.find(selectedFuncNodes, { id: nodeId })
-    
     // First unselect other nodes
     for (const func in this.state.nodes) {
       for (const node of this.state.nodes[func]) node.selected = false
@@ -321,7 +320,6 @@ class Flow extends React.Component {
 
   addNode (type, parent, branch) {
     this.selectNode(-1)
-
     this.setState({
       newNodeType: type,
       selectedNodeParents: [{ node: parent, branch: branch }]
@@ -349,7 +347,7 @@ class Flow extends React.Component {
 
     const selectedFuncNodes = nodes[this.state.selectedFunc]
     const newExpressionNode = nodesUtils.getNewNode('expression', data)[0]
-
+    //Here can I set checked...? By hand then only need to add a button to the window and from there call nodeUtils.setChecked  
     for (const parentInfo of data.parents) {
       const newNodeParent = _.find(selectedFuncNodes, { id: parentInfo.id })
       const newSubGraph = {
