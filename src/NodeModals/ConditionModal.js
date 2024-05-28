@@ -22,7 +22,8 @@ const baseState = {
   condition: '',
   okToAddNode: false,
   usedVariables: [],
-  variableWarnings: []
+  variableWarnings: [],
+  checked : false
 }
 
 function cleanupConditionString (val) {
@@ -44,6 +45,7 @@ class ConditionModal extends React.Component {
     this.updateNode = this.updateNode.bind(this)
     this.deleteNode = this.deleteNode.bind(this)
     this.showVariableFeedback = this.showVariableFeedback.bind(this)
+    this.checkNode = this.checkNode.bind(this)
   }
 
   componentDidMount () {
@@ -62,15 +64,16 @@ class ConditionModal extends React.Component {
     const newState = _.cloneDeep(baseState)
     // Parent nodes
     utils.assignParentsOnReset(newState, this.props.node, this.props.nodes, this.props.parents)
-
+    let checked = false
     let condition = ''
     let usedVariables = []
     if (!_.isNil(this.props.node)) {
+      checked = this.props.node.checked !==undefined ? this.props.node.checked : false 
       condition = this.props.node.condition
       const parseRes = utils.parseCondition(this.state.condition)
       usedVariables = parseRes.usedVariables
     }
-
+    newState.checked = checked
     newState.condition = condition
     newState.usedVariables = usedVariables
 
@@ -134,12 +137,22 @@ class ConditionModal extends React.Component {
     this.props.closeCallback()
   }
 
+  checkNode(ev)
+  {
+    const okToGo = (ev.target.checked !== this.props.node.checked || this.state.okToAddNode)? true : false   
+    this.setState({
+      okToAddNode: okToGo,
+      checked: ev.target.checked
+    })
+  }
+
   updateNode () {
     const data = {
       id: this.props.node.id,
       parents: _.clone(this.state.currentlySelectedParents),
       condition: _.trim(_.cloneDeep(this.state.condition)),
-      variables: _.cloneDeep(this.state.usedVariables)
+      variables: _.cloneDeep(this.state.usedVariables),
+      checked : this.state.checked
     }
 
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
@@ -211,6 +224,10 @@ class ConditionModal extends React.Component {
             </div>
           }
 
+          {!_.isNil(this.props.node) &&
+            <Form.Check className="me-auto d-sm-inline-block" type="checkbox" id="default-checkbox" label="Segna il nodo come corretto" onChange={this.checkNode} checked={this.state.checked}/> 
+          }
+
           <ButtonGroup>
             {!_.isNil(this.props.node) &&
               <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.updateNode}>
@@ -226,7 +243,7 @@ class ConditionModal extends React.Component {
 
             {!_.isNil(this.props.node) &&
               <Button variant='danger' onClick={this.deleteNode}>
-                <Trash /> Elimina nodo (insieme a tutti i nodi nel suo corpo)
+                <Trash /> Elimina nodo (E tutti i nodi nel suo corpo)
               </Button>
             }
           </ButtonGroup>

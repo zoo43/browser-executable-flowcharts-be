@@ -58,7 +58,6 @@ class ExpressionModal extends React.Component {
   }
 
   componentDidMount () {
-    console.log(this.props.node)
     this.resetState()
   }
 
@@ -78,7 +77,9 @@ class ExpressionModal extends React.Component {
     let expressions = []
     let expressionErrors = []
     let usedVariables = []
+    let checked = false
     if (!_.isNil(this.props.node)) {
+      checked = this.props.node.checked !==undefined ? this.props.node.checked : false   
       expressions = this.props.node.expressions
       for (const expression of expressions) {
         const parseRes = utils.parseExpression(expression)
@@ -90,11 +91,11 @@ class ExpressionModal extends React.Component {
         }
       }
     }
-
+    newState.checked = checked
     newState.expressions = expressions
     newState.expressionErrors = expressionErrors
     newState.usedVariables = usedVariables
-    newState.checked = this.props.node.checked ? this.props.node.checked : false  
+   
     this.setState(newState)
   }
 
@@ -221,7 +222,7 @@ class ExpressionModal extends React.Component {
 
   checkNode(ev)
   {
-    const okToGo = ev.target.checked !== this.props.node.checked ? true : false   
+    const okToGo = (ev.target.checked !== this.props.node.checked || this.state.okToAddNode)? true : false   
     this.setState({
       okToAddNode: okToGo,
       checked: ev.target.checked
@@ -356,7 +357,11 @@ class ExpressionModal extends React.Component {
             </div>
           }
 
-          <Form.Check className="me-auto d-sm-inline-block" type="checkbox" id="default-checkbox" label="Segna il nodo come corretto" onChange={this.checkNode} checked={this.state.checked}/> 
+
+          {!_.isNil(this.props.node) &&
+            <Form.Check className="me-auto d-sm-inline-block" type="checkbox" id="default-checkbox" label="Segna il nodo come corretto" onChange={this.checkNode} checked={this.state.checked}/> 
+          }
+          
 
           <ButtonGroup>
             {!_.isNil(this.props.node) &&

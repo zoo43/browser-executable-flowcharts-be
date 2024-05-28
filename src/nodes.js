@@ -260,9 +260,11 @@ function updateNodeContents (nodeObj, data) {
   } else if (nodeObj.type === 'condition') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'loop') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'loopFor') {
     nodeObj.initialization = data.initialization
     nodeObj.condition = data.condition
@@ -270,9 +272,11 @@ function updateNodeContents (nodeObj, data) {
     nodeObj.variables = data.variables
   } else if (nodeObj.type === 'output') {
     nodeObj.output = data.output
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'returnValue') {
     nodeObj.returnType = data.returnType
     nodeObj.returnValue = data.returnValue
+    nodeObj.checked = data.checked
   }
 
   return nodeObj
