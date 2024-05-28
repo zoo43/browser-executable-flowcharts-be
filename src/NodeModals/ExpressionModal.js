@@ -55,7 +55,6 @@ class ExpressionModal extends React.Component {
     this.showVariableFeedback = this.showVariableFeedback.bind(this)
     this.getCurrentVariables = this.getCurrentVariables.bind(this)
     this.checkNode = this.checkNode.bind(this)
-    this.checked = this.props.node.checked? this.props.node.checked : false
   }
 
   componentDidMount () {
@@ -79,7 +78,6 @@ class ExpressionModal extends React.Component {
     let expressions = []
     let expressionErrors = []
     let usedVariables = []
-
     if (!_.isNil(this.props.node)) {
       expressions = this.props.node.expressions
       for (const expression of expressions) {
@@ -96,7 +94,7 @@ class ExpressionModal extends React.Component {
     newState.expressions = expressions
     newState.expressionErrors = expressionErrors
     newState.usedVariables = usedVariables
-
+    newState.checked = this.props.node.checked ? this.props.node.checked : false  
     this.setState(newState)
   }
 
@@ -112,7 +110,6 @@ class ExpressionModal extends React.Component {
   }
 
   updateSavedExpression (ev, idx) {
-    console.log("ciao2")
     let exprValue = cleanupExpressionString(ev.target.value)
     const parseRes = utils.parseExpression(exprValue)
 
@@ -229,7 +226,6 @@ class ExpressionModal extends React.Component {
       okToAddNode: okToGo,
       checked: ev.target.checked
     })
-    this.checked = !this.checked
   }
 
   updateNode () {
@@ -239,7 +235,6 @@ class ExpressionModal extends React.Component {
       expressions: _.cloneDeep(this.state.expressions),
       checked : this.state.checked
     }
-    this.checked = !this.checked
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
 
@@ -361,7 +356,7 @@ class ExpressionModal extends React.Component {
             </div>
           }
 
-          <Form.Check className="me-auto d-sm-inline-block" type="checkbox" id="default-checkbox" label="Segna il nodo come corretto" onChange={this.checkNode} checked={this.checked}/> 
+          <Form.Check className="me-auto d-sm-inline-block" type="checkbox" id="default-checkbox" label="Segna il nodo come corretto" onChange={this.checkNode} checked={this.state.checked}/> 
 
           <ButtonGroup>
             {!_.isNil(this.props.node) &&

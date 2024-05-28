@@ -256,7 +256,6 @@ function updateNodeContents (nodeObj, data) {
   if (nodeObj.type === 'expression') {
     nodeObj.expressions = data.expressions
     nodeObj.variables = data.variables
-    console.log(data.checked)
     nodeObj.checked = data.checked
   } else if (nodeObj.type === 'condition') {
     nodeObj.condition = data.condition
