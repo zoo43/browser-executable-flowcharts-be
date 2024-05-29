@@ -45,7 +45,8 @@ const baseState = {
   selectedFunc: 'main',
   selectedExampleProgram: _.keys(examplePrograms)[0],
   showDemo: true,
-  checkedNodes : []
+  checkedNodes : [],
+  assignment: ""
 }
 
 function pushLimit (arr, element) {
@@ -119,7 +120,7 @@ class Flow extends React.Component {
     })
   }
 
-  loadPredefinedNodes (nodes, functions, checkedNodes) {
+  loadPredefinedNodes (nodes, functions, checkedNodes, assignment) {
     const showDemo = _.clone(this.state.showDemo)
     const newState = _.cloneDeep(baseState)
     newState.exerciseid = _.clone(this.state.exerciseid)
@@ -129,6 +130,7 @@ class Flow extends React.Component {
     newState.previousStates = []
     newState.showDemo = showDemo
     newState.checkedNodes = checkedNodes
+    newState.assignment = assignment
     nodesUtils.updateBaseId(nodes)
 
     this.setState(newState, this.renderDiagram)
@@ -150,7 +152,8 @@ class Flow extends React.Component {
     const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
     const checkedNodes = this.findCheckedNodes(programNodes["main"],true)
     const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
-    this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes)
+    const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
+    this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
   }
 
   setupFunctionBaseNodes (func) {
@@ -717,6 +720,7 @@ class Flow extends React.Component {
         {_.keys(this.state.nodes).map((func, idx) => {
           return (
             <Tab eventKey={func} title={this.state.functions[func].signature} key={idx}>
+              <h4> Consegna :  { this.state.assignment } </h4>
               <Row>
                 <Col xs={8}>
                   <h3>Diagramma - {this.state.functions[this.state.selectedFunc].signature}</h3>
