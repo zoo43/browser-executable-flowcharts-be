@@ -579,7 +579,7 @@ class Flow extends React.Component {
       })
     })
     
-    console.log("You signed " + signedNodes.length + " nodes and " + correctNodesCounter + " of them are correct on a total of " + checkedNodes.length + " correct nodes")
+    alert("You signed " + signedNodes.length + " nodes and " + correctNodesCounter + " of them are correct on a total of " + checkedNodes.length + " correct nodes")
     //You signed (signedNodes.length) nodes and (equals ids) from them are correct
   }
 
