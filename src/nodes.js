@@ -596,7 +596,7 @@ function drawFlowCharts (diagramStrings, divName, selectedFunc, adjustHeight) {
       if (height > 0) flowchartDiv.style.height = height + 'px'
     }
     flowchartDiv.innerHTML = ''
-
+    
     const diagramStr = diagramStrings[func]
     if (config.renderer === 'mermaid') {
       if (selectedFunc === '' || func === selectedFunc) {
