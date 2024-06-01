@@ -582,8 +582,7 @@ class Flow extends React.Component {
       })
     })
     
-    alert("You signed " + signedNodes.length + " nodes and " + correctNodesCounter + " of them are correct on a total of " + checkedNodes.length + " correct nodes")
-    //You signed (signedNodes.length) nodes and (equals ids) from them are correct
+    alert("Hai segnato " + signedNodes.length + " nodi e " + correctNodesCounter + " di questi sono corretti su un totale di " + checkedNodes.length + " nodi corretti")
   }
 
   createDiagramFromFile()
