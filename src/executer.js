@@ -120,7 +120,6 @@ function executeFromNode (node, nodes, functions, func, calcData) {
     const result = function (str) {
       return eval(str)
     }.call(calcData.scope[func][currentFunc], parsedCondition)
-
     if (result) nextNode = _.find(nodes[func], { id: node.children.yes })
     else nextNode = _.find(nodes[func], { id: node.children.no })
   } else if (node.type === 'output') {
@@ -152,9 +151,17 @@ function executeFromNode (node, nodes, functions, func, calcData) {
 
     // Jump to end node
     nextNode = _.find(nodes[func], { type: 'end' })
-  }
+  }else if(node.type === 'assertion')
+  {
+    const parsedCondition = parseExpressions(node.condition)
+    console.log(parsedCondition)
 
-  if (['nop', 'nopNoModal'].indexOf(node.type) < 0) {
+    const result = function (str) {
+      return eval(str)
+    }.call(calcData.scope[func][currentFunc], parsedCondition)
+    console.log(result)
+
+  }if (['nop', 'nopNoModal'].indexOf(node.type) < 0) {
     const memoryStateSnapshot = {
       id: _.clone(node.id),
       type: _.clone(node.type),

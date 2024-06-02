@@ -34,7 +34,7 @@ class AddChildButtons extends React.Component {
         <Button variant='dark' onClick={() => {this.props.addChildCallback('returnValue', this.props.node, this.props.branch)}}>
           Ritorna valore <BoxArrowUp />
         </Button>
-        <Button variant='secondary' onClick={() => {this.props.addChildCallback('assert', this.props.node, this.props.branch)}}>
+        <Button variant='secondary' onClick={() => {this.props.addChildCallback('assertion', this.props.node, this.props.branch)}}>
           Assert <SignpostSplit />
         </Button>
       </ButtonGroup>

@@ -24,14 +24,15 @@ function getNodeConnections (nodes, nodeId) {
     if (!_.isNil(nodeId) && nodeId === node.id) continue
     if (node.nodeType === 'end') continue
 
-    if (node.nodeType === 'condition') {
+    if (node.nodeType === 'condition' && node.type!== 'assertion') {
       connections.push({
         value: node.id + '/yes'
       })
       connections.push({
         value: node.id + '/no'
       })
-    } else {
+    }
+    else {
       connections.push({
         value: node.id.toString()
       })

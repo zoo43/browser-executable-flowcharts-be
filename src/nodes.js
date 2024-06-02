@@ -276,6 +276,9 @@ function updateNodeContents (nodeObj, data) {
   } else if (nodeObj.type === 'condition') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
+  } else if (nodeObj.type === 'assertion') {
+    nodeObj.condition = data.condition
+    nodeObj.variables = data.variables
   } else if (nodeObj.type === 'loop') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables

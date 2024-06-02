@@ -410,21 +410,20 @@ class Flow extends React.Component {
     const nodes = this.state.nodes
     const previousStates = this.state.previousStates
     pushLimit(previousStates, _.cloneDeep(nodes))
-    const selectedFuncNodes = nodes[this.state.selectedFunc]
-    console.log(data)
-    const newConditionNodes = nodesUtils.getNewNode('assertion', data)
 
-    const conditionNode = newConditionNodes[0]
+    const selectedFuncNodes = nodes[this.state.selectedFunc]
+    const newAssertionNode = nodesUtils.getNewNode('assertion', data)[0]
+
     for (const parentInfo of data.parents) {
       const newNodeParent = _.find(selectedFuncNodes, { id: parentInfo.id })
       const newSubGraph = {
-        entry: conditionNode,
-        exit: conditionNode
+        entry: newAssertionNode,
+        exit: newAssertionNode
       }
       nodesUtils.connectGraphs(newNodeParent, parentInfo.branch, newSubGraph, selectedFuncNodes)
     }
 
-    selectedFuncNodes.push(conditionNode)
+    selectedFuncNodes.push(newAssertionNode)
     nodesUtils.markUnreachableNodes(selectedFuncNodes)
 
     this.setState({
@@ -601,8 +600,8 @@ class Flow extends React.Component {
 
   shouldShowAssertModal () {
     return (!_.isNil(this.state.selectedNodeObj) &&
-    this.state.selectedNodeObj.type === 'assert') ||
-    (this.state.newNodeType === 'assert')
+    this.state.selectedNodeObj.type === 'assertion') ||
+    (this.state.newNodeType === 'assertion')
   }
 
   shouldShowLoopModal () {

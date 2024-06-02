@@ -203,6 +203,14 @@ class AssertModal extends React.Component {
 
         <Modal.Footer>
 
+          {!_.isNil(this.props.node) &&
+            <div>
+              <h3>Aggiungi nodo successore:</h3>
+              <AddChildButtons node={this.props.node} addChildCallback={this.props.addChildCallback} branch='main' />
+            </div>
+          }
+
+
           <ButtonGroup>
             {!_.isNil(this.props.node) &&
               <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.updateNode}>
@@ -218,7 +226,7 @@ class AssertModal extends React.Component {
 
             {!_.isNil(this.props.node) &&
               <Button variant='danger' onClick={this.deleteNode}>
-                <Trash /> Elimina nodo (insieme a tutti i nodi nel suo corpo)
+                <Trash /> Elimina nodo
               </Button>
             }
           </ButtonGroup>
