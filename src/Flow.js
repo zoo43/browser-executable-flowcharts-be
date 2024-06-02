@@ -411,22 +411,20 @@ class Flow extends React.Component {
     const previousStates = this.state.previousStates
     pushLimit(previousStates, _.cloneDeep(nodes))
     const selectedFuncNodes = nodes[this.state.selectedFunc]
-    const newConditionNodes = nodesUtils.getNewNode('condition', data)
+    console.log(data)
+    const newConditionNodes = nodesUtils.getNewNode('assertion', data)
 
     const conditionNode = newConditionNodes[0]
-    const closeConditionNode = newConditionNodes[1]
-
     for (const parentInfo of data.parents) {
       const newNodeParent = _.find(selectedFuncNodes, { id: parentInfo.id })
       const newSubGraph = {
         entry: conditionNode,
-        exit: closeConditionNode
+        exit: conditionNode
       }
       nodesUtils.connectGraphs(newNodeParent, parentInfo.branch, newSubGraph, selectedFuncNodes)
     }
 
     selectedFuncNodes.push(conditionNode)
-    selectedFuncNodes.push(closeConditionNode)
     nodesUtils.markUnreachableNodes(selectedFuncNodes)
 
     this.setState({

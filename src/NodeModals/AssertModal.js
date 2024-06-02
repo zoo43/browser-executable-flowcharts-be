@@ -30,7 +30,7 @@ function cleanupConditionString (val) {
   return res
 }
 
-class ConditionModal extends React.Component {
+class AssertModal extends React.Component {
   constructor (props) {
     super(props)
 
@@ -229,7 +229,7 @@ class ConditionModal extends React.Component {
   }
 }
 
-ConditionModal.propTypes = {
+AssertModal.propTypes = {
   show: PropTypes.bool,
   closeCallback: PropTypes.func,
   node: PropTypes.object,
@@ -242,4 +242,4 @@ ConditionModal.propTypes = {
   deleteNodeCallback: PropTypes.func
 }
 
-export default ConditionModal
+export default AssertModal

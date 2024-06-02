@@ -20,6 +20,10 @@ const NODES = {
     type: 'expression',
     nodeType: 'operation'
   },
+  assertion: {
+    type: 'assertion',
+    nodeType: 'condition'
+  },
   condition: {
     type: 'condition',
     nodeType: 'condition'
@@ -80,8 +84,8 @@ function getNodeText (type, data) {
     }
   } else if (type === 'condition') {
     newNodeText += cleanupExpression(data.condition)
-  } else if (type === 'assert') {
-    newNodeText += cleanupExpression(data.assertion)
+  } else if (type === 'assertion') {
+    newNodeText += cleanupExpression(data.condition)
   } else if (type === 'loop') {
     newNodeText += cleanupExpression(data.condition)
   } else if (type === 'output') {
@@ -125,7 +129,12 @@ function getNodeTextMermaid (type, data) {
     if (data.condition.indexOf('//') === 0) {
       newNodeText += cleanupExpression(data.condition)
     } else newNodeText += '<strong>if</strong> (' + cleanupExpression(data.condition) + ')'
-  } else if (type === 'loop') {
+  } else if (type === 'assertion') {
+    if (data.condition.indexOf('//') === 0) {
+      newNodeText += cleanupExpression(data.condition)
+    } else newNodeText += '<strong>assert</strong> (' + cleanupExpression(data.condition) + ')'
+  } 
+  else if (type === 'loop') {
     if (data.condition.indexOf('//') === 0) {
       newNodeText += cleanupExpression(data.condition)
     } else newNodeText += '<strong>while</strong> (' + cleanupExpression(data.condition) + ')'
@@ -157,8 +166,10 @@ function getNodeHtml (type, data) {
 }
 
 function createNewNode (type) {
+  
   const newNode = _.cloneDeep(NODES[type])
   newNode.id = ++ID
+  
   newNode.parents = []
   newNode.children = { main: -1 }
   newNode.selected = false
@@ -202,7 +213,11 @@ function getNewNode (type, data) {
     newNode.variables = data.variables
 
     result.push(closeConditionNode)
-  } else if (type === 'loop') {
+  } else if(type === 'assertion'){
+    newNode.condition = data.condition
+    newNode.variables = data.variables
+  }
+    else if (type === 'loop') {
     const loopRestartNode = getNopNode(newNode, 'nopNoModal')
     const loopEndNode = getNopNode(newNode, 'nop')
     loopRestartNode.parents.push({ id: newNode.id, branch: 'yes' })
@@ -501,6 +516,7 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
     if (clickable && ['end', 'nopNoModal'].indexOf(node.type) < 0) diagramStr += 'click ' + node.id + ' nodeClickCallbackMermaid\n'
     if (node.selected) diagramStr += 'class ' + node.id + ' selected\n'
     if (node.unreachable) diagramStr += 'class ' + node.id + ' unreachable\n'
+   // if (node.unreachable) TO DO, here I assign the class
     else if (node.type === 'nop') diagramStr += 'class ' + node.id + ' nop\n'
     else if (node.type === 'nopNoModal') diagramStr += 'class ' + node.id + ' nopNoModal\n'
   }
