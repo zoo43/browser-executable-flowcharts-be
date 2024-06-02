@@ -236,6 +236,7 @@ class Flow extends React.Component {
       console.log('Error message: ', err.message)
       alert(alertMsg)
     }
+    this.setState({nodes: this.state.nodes},this.renderDiagram)
   }
 
   showExecutionFeedback (data) {

@@ -527,7 +527,7 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
   }
 
   diagramStr += 'classDef selected stroke-width:5px,stroke: #2001aa\n'
-  diagramStr += 'classDef wrong stroke-width:5px,stroke: red\n'
+  diagramStr += 'classDef wrong fill: #E94545\n'
   diagramStr += 'classDef unreachable fill:#262626\n'
   // diagramStr += 'classDef nop fill:#a1f1fc\n'
   diagramStr += 'classDef nopNoModal fill:#000000\n'

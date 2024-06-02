@@ -159,11 +159,11 @@ function executeFromNode (node, nodes, functions, func, calcData) {
     const result = function (str) {
       return eval(str)
     }.call(calcData.scope[func][currentFunc], parsedCondition)
-    if(result === true)
-      node.wrong = false
-    else
+    if(typeof(result)==="undefined" || result === false)
       node.wrong = true
-    console.log(result)
+    else
+      node.wrong = false
+
 
   }if (['nop', 'nopNoModal'].indexOf(node.type) < 0) {
     const memoryStateSnapshot = {
