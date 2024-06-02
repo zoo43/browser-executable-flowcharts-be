@@ -159,6 +159,10 @@ function executeFromNode (node, nodes, functions, func, calcData) {
     const result = function (str) {
       return eval(str)
     }.call(calcData.scope[func][currentFunc], parsedCondition)
+    if(result === true)
+      node.wrong = false
+    else
+      node.wrong = true
     console.log(result)
 
   }if (['nop', 'nopNoModal'].indexOf(node.type) < 0) {

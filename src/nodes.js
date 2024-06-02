@@ -173,7 +173,7 @@ function createNewNode (type) {
   newNode.parents = []
   newNode.children = { main: -1 }
   newNode.selected = false
-
+  newNode.wrong = false
   return newNode
 }
 
@@ -184,7 +184,7 @@ function getNopNode (parent, type) {
   newNode.parents = []
   newNode.children = { main: -1 }
   newNode.selected = false
-
+  newNode.wrong = false
   return newNode
 }
 
@@ -418,6 +418,7 @@ function convertToNodeLine (node) {
       nodeStr += getNodeText(node.type, node)
     }
     if (node.selected) nodeStr += '|selected'
+    if (node.wrong) nodeStr += '|wrong'
     else if (node.type === 'nop') nodeStr += '|nop'
     nodeStr += ':$nodeClickCallback'
   } else {
@@ -518,6 +519,7 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
 
     if (clickable && ['end', 'nopNoModal'].indexOf(node.type) < 0) diagramStr += 'click ' + node.id + ' nodeClickCallbackMermaid\n'
     if (node.selected) diagramStr += 'class ' + node.id + ' selected\n'
+    if (node.wrong) diagramStr += 'class ' + node.id + ' wrong\n'
     if (node.unreachable) diagramStr += 'class ' + node.id + ' unreachable\n'
    // if (node.unreachable) TO DO, here I assign the class
     else if (node.type === 'nop') diagramStr += 'class ' + node.id + ' nop\n'
@@ -525,6 +527,7 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
   }
 
   diagramStr += 'classDef selected stroke-width:5px,stroke: #2001aa\n'
+  diagramStr += 'classDef wrong stroke-width:5px,stroke: red\n'
   diagramStr += 'classDef unreachable fill:#262626\n'
   // diagramStr += 'classDef nop fill:#a1f1fc\n'
   diagramStr += 'classDef nopNoModal fill:#000000\n'
