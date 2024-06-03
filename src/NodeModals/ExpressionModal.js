@@ -27,7 +27,8 @@ const baseState = {
   okToAddExpression: false,
   okToAddNode: false,
   usedVariables: [],
-  variableWarnings: []
+  variableWarnings: [],
+  checked : false 
 }
 
 function cleanupExpressionString (val) {
@@ -53,6 +54,7 @@ class ExpressionModal extends React.Component {
     this.deleteNode = this.deleteNode.bind(this)
     this.showVariableFeedback = this.showVariableFeedback.bind(this)
     this.getCurrentVariables = this.getCurrentVariables.bind(this)
+    this.checkNode = this.checkNode.bind(this)
   }
 
   componentDidMount () {
@@ -75,8 +77,9 @@ class ExpressionModal extends React.Component {
     let expressions = []
     let expressionErrors = []
     let usedVariables = []
-
+    let checked = false
     if (!_.isNil(this.props.node)) {
+      checked = this.props.node.checked !==undefined ? this.props.node.checked : false   
       expressions = this.props.node.expressions
       for (const expression of expressions) {
         const parseRes = utils.parseExpression(expression)
@@ -88,11 +91,11 @@ class ExpressionModal extends React.Component {
         }
       }
     }
-
+    newState.checked = checked
     newState.expressions = expressions
     newState.expressionErrors = expressionErrors
     newState.usedVariables = usedVariables
-
+   
     this.setState(newState)
   }
 
@@ -217,13 +220,22 @@ class ExpressionModal extends React.Component {
     this.props.closeCallback()
   }
 
+  checkNode(ev)
+  {
+    const okToGo = (ev.target.checked !== this.props.node.checked || this.state.okToAddNode)? true : false   
+    this.setState({
+      okToAddNode: okToGo,
+      checked: ev.target.checked
+    })
+  }
+
   updateNode () {
     const data = {
       id: this.props.node.id,
       parents: _.clone(this.state.currentlySelectedParents),
-      expressions: _.cloneDeep(this.state.expressions)
+      expressions: _.cloneDeep(this.state.expressions),
+      checked : this.state.checked
     }
-
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
 
@@ -243,7 +255,7 @@ class ExpressionModal extends React.Component {
           <Modal.Title>
             {!_.isNil(this.props.node) &&
               <span>
-                <Calculator /> Nodo {this.props.node.id} - Espressione
+                <Calculator /> Nodo {this.props.node.id} - Espressione 
               </span>
             }
             {_.isNil(this.props.node) &&
@@ -345,11 +357,19 @@ class ExpressionModal extends React.Component {
             </div>
           }
 
+
+          {!_.isNil(this.props.node) &&
+            <Form.Check className="me-auto d-sm-inline-block" type="checkbox" id="default-checkbox" label="Segna il nodo come corretto" onChange={this.checkNode} checked={this.state.checked}/> 
+          }
+          
+
           <ButtonGroup>
             {!_.isNil(this.props.node) &&
+            <ButtonGroup>
               <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.updateNode}>
                 <Pencil /> Aggiorna nodo
-              </Button>
+              </Button>            
+            </ButtonGroup>
             }
 
             {_.isNil(this.props.node) &&

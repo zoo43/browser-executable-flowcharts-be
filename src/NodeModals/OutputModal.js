@@ -20,7 +20,8 @@ const baseState = {
 
   // Output
   output: '',
-  okToAddNode: false
+  okToAddNode: false,
+  checked : false 
 }
 
 class OutputModal extends React.Component {
@@ -36,6 +37,7 @@ class OutputModal extends React.Component {
     this.addNode = this.addNode.bind(this)
     this.updateNode = this.updateNode.bind(this)
     this.deleteNode = this.deleteNode.bind(this)
+    this.checkNode = this.checkNode.bind(this)
   }
 
   componentDidMount () {
@@ -51,15 +53,17 @@ class OutputModal extends React.Component {
   }
 
   resetState () {
+    let checked = false
     const newState = _.cloneDeep(baseState)
     // Parent nodes
     utils.assignParentsOnReset(newState, this.props.node, this.props.nodes, this.props.parents)
 
     let output = ''
     if (!_.isNil(this.props.node)) {
+      checked = this.props.node.checked !==undefined ? this.props.node.checked : false  
       output = this.props.node.output
     }
-
+    newState.checked = checked
     newState.output = output
 
     this.setState(newState)
@@ -96,11 +100,22 @@ class OutputModal extends React.Component {
     this.props.closeCallback()
   }
 
+  checkNode(ev)
+  {
+    const okToGo = (ev.target.checked !== this.props.node.checked || this.state.okToAddNode)? true : false   
+    this.setState({
+      okToAddNode: okToGo,
+      checked: ev.target.checked
+    })
+  }
+
+
   updateNode () {
     const data = {
       id: this.props.node.id,
       parents: _.clone(this.state.currentlySelectedParents),
-      output: _.cloneDeep(this.state.output)
+      output: _.cloneDeep(this.state.output),
+      checked : this.state.checked
     }
 
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
@@ -164,6 +179,10 @@ class OutputModal extends React.Component {
               <h3>Aggiungi nodo successore:</h3>
               <AddChildButtons node={this.props.node} addChildCallback={this.props.addChildCallback} branch='main' />
             </div>
+          }
+
+          {!_.isNil(this.props.node) &&
+            <Form.Check className="me-auto d-sm-inline-block" type="checkbox" id="default-checkbox" label="Segna il nodo come corretto" onChange={this.checkNode} checked={this.state.checked}/> 
           }
 
           <ButtonGroup>

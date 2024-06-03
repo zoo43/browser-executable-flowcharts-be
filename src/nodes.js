@@ -174,6 +174,7 @@ function createNewNode (type) {
   newNode.children = { main: -1 }
   newNode.selected = false
   newNode.wrong = false
+  newNode.checked = false
   return newNode
 }
 
@@ -185,6 +186,7 @@ function getNopNode (parent, type) {
   newNode.children = { main: -1 }
   newNode.selected = false
   newNode.wrong = false
+  newNode.checked = false
   return newNode
 }
 
@@ -273,15 +275,18 @@ function updateNodeContents (nodeObj, data) {
   if (nodeObj.type === 'expression') {
     nodeObj.expressions = data.expressions
     nodeObj.variables = data.variables
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'condition') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
   } else if (nodeObj.type === 'assertion') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'loop') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'loopFor') {
     nodeObj.initialization = data.initialization
     nodeObj.condition = data.condition
@@ -289,9 +294,11 @@ function updateNodeContents (nodeObj, data) {
     nodeObj.variables = data.variables
   } else if (nodeObj.type === 'output') {
     nodeObj.output = data.output
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'returnValue') {
     nodeObj.returnType = data.returnType
     nodeObj.returnValue = data.returnValue
+    nodeObj.checked = data.checked
   }
 
   return nodeObj
@@ -520,6 +527,7 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
     if (clickable && ['end', 'nopNoModal'].indexOf(node.type) < 0) diagramStr += 'click ' + node.id + ' nodeClickCallbackMermaid\n'
     if (node.selected) diagramStr += 'class ' + node.id + ' selected\n'
     if (node.wrong) diagramStr += 'class ' + node.id + ' wrong\n'
+    if (node.checked) diagramStr += 'class ' + node.id + ' checked\n'
     if (node.unreachable) diagramStr += 'class ' + node.id + ' unreachable\n'
    // if (node.unreachable) TO DO, here I assign the class
     else if (node.type === 'nop') diagramStr += 'class ' + node.id + ' nop\n'
@@ -528,6 +536,7 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
 
   diagramStr += 'classDef selected stroke-width:5px,stroke: #2001aa\n'
   diagramStr += 'classDef wrong fill: #E94545\n'
+  diagramStr += 'classDef checked fill: #99FF99\n'
   diagramStr += 'classDef unreachable fill:#262626\n'
   // diagramStr += 'classDef nop fill:#a1f1fc\n'
   diagramStr += 'classDef nopNoModal fill:#000000\n'
@@ -613,7 +622,7 @@ function drawFlowCharts (diagramStrings, divName, selectedFunc, adjustHeight) {
       if (height > 0) flowchartDiv.style.height = height + 'px'
     }
     flowchartDiv.innerHTML = ''
-
+    
     const diagramStr = diagramStrings[func]
     if (config.renderer === 'mermaid') {
       if (selectedFunc === '' || func === selectedFunc) {
