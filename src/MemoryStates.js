@@ -30,6 +30,7 @@ class MemoryStates extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
+    console.log("Ciao")
     if (!_.isEqual(prevProps.memoryStates, this.props.memoryStates) && this.props.memoryStates.length > 0) {
       this.goToState(0)
     }
@@ -53,18 +54,27 @@ class MemoryStates extends React.Component {
       const nodes = _.cloneDeep(this.props.nodes[openFunc.func])
       const highlightNode = currentState.onNode[openFunc.func][openFunc.lvl]
 
-      // TODO qui dopo l'esecuzione di End highlightNode diventa undefined
-      if (_.isFinite(highlightNode)) {
-        _.find(nodes, n => { return n.id === highlightNode }).selected = true
+      const presence = _.find(nodes, n => { return highlightNode === n.id})
+      if (typeof(presence) !== "undefined")
+      {
+        // TODO qui dopo l'esecuzione di End highlightNode diventa undefined
+        
+        if (_.isFinite(highlightNode)) {
+          _.find(nodes, n => { return n.id === highlightNode }).selected = true
 
-        const nodesStr = nodesUtils.convertToDiagramStr(nodes, false)
-        const diagramData = {
-          func: openFunc.func,
-          lvl: openFunc.lvl,
-          str: nodesStr
+          const nodesStr = nodesUtils.convertToDiagramStr(nodes, false)
+          const diagramData = {
+            func: openFunc.func,
+            lvl: openFunc.lvl,
+            str: nodesStr
+          }
+
+          diagrams.push(diagramData)
         }
-
-        diagrams.push(diagramData)
+      }
+      else
+      {
+        alert("Attenzione, hai appena cancellato o modificato un nodo senza eseguire il flowchart, la visualizzazione del menù passo-passo non sarà corretta prima di una nuova esecuzione")
       }
     }
 

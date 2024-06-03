@@ -146,10 +146,9 @@ class AssertModal extends React.Component {
   }
 
   deleteNode () {
-    const endNode = _.find(this.props.nodes, n => { return n.nopFor === this.props.node.id })
     const data = {
       start: this.props.node,
-      end: endNode
+      end: this.props.node
     }
 
     this.props.deleteNodeCallback(data, () => { return this.props.closeCallback(true) })
