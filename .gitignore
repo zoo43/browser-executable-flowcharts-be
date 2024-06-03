@@ -10,6 +10,8 @@ TODOs.md
 
 #pycache
 /_pycache_
+/server/_pycache_
+/server/__pycache__
 
 # testing
 /coverage
