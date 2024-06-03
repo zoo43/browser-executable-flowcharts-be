@@ -239,7 +239,6 @@ class Flow extends React.Component {
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
     comm.executeFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
-
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
@@ -272,8 +271,7 @@ class Flow extends React.Component {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
-
-    this.setState({ outputToShow: fullOutput, memoryStates: data.memoryStates })
+    this.setState({ outputToShow: fullOutput, memoryStates:data.memoryStates })
   }
 
   renderDiagram () {
@@ -781,7 +779,7 @@ class Flow extends React.Component {
           <Col xs={1}></Col>
           <Col xs={10}>
             {this.state.memoryStates.length > 0 &&
-              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)} />
+              <MemoryStates memoryStates={_.cloneDeep(this.state.memoryStates)} nodes={_.cloneDeep(this.state.nodes)}  />
             }
           </Col>
           <Col xs={1}></Col>

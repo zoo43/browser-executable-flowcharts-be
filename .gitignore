@@ -5,6 +5,12 @@ TODOs.md
 /.pnp
 .pnp.js
 
+#data
+/files
+
+#pycache
+/_pycache_
+
 # testing
 /coverage
 

@@ -3,6 +3,8 @@ import axios from 'axios'
 const _ = require('lodash')
 const config = require('./config')
 const exercises = require('./exercises')
+axios.defaults.baseURL = 'http://127.0.0.1:5000';
+
 
 function getExercise (exerciseid, done) {
   const localData = _.find(exercises, { id: exerciseid, type: 'control' })
@@ -21,10 +23,25 @@ function getExercise (exerciseid, done) {
     })
 }
 
-function getInTouch (exerciseid) {
+
+function getUserId(done)
+{
+  if (!config.communications.enable) return
+  axios.post('flowchart/getUserId').
+    then((response) => {
+      return done(response.data)
+    })
+    .catch(err => {
+      if (config.communications.printErrors) {
+        console.error(err)      
+    }})
+}
+
+function getInTouch (exerciseid,done) {
   if (!config.communications.enable) return
   axios.post('/flowchart/getInTouch', { exId: exerciseid })
-    .then(() => {
+    .then((response) => {
+      return(done(response.data))
     })
     .catch(err => {
       if (config.communications.printErrors) {
@@ -33,12 +50,16 @@ function getInTouch (exerciseid) {
     })
 }
 
-function executeFlowchart (exerciseid, nodes, functions) {
+function executeFlowchart (exerciseid, nodes, functions, userId) {
   if (!config.communications.enable) return
   const data = {
+    classId: "3A",
+    userId : userId,
     exId: exerciseid,
-    nodes: nodes,
-    functions: functions
+    type: "execution",
+    data:{ 
+      nodes: nodes,
+      functions: functions}
   }
 
   axios.post('/flowchart/executeFlowchart', data)
@@ -51,14 +72,18 @@ function executeFlowchart (exerciseid, nodes, functions) {
     })
 }
 
-function updateFlowchart (exerciseid, nodes, functions) {
+function updateFlowchart (exerciseid, nodes, functions, userId) {
+  
   if (!config.communications.enable) return
   const data = {
+    classId: "3A",//Should arrive from a file or some sort of initialization before the start of the experiment
+    userId : userId,
     exId: exerciseid,
-    nodes: nodes,
-    functions: functions
-  }
-
+    type: "modification",
+    data:{ 
+      nodes: nodes,
+      functions: functions}
+  } 
   axios.post('/flowchart/updateFlowchart', data)
     .then(() => {
     })
@@ -72,6 +97,7 @@ function updateFlowchart (exerciseid, nodes, functions) {
 const comm = {
   getExercise,
   getInTouch,
+  getUserId,
   executeFlowchart,
   updateFlowchart
 }

@@ -1,6 +1,6 @@
 const config = {
   communications: {
-    enable: false,
+    enable: true,
     printErrors: false
   },
   renderer: 'mermaid' // flowchartJS
