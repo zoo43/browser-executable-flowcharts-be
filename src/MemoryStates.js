@@ -16,7 +16,8 @@ class MemoryStates extends React.Component {
 
     this.state = {
       currentState: -1,
-      diagrams: []
+      diagrams: [],
+      nodes: this.props.nodes
     }
 
     this.goToState = this.goToState.bind(this)
@@ -30,8 +31,9 @@ class MemoryStates extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
-    console.log("Ciao")
-    if (!_.isEqual(prevProps.memoryStates, this.props.memoryStates) && this.props.memoryStates.length > 0) {
+    //Try to assign prevPros to a variable and then use that to confront.
+    //In alternative you can check on prevProps and how to pass parameters to componentDidUpdate
+    if ((!_.isEqual(prevProps.memoryStates, this.props.memoryStates) && this.props.memoryStates.length > 0)) {
       this.goToState(0)
     }
   }
