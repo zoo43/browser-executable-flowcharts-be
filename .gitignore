@@ -10,6 +10,7 @@ TODOs.md
 
 #pycache
 /_pycache_
+/__pycache__
 /server/_pycache_
 /server/__pycache__
 
