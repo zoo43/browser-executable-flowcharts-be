@@ -20,7 +20,6 @@ import ReturnValueModal from './NodeModals/ReturnValueModal'
 import AssertModal from './NodeModals/AssertModal'
 import FunctionDefineModal from './NodeModals/FunctionDefineModal'
 import NopModal from './NodeModals/NopModal'
-import CheckCorrectNodesModal from './NodeModals/CheckCorrectNodesModal'
 import comm from './communications'
 import nodesUtils from './nodes'
 
@@ -96,7 +95,6 @@ class Flow extends React.Component {
     this.loadExampleProgram = this.loadExampleProgram.bind(this)
     this.loadPredefinedNodes = this.loadPredefinedNodes.bind(this)
     this.deleteSelectedFunction = this.deleteSelectedFunction.bind(this)
-    this.createDiagramFromFile = this.createDiagramFromFile.bind(this)
     this.checkSignedNodes = this.checkSignedNodes.bind(this)
     this.findCheckedNodes = this.findCheckedNodes.bind(this)
     this.undo = this.undo.bind(this)
@@ -151,13 +149,6 @@ class Flow extends React.Component {
     return checkedNodes
   }
 
-  loadExampleProgram () {
-    const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
-    const checkedNodes = this.findCheckedNodes(programNodes["main"],true)
-    const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
-    const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
-    this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
-  }
 
   setupFunctionBaseNodes (func) {
     const startNode = nodesUtils.getNewNode('start')[0]
@@ -617,31 +608,13 @@ class Flow extends React.Component {
     alert("Hai segnato " + signedNodes.length + " nodi e " + correctNodesCounter + " di questi sono corretti su un totale di " + checkedNodes.length + " nodi corretti")
   }
 
-  createDiagramFromFile()
-  {
-    const es = {'exId': '', "nodes":{"main":[{"type":"start","nodeType":"start","id":1,"parents":[],"children":{"main":7},"selected":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":2,"parents":[{"id":7,"branch":"main"}],"children":{"main":-1},"selected":false},{"type":"expression","nodeType":"operation","id":7,"parents":[{"id":1,"branch":"main"}],"children":{"main":2},"selected":false,"expressions":["a = 10","b = 5","c = paolo()"]}],"paolo":[{"type":"start","nodeType":"start","id":3,"parents":[],"children":{"main":5},"selected":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":4,"parents":[{"id":5,"branch":"main"}],"children":{"main":-1},"selected":false},{"type":"expression","nodeType":"operation","id":5,"parents":[{"id":3,"branch":"main"}],"children":{"main":4},"selected":false,"expressions":["a = 12","d = 9"],"variables":[{"name":"a","op":"write"},{"name":"b","op":"write"}]}]},"functions":{"main":{"params":[],"signature":"main"},"ddd":{"params":[],"signature":"ddd()"},"paolo":{"params":[],"signature":"paolo()"}}}
-      //I take the previous nodes to rember that for the undo function
-    const nodes = es['nodes']
-    const functions = es['functions']
-    const nodesOld = this.state.nodes
-    const previousStates = this.state.previousStates
-    const selectedFunction = this.state.selectedFunc
-    pushLimit(previousStates, _.cloneDeep(nodesOld)) //I adjust the limit and overwrite the old version of previous states
-      
 
-  
-      this.setState({
-        nodes, 
-        previousStates, //PreviousStates for undo
-        functions,
-        //selectedFunc: 'main', //TO DO
-        memoryStates: [], //I want to empty the window with memory
-        outputToShow: '' //Clear also the output
-      }, () => { //What happens after the update of the state
-        //this.setupFunctionBaseNodes(selectedFunction) //create the "main" version with only start and end nodes
-        comm.updateFlowchart(this.state.exerciseid, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), this.userId)
-        this.renderDiagram() //Render the new diagram starting from actual state
-      })
+  loadExampleProgram () {
+    const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
+    const checkedNodes = this.findCheckedNodes(programNodes["main"],true)
+    const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
+    const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
+    this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
   }
 
   shouldShowStartModal () {
@@ -738,15 +711,11 @@ class Flow extends React.Component {
               <Button variant='danger' onClick={this.deleteSelectedFunction} disabled={this.state.selectedFunc === 'main'}>
                 <Trash /> Elimina funzione "{this.state.selectedFunc}"
               </Button>
-              }
-              <Button variant='primary' onClick={this.loadExampleProgram}>
-                Test
-              </Button>
+              }              
             </ButtonGroup>
 
 
           </Col>
-            <CheckCorrectNodesModal></CheckCorrectNodesModal>
           <Col xs={4} style={{ textAlign: 'right' }}>
             <Button variant='primary' onClick={this.executeFlowchart}>
               <Play /> Esegui
@@ -803,11 +772,13 @@ class Flow extends React.Component {
                 Carica demo
               </Button>
             </Col>
+            <Col xs={3}>
+              <Button variant='primary' onClick={this.loadExampleProgram}>
+                Carica demo
+              </Button>
+            </Col>
+
           </Row>
-        }
-        {true &&
-          <CheckCorrectNodesModal
-          />
         }
 
         {this.shouldShowStartModal() &&
