@@ -1,6 +1,5 @@
 import React from 'react'
 import Row from 'react-bootstrap/Row'
-import Modal from 'react-bootstrap/Modal'
 import Col from 'react-bootstrap/Col'
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
@@ -22,6 +21,7 @@ import FunctionDefineModal from './NodeModals/FunctionDefineModal'
 import NopModal from './NodeModals/NopModal'
 import comm from './communications'
 import nodesUtils from './nodes'
+import PropTypes from 'prop-types'
 
 const _ = require('lodash')
 const config = require('./config')
@@ -102,6 +102,52 @@ class Flow extends React.Component {
     this.undo = this.undo.bind(this)
   }
 
+  componentDidMount () {
+    if (config.renderer === 'mermaid') {
+      mermaid.initialize(mermaidOptions.initialize)
+    }
+    const urlParams = new URLSearchParams(window.location.search)
+    const exId = urlParams.get('exerciseid')
+    if (!_.isNil(exId)) {
+      if (exId === 'demoloader') {
+        this.setState({
+          exerciseid: exId,
+          showDemo: !config.communications.enable
+        }, () => {
+          comm.getInTouch(this.state.exerciseid)
+          this.setupFunctionBaseNodes('main')
+          this.renderDiagram()
+        })
+      } else {
+        comm.getExercise(exId, exData => {
+          if (_.isNil(exData)) {
+            comm.getInTouch(exId + 'NO_DATA')
+            this.setupFunctionBaseNodes('main')
+            this.renderDiagram()
+          } else {
+            const nodes = exData.data.nodes
+            const functions = exData.data.functions
+
+            this.setState({
+              exerciseid: exId,
+              exerciseData: exData
+            }, () => {
+              comm.getInTouch(this.state.exerciseid)
+              this.loadPredefinedNodes(nodes, functions)
+            })
+          }
+        })
+      }
+    } else {
+      comm.getInTouch('FREE_MODE')
+      this.setupFunctionBaseNodes('main')
+      this.renderDiagram()
+    }
+  }
+
+
+
+
   undo () {
     const previousStates = this.state.previousStates
     const newNodes = previousStates.pop()
@@ -162,49 +208,6 @@ class Flow extends React.Component {
     stateNodes[func].push(endNode)
 
     nodesUtils.connectNodes(startNode, 'main', endNode, this.state.nodes[func])
-  }
-
-  componentDidMount () {
-    if (config.renderer === 'mermaid') {
-      mermaid.initialize(mermaidOptions.initialize)
-    }
-    const urlParams = new URLSearchParams(window.location.search)
-    const exId = urlParams.get('exerciseid')
-    if (!_.isNil(exId)) {
-      if (exId === 'demoloader') {
-        this.setState({
-          exerciseid: exId,
-          showDemo: !config.communications.enable
-        }, () => {
-          comm.getInTouch(this.state.exerciseid)
-          this.setupFunctionBaseNodes('main')
-          this.renderDiagram()
-        })
-      } else {
-        comm.getExercise(exId, exData => {
-          if (_.isNil(exData)) {
-            comm.getInTouch(exId + 'NO_DATA')
-            this.setupFunctionBaseNodes('main')
-            this.renderDiagram()
-          } else {
-            const nodes = exData.data.nodes
-            const functions = exData.data.functions
-
-            this.setState({
-              exerciseid: exId,
-              exerciseData: exData
-            }, () => {
-              comm.getInTouch(this.state.exerciseid)
-              this.loadPredefinedNodes(nodes, functions)
-            })
-          }
-        })
-      }
-    } else {
-      comm.getInTouch('FREE_MODE')
-      this.setupFunctionBaseNodes('main')
-      this.renderDiagram()
-    }
   }
 
   selectFunctionTab (tabKey) {
@@ -736,9 +739,9 @@ class Flow extends React.Component {
               }              
             </ButtonGroup>
 
-
           </Col>
           <Col xs={4} style={{ textAlign: 'right' }}>
+            <p className="mx-2" style={{ fontWeight: 'bold' , display:'inline'}}> Id: {this.props.studentId} </p>
             <Button variant='primary' onClick={this.executeFlowchart}>
               <Play /> Esegui
             </Button>
@@ -935,6 +938,11 @@ class Flow extends React.Component {
       </div>
     )
   }
+}
+
+
+Flow.propTypes = {
+  studentId : PropTypes.string
 }
 
 export default Flow
