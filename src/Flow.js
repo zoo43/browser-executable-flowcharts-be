@@ -31,7 +31,7 @@ const examplePrograms = require('./examplePrograms')
 const utils = require('./utils')
 
 const baseState = {
-  exerciseid: '',
+  exerciseid: 0,
   exerciseData: null,
   nodes: { main: [] },
   functions: { main: { params: [], signature: 'main' }},
@@ -158,7 +158,7 @@ class Flow extends React.Component {
       newNodeType: '',
       newNodeParent: null
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -173,7 +173,7 @@ class Flow extends React.Component {
   loadPredefinedNodes (nodes, functions, checkedNodes, assignment) {
     const showDemo = _.clone(this.state.showDemo)
     const newState = _.cloneDeep(baseState)
-    newState.exerciseid = _.clone(this.state.exerciseid)
+    newState.exerciseid = _.clone(this.state.selectedExampleProgram)
     newState.exerciseData = _.clone(this.state.exerciseData)
     newState.nodes = nodes
     newState.functions = functions
@@ -182,7 +182,6 @@ class Flow extends React.Component {
     newState.checkedNodes = checkedNodes
     newState.assignment = assignment
     nodesUtils.updateBaseId(nodes)
-
     this.setState(newState, this.renderDiagram)
   }
 
@@ -222,13 +221,12 @@ class Flow extends React.Component {
     pushLimit(previousStates, _.cloneDeep(nodes))
 
     delete nodes[this.state.selectedFunc]
-
     this.setState({
       nodes,
       previousStates,
       selectedFunc: 'main'
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -236,7 +234,7 @@ class Flow extends React.Component {
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    const data = {"studentId":5, "exId" : '' , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+    const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
     comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
@@ -332,7 +330,7 @@ class Flow extends React.Component {
     }
 
     if (updated) {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     }
 
@@ -387,7 +385,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -420,7 +418,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -451,7 +449,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -486,7 +484,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -521,7 +519,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -550,7 +548,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -579,7 +577,7 @@ class Flow extends React.Component {
       nodes,
       previousStates
     }, () => {
-      const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -601,7 +599,7 @@ class Flow extends React.Component {
         previousStates
       }, () => {
         this.setupFunctionBaseNodes(functionName)
-        const data = {"studentId":5, "exId" : this.state.excerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+        const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
         comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
         this.renderDiagram()
       })
