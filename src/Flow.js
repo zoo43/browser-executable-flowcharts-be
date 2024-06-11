@@ -47,6 +47,7 @@ const baseState = {
   showDemo: true,
   checkedNodes : [],
   assignment: "",
+  correctOutput: "",
   correctNodes: 2
 }
 
@@ -78,6 +79,7 @@ class Flow extends React.Component {
     this.addLoopForNode = this.addLoopForNode.bind(this)
     this.addOutputNode = this.addOutputNode.bind(this)
     this.addFunction = this.addFunction.bind(this)
+    this.confirmOutput = this.confirmOutput.bind(this)
     this.addReturnValueNode = this.addReturnValueNode.bind(this)
     this.shouldShowStartModal = this.shouldShowStartModal.bind(this)
     this.shouldShowExpressionModal = this.shouldShowExpressionModal.bind(this)
@@ -234,8 +236,6 @@ class Flow extends React.Component {
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
-    comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
@@ -245,8 +245,15 @@ class Flow extends React.Component {
         'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
+      
+      const outputToSend = this.showExecutionFeedback(res)
+      const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
+      if(data.studentId === "admin")
+        data.output = this.state.correctOutput
+      console.log(data.output)
+      comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
 
-      this.showExecutionFeedback(res)
+      //Here I should check if it's correct
     } catch (err) {
       let alertMsg = 'Errore di esecuzione'
       if (err.message === 'too much recursion') {
@@ -268,7 +275,9 @@ class Flow extends React.Component {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
+    
     this.setState({ outputToShow: fullOutput, memoryStates:data.memoryStates })
+    return fullOutput
   }
 
   renderDiagram () {
@@ -640,6 +649,17 @@ class Flow extends React.Component {
     this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
   }
 
+
+  confirmOutput()
+  {
+    console.log(this.state.outputToShow)
+/*  Remove this characters
+    fullOutput = fullOutput.replaceAll('\\n', '<br/>')
+    // Spaces
+    fullOutput = fullOutput.replaceAll(' ', '&nbsp;')*/
+    this.setState({correctOutput : this.state.outputToShow})
+  }
+
   shouldShowStartModal () {
     return !_.isNil(this.state.selectedNodeObj) &&
       this.state.selectedNodeObj.type === 'start'
@@ -734,7 +754,12 @@ class Flow extends React.Component {
               <Button variant='danger' onClick={this.deleteSelectedFunction} disabled={this.state.selectedFunc === 'main'}>
                 <Trash /> Elimina funzione "{this.state.selectedFunc}"
               </Button>
-              }              
+              }
+              {this.props.studentId === 'admin' &&
+              <Button variant='dark' onClick={this.confirmOutput}>
+                <Trash /> Conferma Output
+              </Button>
+              }                 
             </ButtonGroup>
 
           </Col>

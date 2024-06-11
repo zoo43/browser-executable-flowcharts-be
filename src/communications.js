@@ -51,12 +51,26 @@ function getInTouch (exerciseid,done) {
 }
 
 function executeFlowchart (data, nodes, functions) {
-  if (!config.communications.enable) return
-  data.type = "execution"
-  data.nodes = nodes
-  data.functions = functions
-  console.log(data)
-  axios.post('/flowchart/executeFlowchart', data)
+  const oldData = data
+  if (config.communications.enable)
+  {
+    if(data.studentId !== "admin")
+    {
+      data = {
+        exId : oldData.exId,
+        studentId : oldData.studentId,
+        output : oldData.output,
+        nodes : nodes,
+        functions : functions
+      }
+    }
+    else
+    {
+      data.nodes = nodes
+      data.functions = functions
+    }
+    data.type = "execution"
+    axios.post("/flowchart/executeFlowchart", data)
     .then(() => {
     })
     .catch(err => {
@@ -64,21 +78,31 @@ function executeFlowchart (data, nodes, functions) {
         console.error(err)
       }
     })
+  }
 }
 
-function updateFlowchart (exerciseid, nodes, functions, userId) {
-  
-  if (!config.communications.enable) return
-  const data = {
-    classId: "3A",//Should arrive from a file or some sort of initialization before the start of the experiment
-    userId : userId,
-    exId: exerciseid,
-    type: "modification",
-    data:{ 
-      nodes: nodes,
-      functions: functions}
-  } 
-  axios.post('/flowchart/updateFlowchart', data)
+function updateFlowchart (data, nodes, functions) {
+  const oldData = data
+  if (config.communications.enable)
+  {
+    if(data.studentId !== "admin")
+    {
+      data = {
+        exId : oldData.exId,
+        studentId : oldData.studentId,
+        nodes : nodes,
+        functions : functions
+        //output
+      }
+    }
+    else
+    {
+      data.nodes = nodes
+      data.functions = functions
+      //output
+    }
+    data.type = "modification"
+    axios.post("/flowchart/updateFlowchart", data)
     .then(() => {
     })
     .catch(err => {
@@ -86,6 +110,7 @@ function updateFlowchart (exerciseid, nodes, functions, userId) {
         console.error(err)
       }
     })
+  }
 }
 
 const comm = {
