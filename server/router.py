@@ -41,6 +41,8 @@ def getUserId():
         return {"userId" : userCount}
 
 
+
+
 @app.route("/flowchart/getExercise",methods=["POST"])
 def getExercise(): #use the get exercise id on component did mount
     if(request.method == "POST"):
@@ -52,8 +54,7 @@ def getFlowchart():
     if(request.method == "POST"):
       #  print(decodeData(request))#['exId'] ['nodes'] ['functions'] ['userId']
         dataToSend = decodeData(request.data)
-        if dataToSend["type"] == "modification": #When I execute the flowchart the platform automatically send a request to updateFlowChart; I filter that
-            saveData(dataToSend)
+        saveData(dataToSend)
         return "success"
 
 #similar on above but happens on execution 
@@ -61,7 +62,8 @@ def getFlowchart():
 def getExecution():
    # saveFile(decodeData(request))
     if(request.method == "POST"):
-        saveData(decodeData(request.data))
-        return getFlowchart()
+        res = saveData(decodeData(request.data))
+        s = "Il programma è corretto" if res else "Il programma non è corretto"
+        return s
         
         

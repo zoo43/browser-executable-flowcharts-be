@@ -50,7 +50,9 @@ function getInTouch (exerciseid,done) {
     })
 }
 
-function executeFlowchart (data, nodes, functions) {
+
+
+function executeFlowchart (data, nodes, functions,done) {
   const oldData = data
   if (config.communications.enable)
   {
@@ -71,7 +73,8 @@ function executeFlowchart (data, nodes, functions) {
     }
     data.type = "execution"
     axios.post("/flowchart/executeFlowchart", data)
-    .then(() => {
+    .then((response) => {
+      return(done(response.data))
     })
     .catch(err => {
       if (config.communications.printErrors) {

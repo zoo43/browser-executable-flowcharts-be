@@ -250,9 +250,8 @@ class Flow extends React.Component {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
-      console.log(data.output)
-      comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
-
+      comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
+      
       //Here I should check if it's correct
     } catch (err) {
       let alertMsg = 'Errore di esecuzione'
