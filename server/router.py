@@ -1,6 +1,7 @@
 from flask import Flask, request, Response
 from flask_cors import CORS
 from saveData import saveData
+from exercises import getAll
 import json
 
 app = Flask(__name__)
@@ -56,6 +57,13 @@ def getFlowchart():
         dataToSend = decodeData(request.data)
         saveData(dataToSend)
         return "success"
+
+@app.route("/flowchart/getExercises", methods = ["GET"])
+def getAllExercises():
+    if(request.method == "GET"):
+        exercises = getAll()
+        print(exercises)
+        return exercises
 
 #similar on above but happens on execution 
 @app.route("/flowchart/executeFlowchart",methods=["POST"])

@@ -1,8 +1,16 @@
 // Programs exported here will be available within the demoloader exercise "?exerciseid=demoloader"
 
 //An admin mode where I can set the correct Nodes when creating the string
+import comm from './communications'
+
+const exs = await comm.getAllExercises()
+
+console.log(exs)
+
+const variable = "Sium"
 
 
+/*
 //Should have assignment
 module.exports = [{
     //Print the first 20 even nodes
@@ -14,6 +22,7 @@ module.exports = [{
 {
     'exId': '', 'assignment': "Trova e stampa il numero maggiore all'interno dell'array", 'correctNodes': 6, 'type': 'execution', 'nodes': {'main': [{'type': 'start', 'nodeType': 'start', 'id': 14, 'parents': [], 'children': {'main': 16}, 'selected': false, 'wrong': false, 'checked': false, 'variables': [{'name': 'params', 'op': 'write'}]}, {'type': 'end', 'nodeType': 'end', 'id': 15, 'parents': [{'id': 21, 'branch': 'main'}], 'children': {'main': -1}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 16, 'parents': [{'id': 14, 'branch': 'main'}], 'children': {'main': 18}, 'selected': false, 'wrong': false, 'checked': false, 'expressions': ['array = [ 21, 5, 8, 7, 12, 4, 19 ]', 'massimo = 0', 'contatore = 0']}, {'type': 'loop', 'nodeType': 'condition', 'id': 18, 'parents': [{'id': 16, 'branch': 'main'}], 'children': {'yes': 19, 'no': 10005, 'main': -1}, 'selected': false, 'wrong': false, 'checked': false, 'condition': 'contatore < 7', 'variables': [{'name': 'contatore', 'op': 'read'}]}, {'type': 'nopNoModal', 'nodeType': 'operation', 'id': 10004, 'nopFor': 18, 'parents': [{'id': 22, 'branch': 'main'}], 'children': {'main': 18}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'nop', 'nodeType': 'operation', 'id': 10005, 'nopFor': 18, 'parents': [{'id': 18, 'branch': 'no'}], 'children': {'main': 21}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'condition', 'nodeType': 'condition', 'id': 19, 'parents': [{'id': 18, 'branch': 'yes'}], 'children': {'yes': 20, 'no': 10006, 'main': -1}, 'selected': false, 'wrong': false, 'checked': false, 'condition': 'array[contatore] > massimo', 'variables': [{'name': 'massimo', 'op': 'read'}]}, {'type': 'nop', 'nodeType': 'operation', 'id': 10006, 'nopFor': 19, 'parents': [{'id': 19, 'branch': 'no'}, {'id': 20, 'branch': 'main'}], 'children': {'main': 22}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 20, 'parents': [{'id': 19, 'branch': 'yes'}], 'children': {'main': 10006}, 'selected': false, 'wrong': false, 'checked': false, 'expressions': ['massimo = array[contatore]'], 'variables': [{'name': 'massimo', 'op': 'write'}]}, {'type': 'output', 'nodeType': 'inputoutput', 'id': 21, 'parents': [{'id': 10005, 'branch': 'main'}], 'children': {'main': 15}, 'selected': false, 'wrong': false, 'checked': false, 'output': '$massimo'}, {'type': 'expression', 'nodeType': 'operation', 'id': 22, 'parents': [{'id': 10006, 'branch': 'main'}], 'children': {'main': 10004}, 'selected': false, 'wrong': false, 'checked': false, 'expressions': ['contatore = contatore + 1'], 'variables': [{'name': 'contatore', 'op': 'write'}, {'name': 'contatore', 'op': 'read'}]}]}, 'functions': {'main': {'params': [], 'signature': 'main'}}
 }
-
-
 ]
+*/
+
+export default{ exs }

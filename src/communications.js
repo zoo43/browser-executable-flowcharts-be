@@ -5,6 +5,18 @@ const config = require('./config')
 const exercises = require('./exercises')
 axios.defaults.baseURL = 'http://127.0.0.1:5000';
 
+async function getAllExercises()
+{
+  const response = await axios.get('/flowchart/getExercises')
+  .then(response => response.data)
+  .catch(err => {
+    if (config.communications.printErrors) {
+      console.error(err)
+    }
+  })
+  return response
+}
+
 
 function getExercise (exerciseid, done) {
   const localData = _.find(exercises, { id: exerciseid, type: 'control' })
@@ -49,8 +61,6 @@ function getInTouch (exerciseid,done) {
       }
     })
 }
-
-
 
 function executeFlowchart (data, nodes, functions,done) {
   const oldData = data
@@ -121,7 +131,8 @@ const comm = {
   getInTouch,
   getUserId,
   executeFlowchart,
-  updateFlowchart
+  updateFlowchart, 
+  getAllExercises
 }
 
 export default comm

@@ -22,6 +22,7 @@ import NopModal from './NodeModals/NopModal'
 import comm from './communications'
 import nodesUtils from './nodes'
 import PropTypes from 'prop-types'
+import exs from './examplePrograms'
 
 const _ = require('lodash')
 const config = require('./config')
@@ -43,7 +44,7 @@ const baseState = {
   outputToShow: '',
   memoryStates: [],
   selectedFunc: 'main',
-  selectedExampleProgram: _.keys(examplePrograms)[0],
+  selectedExampleProgram: _.keys(exs.exs)[0],
   showDemo: true,
   checkedNodes : [],
   assignment: "",
@@ -641,10 +642,11 @@ class Flow extends React.Component {
 
 
   loadExampleProgram () {
-    const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
+    
+    const programNodes = _.cloneDeep(exs.exs[this.state.selectedExampleProgram].nodes)
     const checkedNodes = this.findCheckedNodes(programNodes["main"],true)
-    const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
-    const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
+    const programFunctions = _.cloneDeep(exs.exs[this.state.selectedExampleProgram].functions)
+    const assignment = exs.exs[this.state.selectedExampleProgram].assignment
     this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
   }
 
@@ -807,9 +809,10 @@ class Flow extends React.Component {
           <Row>
             <Col xs={3}>
               <Form.Select value={this.state.selectedExampleProgram} onChange={this.updateSelectedExampleProgram}>
-                {_.keys(examplePrograms).map((progName, idx) => {
+                {_.keys(exs.exs).map((progName, idx) => {
+                 // console.log(progName)
                   return (
-                    <option key={idx} value={progName}>{progName}</option>
+                    <option key={idx} value={idx}>{idx}</option>
                   )
                 })}
               </Form.Select>
