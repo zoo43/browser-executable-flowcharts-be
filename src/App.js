@@ -2,7 +2,7 @@ import React from 'react'
 import Flow from './Flow'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-
+import comm from './communications'
 
 
 class App extends React.Component {
@@ -16,8 +16,9 @@ class App extends React.Component {
   }
 
   componentDidMount () {
+    const id = window.sessionStorage.getItem("accessToken")
     const studentId = window.sessionStorage.getItem("studentId")
-    if (studentId !== null)
+    if (id !== null && studentId !== null)
     {
       this.setState(
         {
@@ -42,12 +43,16 @@ class App extends React.Component {
     })
   }
 
+
   checkCredentials(){
-    //Check password and user
-    window.sessionStorage.setItem("studentId", this.state.studentId)
-    this.setState({
-      logged:true
+    //Before check if it's logged
+    comm.login(this.state.studentId, this.state.password, () => {
+      this.setState({
+        logged:true
+      })
+      window.location.reload()
     })
+   // window.sessionStorage.setItem("studentId",this.state.studentId)
   }
 
   render(){

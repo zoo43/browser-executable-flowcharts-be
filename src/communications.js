@@ -4,6 +4,8 @@ const _ = require('lodash')
 const config = require('./config')
 const exercises = require('./exercises')
 axios.defaults.baseURL = 'http://127.0.0.1:5000';
+axios.defaults.headers.common['Authorization'] = "Bearer " + window.sessionStorage.getItem("accessToken")
+
 
 async function getAllExercises()
 {
@@ -17,6 +19,25 @@ async function getAllExercises()
   return response
 }
 
+function login(id, pass, done)
+{
+  axios.post('/token', { studentId: id, password: pass })
+  .then(response => {
+    console.log(response)
+    window.sessionStorage.setItem("accessToken", response.data.access_token)
+    window.sessionStorage.setItem("studentId", response.data.studentId)
+    return done()
+    
+  })
+  .catch(err => {
+    if (config.communications.printErrors) {
+      console.error(err)
+      console.log("Ciao")
+    }
+    alert ("Password o id errati")
+    return
+  })
+}
 
 function getExercise (exerciseid, done) {
   const localData = _.find(exercises, { id: exerciseid, type: 'control' })
@@ -132,7 +153,8 @@ const comm = {
   getUserId,
   executeFlowchart,
   updateFlowchart, 
-  getAllExercises
+  getAllExercises,
+  login
 }
 
 export default comm
