@@ -6,6 +6,7 @@ from datetime import datetime, timezone, timedelta
 def removeSpaces(s):
     s = s.replace("\n" , "")
     s = s.replace("&nbsp;<br/>","")
+    s = s.replace("&nbsp;","")
     return s
 
 def saveData(data):

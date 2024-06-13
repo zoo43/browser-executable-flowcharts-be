@@ -62,12 +62,11 @@ def getFlowchart():
 def getAllExercises():
     if(request.method == "GET"):
         exercises = getAll()
-        print(exercises)
         return exercises
 
-#similar on above but happens on execution 
+#similar on above but happens on execution, check if it's correct
 @app.route("/flowchart/executeFlowchart",methods=["POST"])
-def getExecution():
+def getExecution(): 
    # saveFile(decodeData(request))
     if(request.method == "POST"):
         res = saveData(decodeData(request.data))

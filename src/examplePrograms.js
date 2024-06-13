@@ -5,10 +5,6 @@ import comm from './communications'
 
 const exs = await comm.getAllExercises()
 
-console.log(exs)
-
-const variable = "Sium"
-
 
 /*
 //Should have assignment

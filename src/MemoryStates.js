@@ -33,8 +33,8 @@ class MemoryStates extends React.Component {
   componentDidUpdate (prevProps) {
     //Try to assign prevPros to a variable and then use that to confront.
     //In alternative you can check on prevProps and how to pass parameters to componentDidUpdate
-    console.log(prevProps.memoryStates)
-    console.log(this.props.memoryStates)
+   // console.log(prevProps.memoryStates)
+   // console.log(this.props.memoryStates)
     if ((!_.isEqual(prevProps.memoryStates, this.props.memoryStates) && this.props.memoryStates.length > 0)) {
       this.goToState(0)
     }
