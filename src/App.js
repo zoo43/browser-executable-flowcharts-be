@@ -69,7 +69,7 @@ class App extends React.Component {
     {!this.state.logged &&
     <div className="flex m-5 p-5">
       <Form>
-        <h1 className="text-center">Schermata di accesso</h1>
+        <h1 className="text-center">Pagina di accesso</h1>
       <Form.Group className="mx-auto p-2" style = {{width:400}} controlId="userId">
         <Form.Label>Id Utente</Form.Label>
         <Form.Control className="mx-2" type="text" onChange={this.changeId} placeholder="Inserisci il tuo id utente" />

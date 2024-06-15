@@ -21,6 +21,8 @@ def saveData(data):
         collection.insert_one(data)
         if(data["type"] == "execution"):
             correctOutput = exercises.find_one({'exId' : '0'})
+            print(removeSpaces(correctOutput["output"]))
+            print(removeSpaces(data["output"]))
             return (removeSpaces(correctOutput["output"]) == removeSpaces(data["output"]))
     else:
         if(data["type"] == "execution"):
