@@ -14,6 +14,7 @@ const baseState = {
   // Function call
   functionName: '',
   currentParameterName: '',
+  currentParameterType: 'indefinito',
   functionParameters: [],
   okToAddNode: false
 }
@@ -31,6 +32,7 @@ class FunctionDefineModal extends React.Component {
     this.validate = this.validate.bind(this)
     this.addFunction = this.addFunction.bind(this)
     this.getFunctionSignature = this.getFunctionSignature.bind(this)
+    this.updateCurrentParameterType = this.updateCurrentParameterType.bind(this)
   }
 
   componentDidMount () {
@@ -66,7 +68,7 @@ class FunctionDefineModal extends React.Component {
   addParameter () {
     const parameters = this.state.functionParameters
     if (parameters.indexOf(this.state.currentParameterName) < 0) {
-      parameters.push(this.state.currentParameterName)
+      parameters.push({"name":this.state.currentParameterName,"type":this.state.currentParameterType})
       this.setState({
         functionParameters: parameters,
         currentParameterName: ''
@@ -111,9 +113,17 @@ class FunctionDefineModal extends React.Component {
     this.props.closeCallback()
   }
 
+  updateCurrentParameterType(ev){
+    this.setState({
+      currentParameterType: ev.target.value
+    })
+  }
+
+
+
   render () {
     return (
-      <Modal show={this.props.show} onHide={this.props.closeCallback} size='lg'>
+      <Modal show={this.props.show} onHide={this.props.closeCallback} size='xl'>
         <Modal.Header closeButton>
           <Modal.Title>
             Aggiungi funzione al programma
@@ -132,7 +142,7 @@ class FunctionDefineModal extends React.Component {
                 {this.state.functionParameters.map((param, idx) => {
                   return (
                     <li key={idx}>
-                      {param}&nbsp;&nbsp;&nbsp;<Button variant='danger' onClick={() => { this.removeParameter(idx) }} size='sm'><Trash /></Button>
+                      {param.name}&nbsp;&nbsp;&nbsp;<Button variant='danger' onClick={() => { this.removeParameter(idx) }} size='sm'><Trash /></Button>
                     </li>
                   )
                 })}
@@ -147,12 +157,25 @@ class FunctionDefineModal extends React.Component {
             </Col>
           </Row>
           <hr />
+          
           <Form.Label>Nuovo parametro:</Form.Label>
           <Row>
-            <Col xs={6}>
+            <Col xs={4}>
               <Form.Control value={this.state.currentParameterName} onChange={this.updateCurrentParameterName}/>
             </Col>
-            <Col xs={6}>
+            
+            <Col xs={4}>
+            <Form.Select onChange={this.updateCurrentParameterType}>
+              <option>Indefinito</option>
+              <option>Numero</option>
+              <option>Stringa</option>
+              <option>Bool</option>
+              <option>Array</option>
+            </Form.Select>
+              
+            </Col>
+            
+            <Col xs={4}>
               <Button variant='primary' disabled={this.state.currentParameterName === ''} onClick={this.addParameter}>
                 Aggiungi parametro
               </Button>
