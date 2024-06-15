@@ -6,8 +6,8 @@ def checkCredentials(data):
     id = data["studentId"]
     password = data["password"]
 
-    client = pymongo.MongoClient("mongodb://localhost:27017")
-    db = client["local"]
+    client = pymongo.MongoClient("mongodb+srv://matteomartini6:admin@cluster0.jpkdcgi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+    db = client["Experiment-Data"]
     users = db["Account"]
     res = users.find_one({'studentId' : id , 'password' : password})
 
