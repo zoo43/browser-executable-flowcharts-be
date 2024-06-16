@@ -12,14 +12,6 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
 
     for (let i = 0; i < functions[otherFunc].params.length; i++) {
       const param = functions[otherFunc].params[i].name
-      console.log(functions[otherFunc].params[i].type)
-      const cD = _.cloneDeep(calcData)
-      console.log(cD) //find correctly the variable
-      console.log(cD.memoryStates[0].memory)
-      console.log(cD.memoryStates[0].memory.length)
-      for (const x in cD.memoryStates[0].memory){
-        console.log(x)
-      }
       if (i <= args.length) {
         newScope[param] = args[i]
       } else newScope[param] = undefined
@@ -31,9 +23,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
     }
     calcData.scope[otherFunc].push(newScope)
     const funcStartNode = _.find(nodes[otherFunc], n => { return n.type === 'start' })
-   // console.log(calcData)
-    //calcData.memoryStates.memory[otherFunc...?]
-    //for 
+
     executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
     const res = _.cloneDeep(calcData.returnVal[otherFunc])
 

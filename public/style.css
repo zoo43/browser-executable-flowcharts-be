@@ -16,3 +16,7 @@
 .flowchartInfoDiv {
   color: #494949
 }
+
+.false {
+  background-color: red !important;
+}

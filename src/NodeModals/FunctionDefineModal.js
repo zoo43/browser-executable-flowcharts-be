@@ -5,7 +5,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { Trash } from 'react-bootstrap-icons'
+import { Trash, Pencil, Plus } from 'react-bootstrap-icons'
+import ButtonGroup from 'react-bootstrap/ButtonGroup'
 
 const _ = require('lodash')
 const utils = require('../utils')
@@ -14,7 +15,7 @@ const baseState = {
   // Function call
   functionName: '',
   currentParameterName: '',
-  currentParameterType: 'indefinito',
+  currentParameterType: 'Indefinito',
   functionParameters: [],
   okToAddNode: false
 }
@@ -33,6 +34,7 @@ class FunctionDefineModal extends React.Component {
     this.addFunction = this.addFunction.bind(this)
     this.getFunctionSignature = this.getFunctionSignature.bind(this)
     this.updateCurrentParameterType = this.updateCurrentParameterType.bind(this)
+    this.updateNode = this.updateNode.bind(this)
   }
 
   componentDidMount () {
@@ -40,9 +42,24 @@ class FunctionDefineModal extends React.Component {
   }
 
   resetState () {
-    const newState = _.cloneDeep(baseState)
-
+    let newState = _.cloneDeep(baseState)
+    if(!_.isNil(this.props.functionData))
+    {
+      newState.functionName = this.props.functionName
+      newState.functionParameters = this.props.functionData.params
+      newState.correct = this.props.functionData.corret
+    }
     this.setState(newState)
+  }
+
+  updateNode()
+  {
+    const data = {
+      signature : utils.getFunctionSignature(this.state.functionName, this.state.functionParameters),
+      functionParameters : this.state.functionParameters,
+      correct : this.state.correct
+    }
+    this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
 
   updateFunctionName (ev) {
@@ -142,7 +159,7 @@ class FunctionDefineModal extends React.Component {
                 {this.state.functionParameters.map((param, idx) => {
                   return (
                     <li key={idx}>
-                      {param.name}&nbsp;&nbsp;&nbsp;<Button variant='danger' onClick={() => { this.removeParameter(idx) }} size='sm'><Trash /></Button>
+                      {param.name} , {param.type}&nbsp;&nbsp;&nbsp;<Button variant='danger' onClick={() => { this.removeParameter(idx) }} size='sm'><Trash /></Button>
                     </li>
                   )
                 })}
@@ -184,11 +201,20 @@ class FunctionDefineModal extends React.Component {
         </Modal.Body>
 
         <Modal.Footer>
-          {_.isNil(this.props.node) &&
+          <ButtonGroup>
+          {_.isNil(this.props.functionData) &&
             <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.addFunction}>
               Aggiungi
             </Button>
           }
+
+          {!_.isNil(this.props.functionData) &&
+            
+              <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.updateNode}>
+                <Pencil /> Aggiorna
+              </Button>            
+          }
+          </ButtonGroup>
         </Modal.Footer>
       </Modal>
     )
@@ -197,6 +223,7 @@ class FunctionDefineModal extends React.Component {
 
 FunctionDefineModal.propTypes = {
   show: PropTypes.bool,
+  functionData: PropTypes.object,
   closeCallback: PropTypes.func,
   addFunctionCallback: PropTypes.func,
   updateNodeCallback: PropTypes.func
