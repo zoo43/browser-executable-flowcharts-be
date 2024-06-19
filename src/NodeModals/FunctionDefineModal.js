@@ -53,7 +53,7 @@ class FunctionDefineModal extends React.Component {
     if(this.state.functionParameters !== 0)
     {
       let cont = 0
-      const alias = (this.props.functionData.params.length !== 0 && this.props.functionName === this.state.functionName) ? this.props.functionData.params : this.state.functionParameters
+      const alias = (this.props.functionData.params.length !== 0) ? this.props.functionData.params : this.state.functionParameters
       const defaultTests = alias.map( (param, id) =>
       { cont = id
         return {
@@ -125,14 +125,20 @@ class FunctionDefineModal extends React.Component {
       newState.functionParameters = this.props.functionData.params
       newState.correct = this.props.functionData.corret
       if(!_.isNil(this.props.functionData.unitTests))
-      if(this.props.functionData.unitTests.length !==0)
       {
-        newState.unitTests = this.props.functionData.unitTests
+        if(this.props.functionData.unitTests.length !==0)
+        {
+          newState.unitTests = this.props.functionData.unitTests
+        }
+        else
+        {
+          newState.unitTests[0]=this.createDefaultUnitTest()
+        }
       }
-         //On first time that is going
     }
     else
     {
+      newState.functionName = this.state.functionName
       newState.unitTests[0]=this.createDefaultUnitTest()
     }
     this.setState(newState)
@@ -160,7 +166,6 @@ class FunctionDefineModal extends React.Component {
       }
       
     }
-    console.log(newUnitTests)
     return newUnitTests
   }
 
@@ -243,15 +248,13 @@ class FunctionDefineModal extends React.Component {
       assignReturnValTo: _.cloneDeep(this.state.assignReturnValTo),
       unitTests: this.removeVoidTests()
     }
-
     this.props.addFunctionCallback(data)
-
     this.props.closeCallback()
   }
 
   updateCurrentParameterType(ev){
     this.setState({
-      currentParameterType: ev.target.value
+      currentParameterType: ev.target.value,
     })
   }
 
@@ -314,9 +317,19 @@ class FunctionDefineModal extends React.Component {
     return (
       <Modal show={this.props.show} onHide={this.props.closeCallback} size='xl'>
         <Modal.Header closeButton>
-          <Modal.Title>
+
+        {!this.props.modifyFunction &&
+            <Modal.Title>
             Aggiungi funzione al programma
           </Modal.Title>
+          }
+
+          {this.props.modifyFunction &&
+            <Modal.Title>
+            Aggiorna funzione
+          </Modal.Title>     
+          }
+
         </Modal.Header>
         <Modal.Body>
           <Row>
@@ -422,6 +435,7 @@ class FunctionDefineModal extends React.Component {
 
 FunctionDefineModal.propTypes = {
   show: PropTypes.bool,
+  functionName: PropTypes.string,
   functionData: PropTypes.object,
   closeCallback: PropTypes.func,
   addFunctionCallback: PropTypes.func,

@@ -279,7 +279,6 @@ class Flow extends React.Component {
         for (const param in actualFun.params)
         {
           const actualParam = actualFun.params[param]
-          console.log(actualParam)
           for(const node in calcData.memoryStates)
           {
             const actualNode = calcData.memoryStates[node]
@@ -299,7 +298,28 @@ class Flow extends React.Component {
       //res.returnVal
   }
 
-
+  checkTests()
+  {
+    //Modify nodes and check returnValue
+    console.log(this.state.functions["dsa"])
+    try {
+      const startNode = _.find(this.state.nodes.dsa, { nodeType: 'start' })
+      const res = executer.executeFromNode(
+        startNode,
+        this.state.nodes,
+        this.state.functions,
+        'dsa',
+        executer.getNewCalcData(this.state.nodes, this.state.functions)
+      )
+      console.log(res)
+    }catch (err) {
+      let alertMsg = 'Errore di esecuzione'
+      if (err.message === 'too much recursion') {
+        alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
+      }
+      alert(alertMsg)
+    }
+  }
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
@@ -314,7 +334,7 @@ class Flow extends React.Component {
       )
 
       this.parameterCheck(res)
-
+      this.checkTests()
       
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
@@ -806,6 +826,8 @@ class Flow extends React.Component {
     this.state.selectedNodeObj.type === 'functionCall') ||
     (this.state.newNodeType === 'functionCall') || 
     this.state.modifyFunction
+
+    
   }
 
 
