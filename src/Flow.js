@@ -429,6 +429,7 @@ class Flow extends React.Component {
 
   updateFunction(data,done){
     let newFunctions = _.cloneDeep(this.state.functions)
+    console.log(data)
     newFunctions[this.state.selectedFunc].signature = data.signature
     newFunctions[this.state.selectedFunc].params = data.functionParameters
     newFunctions[this.state.selectedFunc].correct = true
@@ -436,7 +437,8 @@ class Flow extends React.Component {
     //change function
     this.setState(
     {
-      functions:newFunctions
+      functions:newFunctions,
+      selectedFunc : data.name
     })
     return done()
   }
@@ -686,11 +688,12 @@ class Flow extends React.Component {
       pushLimit(previousStates, _.cloneDeep(nodes))
 
       nodes[functionName] = []
-      functions[functionName] = { params: data.functionParameters, signature: utils.getFunctionSignature(data.functionName, data.functionParameters), correct:true}
+      functions[functionName] = { params: data.functionParameters, signature: utils.getFunctionSignature(data.functionName, data.functionParameters), correct:true, unitTests:data.unitTests}
       this.setState({
         nodes,
         functions,
-        previousStates
+        previousStates,
+        selectedFunc : functionName
       }, () => {
         this.setupFunctionBaseNodes(functionName)
         const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}

@@ -38,6 +38,9 @@ class FunctionDefineModal extends React.Component {
     this.updateCurrentParameterType = this.updateCurrentParameterType.bind(this)
     this.updateNode = this.updateNode.bind(this)
     this.updateTable = this.updateTable.bind(this)
+    this.addRow = this.addRow.bind(this)
+    this.remove = this.removeRow.bind(this)
+    this.removeVoidTests = this.removeVoidTests.bind(this)
   }
 
   componentDidMount () {
@@ -50,7 +53,8 @@ class FunctionDefineModal extends React.Component {
     if(this.state.functionParameters !== 0)
     {
       let cont = 0
-      const defaultTests = this.props.functionData.params.map( (param, id) =>
+      const alias = (this.props.functionData.params.length !== 0 && this.props.functionName === this.state.functionName) ? this.props.functionData.params : this.state.functionParameters
+      const defaultTests = alias.map( (param, id) =>
       { cont = id
         return {
           id : id.toString(),
@@ -78,11 +82,8 @@ class FunctionDefineModal extends React.Component {
       {      
         return element.id === idx.toString()
       })
-      console.log(res)
       newUnitTests[x].splice(res, 1)
     }
-    
-    console.log(newUnitTests)
     return newUnitTests
   }
   
@@ -95,37 +96,72 @@ class FunctionDefineModal extends React.Component {
 
   addParameterToTest()
   {
-    const newUnitTests = _.cloneDeep(this.state.unitTests)   
-    for(const x in newUnitTests)
-    {
-      const newId = this.findMaxId(newUnitTests[x])
-      const returnElement = newUnitTests[x].pop()
-      newUnitTests[x].push(
+    const newUnitTests = _.cloneDeep(this.state.unitTests) 
+    if(newUnitTests.length !==0)
+    {  
+      for(const x in newUnitTests)
       {
-        id : newId.toString(),
-        name : this.state.currentParameterName,
-        value : ""
-      })
-      returnElement.id = (newUnitTests[x].length).toString()
-      newUnitTests[x].push(returnElement)
+        const newId = this.findMaxId(newUnitTests[x])
+        const returnElement = newUnitTests[x].pop()
+        newUnitTests[x].push(
+        {
+          id : newId.toString(),
+          name : this.state.currentParameterName,
+          value : ""
+        })
+        returnElement.id = (newUnitTests[x].length).toString()
+        newUnitTests[x].push(returnElement)
+      }
     }
     return newUnitTests
   }
 
   resetState () {
     let newState = _.cloneDeep(baseState)
+    
     if(this.props.modifyFunction)
     {
       newState.functionName = this.props.functionName
       newState.functionParameters = this.props.functionData.params
       newState.correct = this.props.functionData.corret
       if(!_.isNil(this.props.functionData.unitTests))
+      if(this.props.functionData.unitTests.length !==0)
+      {
         newState.unitTests = this.props.functionData.unitTests
-      else
-        newState.unitTests[0]=this.createDefaultUnitTest()
+      }
+         //On first time that is going
     }
-    
+    else
+    {
+      newState.unitTests[0]=this.createDefaultUnitTest()
+    }
     this.setState(newState)
+  }
+
+  removeVoidTests()
+  {
+    const newUnitTests = _.cloneDeep(this.state.unitTests)
+    let row = 0
+    while(row<newUnitTests.length && newUnitTests.length!==0)
+    {
+      const res = newUnitTests[row].findIndex((element) =>
+      {      
+        return element.value === ""
+      })
+      
+      if(res !== -1) //There is a void element
+      {
+        newUnitTests.splice(row,1)
+        row = 0
+      }
+      else
+      {
+        row++
+      }
+      
+    }
+    console.log(newUnitTests)
+    return newUnitTests
   }
 
   updateNode()
@@ -135,7 +171,7 @@ class FunctionDefineModal extends React.Component {
       signature : utils.getFunctionSignature(this.state.functionName, this.state.functionParameters),
       functionParameters : this.state.functionParameters,
       correct : this.state.correct,
-      unitTests : this.state.unitTests
+      unitTests : this.removeVoidTests()
     }
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
@@ -204,7 +240,8 @@ class FunctionDefineModal extends React.Component {
       parents: _.clone(this.state.currentlySelectedParents),
       functionName: _.cloneDeep(this.state.functionName),
       functionParameters: _.cloneDeep(this.state.functionParameters),
-      assignReturnValTo: _.cloneDeep(this.state.assignReturnValTo)
+      assignReturnValTo: _.cloneDeep(this.state.assignReturnValTo),
+      unitTests: this.removeVoidTests()
     }
 
     this.props.addFunctionCallback(data)
@@ -220,39 +257,55 @@ class FunctionDefineModal extends React.Component {
 
 
 
-  updateTable(ev)
+  updateTable(row, col,ev)
   {
     const newUnitTests = _.cloneDeep(this.state.unitTests)
-    const row = ev.target.name.split("-")[0]
-    const col = ev.target.name.split("-")[1]
     newUnitTests[row][col].value = ev.target.value
     this.setState({unitTests : newUnitTests},this.validate)
-    
-    
   }
 
   createTableHeaders()
   { 
-    const rows = this.state.functionParameters.map((param,id) => {
+    const rows = [(<th>{"#"}</th>)]
+    rows.push(this.state.functionParameters.map((param,id) => {
       return (<th> { param.name } </th>)
-    })
+    }))
     rows.push((<th> {"Ritorno"} </th>))
     return [rows]
   }
 
+  removeRow(idx)
+  {
+    const newUnitTests = _.cloneDeep(this.state.unitTests)
+    newUnitTests.splice(idx, 1)
+    this.setState(
+      {unitTests : newUnitTests},this.validate
+    )
+  }
 
   createRows()
   {
     const rows = []
-    for(const x in this.state.unitTests)
+    let cont = 0
+    for(const row in this.state.unitTests)
     {
-      const row = this.state.unitTests[x].map((param,id) => {
-        return (<td> <Form.Control key={id} name={x + "-" + id} id={id} value={param.value} onChange={this.updateTable} /></td>)
+      const cols = this.state.unitTests[row].map((param,id) => {
+        cont = cont+1
+        return (<td> <Form.Control key={cont} value={param.value} onChange={(ev) => { this.updateTable(row,id,ev)}} /></td>)
       })
-      rows.push(row)
+      rows.push((<tr><td>{Number(row)+1}</td>{cols} <td><Button name={row} variant='danger' onClick={() => { this.removeRow(row)}} size='sm'><Trash /></Button></td></tr> ))
     }
     
-    return(<tr>{rows}</tr>)  
+    return(rows)  
+  }
+
+  addRow()
+  {
+    const newUnitTests = _.cloneDeep(this.state.unitTests)
+    newUnitTests.push(this.createDefaultUnitTest())
+    this.setState(
+      {unitTests : newUnitTests},this.validate
+    )
   }
   
 
@@ -319,7 +372,7 @@ class FunctionDefineModal extends React.Component {
           </Row>
 
           <hr />
-          {this.state.functionParameters.length !==0 && this.props.modifyFunction && //check if there are parameters
+          {this.state.functionParameters.length !==0 && //check if there are parameters
           <>
             <Form.Label>Inserisci test d'unità </Form.Label>
             <Row>
@@ -338,8 +391,8 @@ class FunctionDefineModal extends React.Component {
               </tbody>
             </Table>  
             </Row>
-            <Button  variant='primary'>
-                Aggiungi riga alla tabella
+            <Button variant='primary' onClick={this.addRow}>
+                Aggiungi un nuovo test d'unità
             </Button>
             </>
           }
