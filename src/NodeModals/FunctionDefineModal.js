@@ -22,8 +22,6 @@ const baseState = {
   unitTests: []
 }
 
-let dataTable = []
-
 class FunctionDefineModal extends React.Component {
   constructor (props) {
     super(props)
@@ -49,7 +47,7 @@ class FunctionDefineModal extends React.Component {
 
   createDefaultUnitTest()
   {
-    if(this.props.modifyFunction)
+    if(this.state.functionParameters !== 0)
     {
       let cont = 0
       const defaultTests = this.props.functionData.params.map( (param, id) =>
@@ -71,6 +69,49 @@ class FunctionDefineModal extends React.Component {
     }
   }
 
+  removeParameterFromTest(idx)
+  {
+    let newUnitTests = _.cloneDeep(this.state.unitTests)
+    for(const x in newUnitTests)
+    {
+      const res = newUnitTests[x].findIndex((element) =>
+      {      
+        return element.id === idx.toString()
+      })
+      console.log(res)
+      newUnitTests[x].splice(res, 1)
+    }
+    
+    console.log(newUnitTests)
+    return newUnitTests
+  }
+  
+  findMaxId(arr)
+  {
+    const ids = arr.map((a) => a.id)
+    const maxId = Math.max(...ids)
+    return maxId
+  }
+
+  addParameterToTest()
+  {
+    const newUnitTests = _.cloneDeep(this.state.unitTests)   
+    for(const x in newUnitTests)
+    {
+      const newId = this.findMaxId(newUnitTests[x])
+      const returnElement = newUnitTests[x].pop()
+      newUnitTests[x].push(
+      {
+        id : newId.toString(),
+        name : this.state.currentParameterName,
+        value : ""
+      })
+      returnElement.id = (newUnitTests[x].length).toString()
+      newUnitTests[x].push(returnElement)
+    }
+    return newUnitTests
+  }
+
   resetState () {
     let newState = _.cloneDeep(baseState)
     if(this.props.modifyFunction)
@@ -78,7 +119,6 @@ class FunctionDefineModal extends React.Component {
       newState.functionName = this.props.functionName
       newState.functionParameters = this.props.functionData.params
       newState.correct = this.props.functionData.corret
-      console.log(this.props.functionData)
       if(!_.isNil(this.props.functionData.unitTests))
         newState.unitTests = this.props.functionData.unitTests
       else
@@ -90,12 +130,12 @@ class FunctionDefineModal extends React.Component {
 
   updateNode()
   {
-    console.log(dataTable)
     const data = {
+      name : this.state.functionName,
       signature : utils.getFunctionSignature(this.state.functionName, this.state.functionParameters),
       functionParameters : this.state.functionParameters,
       correct : this.state.correct,
-      unitTests : dataTable
+      unitTests : this.state.unitTests
     }
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
@@ -124,18 +164,22 @@ class FunctionDefineModal extends React.Component {
     const parameters = this.state.functionParameters
     if (parameters.indexOf(this.state.currentParameterName) < 0) {
       parameters.push({"name":this.state.currentParameterName,"type":this.state.currentParameterType})
+      const newUnitTests = this.addParameterToTest()
       this.setState({
         functionParameters: parameters,
-        currentParameterName: ''
+        currentParameterName: '',
+        unitTests : newUnitTests
       }, this.validate)
     }
   }
 
   removeParameter (idx) {
     const parameters = this.state.functionParameters
+    const newUnitTests = this.removeParameterFromTest(idx)
     parameters.splice(idx, 1)
     this.setState({
-      functionParameters: parameters
+      functionParameters: parameters,
+      unitTests : newUnitTests
     }, this.validate)
   }
 
@@ -178,25 +222,13 @@ class FunctionDefineModal extends React.Component {
 
   updateTable(ev)
   {
-    if(!_.isNil(ev))
-    {
-      
-      const newUnitTests = _.cloneDeep(this.state.unitTests)
-      for(const row in this.state.unitTests)
-      {
-        
-        for(const col in this.state.unitTests[row])
-        {
-          if(ev.target.id === this.state.unitTests[row][col].id)
-          {
-            newUnitTests[row][col].value = ev.target.innerText
-          }
-          
-        }
-      }
-      dataTable = newUnitTests
-    }
-
+    const newUnitTests = _.cloneDeep(this.state.unitTests)
+    const row = ev.target.name.split("-")[0]
+    const col = ev.target.name.split("-")[1]
+    newUnitTests[row][col].value = ev.target.value
+    this.setState({unitTests : newUnitTests},this.validate)
+    
+    
   }
 
   createTableHeaders()
@@ -211,10 +243,15 @@ class FunctionDefineModal extends React.Component {
 
   createRows()
   {
-    console.log(this.state.unitTests)
-    const rows = this.state.unitTests[0].map((param,id) => {
-      return (<td contentEditable={true} id={id} suppressContentEditableWarning={true} onInput={this.updateTable}>{ param.value }</td>)
-    })
+    const rows = []
+    for(const x in this.state.unitTests)
+    {
+      const row = this.state.unitTests[x].map((param,id) => {
+        return (<td> <Form.Control key={id} name={x + "-" + id} id={id} value={param.value} onChange={this.updateTable} /></td>)
+      })
+      rows.push(row)
+    }
+    
     return(<tr>{rows}</tr>)  
   }
   
@@ -301,7 +338,7 @@ class FunctionDefineModal extends React.Component {
               </tbody>
             </Table>  
             </Row>
-            <Button onClick={ console.log("Ciao") } variant='primary'>
+            <Button  variant='primary'>
                 Aggiungi riga alla tabella
             </Button>
             </>
