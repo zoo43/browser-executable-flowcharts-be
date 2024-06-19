@@ -215,7 +215,7 @@ class Flow extends React.Component {
   }
 
   selectFunctionTab (tabKey) {
-    if(tabKey === this.state.selectedFunc)
+    if(tabKey === this.state.selectedFunc && this.state.selectedFunc!=="main")
     {
       this.setState(
         {
@@ -270,7 +270,7 @@ class Flow extends React.Component {
   }
 
 
-  unitTest(calcData)
+  parameterCheck(calcData)
   {
     let newFunctions = _.cloneDeep(this.state.functions)
     for (const fun in this.state.functions)
@@ -313,7 +313,7 @@ class Flow extends React.Component {
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
 
-      this.unitTest(res)
+      this.parameterCheck(res)
 
       
       const outputToSend = this.showExecutionFeedback(res)
@@ -432,6 +432,7 @@ class Flow extends React.Component {
     newFunctions[this.state.selectedFunc].signature = data.signature
     newFunctions[this.state.selectedFunc].params = data.functionParameters
     newFunctions[this.state.selectedFunc].correct = true
+    newFunctions[this.state.selectedFunc].unitTests = data.unitTests
     //change function
     this.setState(
     {
@@ -1045,6 +1046,7 @@ class Flow extends React.Component {
             updateNodeCallback={this.updateFunction}
             functionData={this.state.functions[this.state.selectedFunc]}
             functionName={this.state.selectedFunc}
+            modifyFunction={this.state.modifyFunction}
           />
         }
       </div>

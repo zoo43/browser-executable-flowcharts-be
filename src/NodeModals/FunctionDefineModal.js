@@ -5,7 +5,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { Trash, Pencil, Plus } from 'react-bootstrap-icons'
+import Table from 'react-bootstrap/Table'
+import { Trash, Pencil } from 'react-bootstrap-icons'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 
 const _ = require('lodash')
@@ -17,8 +18,11 @@ const baseState = {
   currentParameterName: '',
   currentParameterType: 'Indefinito',
   functionParameters: [],
-  okToAddNode: false
+  okToAddNode: false,
+  unitTests: []
 }
+
+let dataTable = []
 
 class FunctionDefineModal extends React.Component {
   constructor (props) {
@@ -35,29 +39,63 @@ class FunctionDefineModal extends React.Component {
     this.getFunctionSignature = this.getFunctionSignature.bind(this)
     this.updateCurrentParameterType = this.updateCurrentParameterType.bind(this)
     this.updateNode = this.updateNode.bind(this)
+    this.updateTable = this.updateTable.bind(this)
   }
 
   componentDidMount () {
     this.resetState()
   }
 
+
+  createDefaultUnitTest()
+  {
+    if(this.props.modifyFunction)
+    {
+      let cont = 0
+      const defaultTests = this.props.functionData.params.map( (param, id) =>
+      { cont = id
+        return {
+          id : id.toString(),
+          name : param.name, //name is column name
+          value : ""
+        }
+      })
+
+      cont = cont + 1
+      defaultTests.push({
+        id:cont.toString(),
+        name : "Ritorno", //name is column name
+        value : ""
+      })
+      return defaultTests
+    }
+  }
+
   resetState () {
     let newState = _.cloneDeep(baseState)
-    if(!_.isNil(this.props.functionData))
+    if(this.props.modifyFunction)
     {
       newState.functionName = this.props.functionName
       newState.functionParameters = this.props.functionData.params
       newState.correct = this.props.functionData.corret
+      console.log(this.props.functionData)
+      if(!_.isNil(this.props.functionData.unitTests))
+        newState.unitTests = this.props.functionData.unitTests
+      else
+        newState.unitTests[0]=this.createDefaultUnitTest()
     }
+    
     this.setState(newState)
   }
 
   updateNode()
   {
+    console.log(dataTable)
     const data = {
       signature : utils.getFunctionSignature(this.state.functionName, this.state.functionParameters),
       functionParameters : this.state.functionParameters,
-      correct : this.state.correct
+      correct : this.state.correct,
+      unitTests : dataTable
     }
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
@@ -138,6 +176,50 @@ class FunctionDefineModal extends React.Component {
 
 
 
+  updateTable(ev)
+  {
+    if(!_.isNil(ev))
+    {
+      
+      const newUnitTests = _.cloneDeep(this.state.unitTests)
+      for(const row in this.state.unitTests)
+      {
+        
+        for(const col in this.state.unitTests[row])
+        {
+          if(ev.target.id === this.state.unitTests[row][col].id)
+          {
+            newUnitTests[row][col].value = ev.target.innerText
+          }
+          
+        }
+      }
+      dataTable = newUnitTests
+    }
+
+  }
+
+  createTableHeaders()
+  { 
+    const rows = this.state.functionParameters.map((param,id) => {
+      return (<th> { param.name } </th>)
+    })
+    rows.push((<th> {"Ritorno"} </th>))
+    return [rows]
+  }
+
+
+  createRows()
+  {
+    console.log(this.state.unitTests)
+    const rows = this.state.unitTests[0].map((param,id) => {
+      return (<td contentEditable={true} id={id} suppressContentEditableWarning={true} onInput={this.updateTable}>{ param.value }</td>)
+    })
+    return(<tr>{rows}</tr>)  
+  }
+  
+
+
   render () {
     return (
       <Modal show={this.props.show} onHide={this.props.closeCallback} size='xl'>
@@ -198,17 +280,44 @@ class FunctionDefineModal extends React.Component {
               </Button>
             </Col>
           </Row>
+
+          <hr />
+          {this.state.functionParameters.length !==0 && this.props.modifyFunction && //check if there are parameters
+          <>
+            <Form.Label>Inserisci test d'unità </Form.Label>
+            <Row>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  {
+                    this.createTableHeaders()
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  this.createRows()
+                }
+              </tbody>
+            </Table>  
+            </Row>
+            <Button onClick={ console.log("Ciao") } variant='primary'>
+                Aggiungi riga alla tabella
+            </Button>
+            </>
+          }
+
         </Modal.Body>
 
         <Modal.Footer>
           <ButtonGroup>
-          {_.isNil(this.props.functionData) &&
+          {!this.props.modifyFunction &&
             <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.addFunction}>
               Aggiungi
             </Button>
           }
 
-          {!_.isNil(this.props.functionData) &&
+          {this.props.modifyFunction &&
             
               <Button variant='success' disabled={!this.state.okToAddNode} onClick={this.updateNode}>
                 <Pencil /> Aggiorna
@@ -226,7 +335,8 @@ FunctionDefineModal.propTypes = {
   functionData: PropTypes.object,
   closeCallback: PropTypes.func,
   addFunctionCallback: PropTypes.func,
-  updateNodeCallback: PropTypes.func
+  updateNodeCallback: PropTypes.func,
+  modifyFunction: PropTypes.bool
 }
 
 export default FunctionDefineModal
