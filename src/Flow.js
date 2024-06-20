@@ -712,8 +712,7 @@ class Flow extends React.Component {
       this.setState({
         nodes,
         functions,
-        previousStates,
-        selectedFunc : functionName
+        previousStates
       }, () => {
         this.setupFunctionBaseNodes(functionName)
         const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
