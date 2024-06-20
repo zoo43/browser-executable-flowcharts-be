@@ -298,32 +298,61 @@ class Flow extends React.Component {
       //res.returnVal
   }
 
-  checkTests()
+
+//Splitto string su +, -, *, / , %, ||, && ,
+
+  checkTests(res)
   {
     //Modify nodes and check returnValue
-    console.log(this.state.functions["dsa"])
-    try {
-      const startNode = _.find(this.state.nodes.dsa, { nodeType: 'start' })
+    //Will be for every function
+    const unitTests = this.state.functions["dsa"].unitTests
+    for(const testNumber in unitTests)
+    {
+      const nodes = _.cloneDeep(this.state.nodes)
+      let newNodes = _.cloneDeep(this.state.nodes)
+      for(const variable in unitTests[testNumber])
+      {
+        newNodes["dsa"] = newNodes["dsa"].map((node) => {
+          if(node.type === "expression")
+          {
+            node.expressions.map( x => {
+              x = x.split("=")
+              x[1] = x[1].split(/[+-/*%,|&[]/)
+              for(const element in x[1])
+              {
+                x[1][element] = x[1][element].replace(unitTests[testNumber][variable].name, unitTests[testNumber][variable].value)
+              }
+              //if(x[1].includes(unitTests[testNumber][variable].name))
+              //{
+               // x[1] = x[1].replace(unitTests[testNumber][variable].name, unitTests[testNumber][variable].value)
+             // }
+             // x = x[0] + "=" +x[1]
+              console.log(x)
+            })
+          }
+          return node
+        })
+      }
+      const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
+      
       const res = executer.executeFromNode(
         startNode,
-        this.state.nodes,
+        nodes,
         this.state.functions,
-        'dsa',
+        'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
       console.log(res)
-    }catch (err) {
-      let alertMsg = 'Errore di esecuzione'
-      if (err.message === 'too much recursion') {
-        alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
-      }
-      alert(alertMsg)
     }
+    
+    const startNode = _.find(this.state.nodes.dsa, { nodeType: 'start' })
   }
+
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    try {
+    
+
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
         startNode,
@@ -332,7 +361,6 @@ class Flow extends React.Component {
         'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
-
       this.parameterCheck(res)
       this.checkTests()
       
@@ -343,14 +371,8 @@ class Flow extends React.Component {
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
       
       //Here I should check if it's correct
-    } catch (err) {
-      let alertMsg = 'Errore di esecuzione'
-      if (err.message === 'too much recursion') {
-        alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
-      }
-      console.log('Error message: ', err.message)
-      alert(alertMsg)
-    }
+   
+    
     this.setState({nodes: this.state.nodes},this.renderDiagram)
   }
 
@@ -449,7 +471,6 @@ class Flow extends React.Component {
 
   updateFunction(data,done){
     let newFunctions = _.cloneDeep(this.state.functions)
-    console.log(data)
     newFunctions[this.state.selectedFunc].signature = data.signature
     newFunctions[this.state.selectedFunc].params = data.functionParameters
     newFunctions[this.state.selectedFunc].correct = true

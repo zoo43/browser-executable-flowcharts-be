@@ -5,6 +5,7 @@ const parseExpressions = require('./parseExpressions')
 const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
 function getExecutableFunction (calcData, otherFunc, nodes, functions) {
+  
   return (...args) => {
     const newScope = {
       // params: _.cloneDeep(args)
@@ -16,7 +17,6 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
         newScope[param] = args[i]
       } else newScope[param] = undefined
     }
-
     for (const func in nodes) {
       if (func === 'main') continue
       newScope[func] = getExecutableFunction(calcData, func, nodes, functions)
@@ -27,8 +27,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
     executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
     const res = _.cloneDeep(calcData.returnVal[otherFunc])
 
-    // "Consume" the return value
-    calcData.returnVal[otherFunc] = null
+
 
     // Delete parameters
     calcData.scope[otherFunc].pop()
@@ -47,11 +46,10 @@ function getNewCalcData (nodes, functions) {
     calcData.scope[func].push({})
     for (const otherFunc in nodes) {
       if (otherFunc === 'main') continue
-
       calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions)
     }
   }
-
+  
   return calcData
 }
 
