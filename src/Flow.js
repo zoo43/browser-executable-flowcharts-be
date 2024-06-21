@@ -309,44 +309,24 @@ class Flow extends React.Component {
     for(const testNumber in unitTests)
     {
       const nodes = _.cloneDeep(this.state.nodes)
-      let newNodes = _.cloneDeep(this.state.nodes)
-      for(const variable in unitTests[testNumber])
-      {
-        newNodes["dsa"] = newNodes["dsa"].map((node) => {
-          if(node.type === "expression")
-          {
-            node.expressions.map( x => {
-              x = x.split("=")
-              x[1] = x[1].split(/[+-/*%,|&[]/)
-              for(const element in x[1])
-              {
-                x[1][element] = x[1][element].replace(unitTests[testNumber][variable].name, unitTests[testNumber][variable].value)
-              }
-              //if(x[1].includes(unitTests[testNumber][variable].name))
-              //{
-               // x[1] = x[1].replace(unitTests[testNumber][variable].name, unitTests[testNumber][variable].value)
-             // }
-             // x = x[0] + "=" +x[1]
-              console.log(x)
-            })
-          }
-          return node
-        })
-      }
+      let newFunc = _.cloneDeep(this.state.functions)
+
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
-      
+      /*
       const res = executer.executeFromNode(
         startNode,
         nodes,
-        this.state.functions,
+        newFunc,
         'main',
-        executer.getNewCalcData(this.state.nodes, this.state.functions)
-      )
-      console.log(res)
+        executer.getNewCalcData(this.state.nodes, this.state.functions),
+        unitTests[testNumber]
+      )*/
     }
-    
+      
     const startNode = _.find(this.state.nodes.dsa, { nodeType: 'start' })
-  }
+    const rrr = executer.getNewCalcData(this.state.nodes, this.state.functions, unitTests[0])
+    console.log(rrr)
+}
 
 
   executeFlowchart () {
@@ -362,7 +342,7 @@ class Flow extends React.Component {
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
       this.parameterCheck(res)
-      this.checkTests()
+     // this.checkTests()
       
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
