@@ -6,7 +6,24 @@ const parseExpressions = require('./parseExpressions')
 
 const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
-function getExecutableFunction (calcData, otherFunc, nodes, functions) {   
+
+function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[]) {   
+  
+  if(unitTests.length!==0)
+  {
+    console.log(unitTests)
+    let expr = 0
+    const ttt = unitTests.map((x)=>{ 
+      let toReturn
+      if(isNaN(Number(x.value)))
+          toReturn = x.value
+      else
+        toReturn = Number(x.value)
+      return toReturn
+    })
+    console.log(ttt)
+    expr = ttt.pop()
+    dc.changeTest(ttt)
 
     return (...args) => {
       const newScope = {
@@ -14,7 +31,8 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
       }
   
       for (let i = 0; i < functions[otherFunc].params.length; i++) {
-        const param = functions[otherFunc].params[i]
+        const param = functions[otherFunc].params[i].name
+        args = dc.getTest()
         if (i <= args.length) {
           newScope[param] = args[i]
         } else newScope[param] = undefined
@@ -28,16 +46,49 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
       const funcStartNode = _.find(nodes[otherFunc], n => { return n.type === 'start' })
       executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
       const res = _.cloneDeep(calcData.returnVal[otherFunc])
+      // "Consume" the return value
+      calcData.returnVal[otherFunc] = null
+      console.log(res)
+      console.log(expr)
+      // Delete parameters
+      calcData.scope[otherFunc].pop()
+      return res
+    }  
+  }
   
+
+  else
+  {
+    return (...args) => {
+      console.log("post")
+      const newScope = {
+        // params: _.cloneDeep(args)
+      }
+  
+      for (let i = 0; i < functions[otherFunc].params.length; i++) {
+        const param = functions[otherFunc].params[i].name
+        args = dc.getTest()
+        if (i <= args.length) {
+          newScope[param] = args[i]
+        } else newScope[param] = undefined
+      }
+  
+      for (const func in nodes) {
+        if (func === 'main') continue
+        newScope[func] = getExecutableFunction(calcData, func, nodes, functions)
+      }
+      calcData.scope[otherFunc].push(newScope)
+      const funcStartNode = _.find(nodes[otherFunc], n => { return n.type === 'start' })
+      executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
+      const res = _.cloneDeep(calcData.returnVal[otherFunc])
       // "Consume" the return value
       calcData.returnVal[otherFunc] = null
   
       // Delete parameters
       calcData.scope[otherFunc].pop()
       return res
-    }
-
-  
+    }  
+  }
 }
 
 function getNewCalcData (nodes, functions,unitTests=[]) {

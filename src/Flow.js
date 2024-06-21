@@ -312,15 +312,15 @@ class Flow extends React.Component {
       let newFunc = _.cloneDeep(this.state.functions)
 
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
-      /*
+      
       const res = executer.executeFromNode(
         startNode,
-        nodes,
-        newFunc,
+        this.state.nodes,
+        this.state.functions,
         'main',
-        executer.getNewCalcData(this.state.nodes, this.state.functions),
-        unitTests[testNumber]
-      )*/
+        executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[0])
+      )
+      console.log(res)
     }
       
     const startNode = _.find(this.state.nodes.dsa, { nodeType: 'start' })
@@ -341,8 +341,10 @@ class Flow extends React.Component {
         'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
+
+
       this.parameterCheck(res)
-     // this.checkTests()
+      this.checkTests()
       
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
