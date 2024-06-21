@@ -35,7 +35,7 @@ const baseState = {
   exerciseid: 0,
   exerciseData: null,
   nodes: { main: [] },
-  functions: { main: { params: [], signature: 'main' }},
+  functions: { main: { params: [], signature: 'main', correct : true, returnType: 'Indefinito' }},
   previousStates: [],
   diagramStr: { main: '' },
   selectedNodeObj: null,
@@ -44,12 +44,13 @@ const baseState = {
   outputToShow: '',
   memoryStates: [],
   selectedFunc: 'main',
-  selectedExampleProgram: _.keys(exs.exs)[0],
+  selectedExampleProgram: _.keys(examplePrograms)[0],
   showDemo: true,
   checkedNodes : [],
   assignment: "",
   correctOutput: "",
-  correctNodes: 2
+  correctNodes: 2,
+  modifyFunction: false
 }
 
 function pushLimit (arr, element) {
@@ -102,6 +103,7 @@ class Flow extends React.Component {
     this.checkSignedNodes = this.checkSignedNodes.bind(this)
     this.findCheckedNodes = this.findCheckedNodes.bind(this)
     this.changeAssignment = this.changeAssignment.bind(this)
+    this.updateFunction = this.updateFunction.bind(this)
     this.undo = this.undo.bind(this)
   }
 
@@ -213,9 +215,20 @@ class Flow extends React.Component {
   }
 
   selectFunctionTab (tabKey) {
-    this.setState({
-      selectedFunc: tabKey
-    }, this.renderDiagram)
+    if(tabKey === this.state.selectedFunc && this.state.selectedFunc!=="main")
+    {
+      this.setState(
+        {
+          modifyFunction : true
+        }
+      )
+    }
+    else
+    {
+      this.setState({
+        selectedFunc: tabKey
+      }, this.renderDiagram)
+    }
   }
 
   deleteSelectedFunction () {
@@ -235,6 +248,68 @@ class Flow extends React.Component {
     })
   }
 
+
+  adjustType(variableType)
+  {
+    switch (variableType)
+    {
+      case 'Numero':
+        return "number"
+      case "Stringa":
+        return "string"
+      case "Bool":
+        return "boolean"
+      case "Array":
+        return "object"
+      case "Indefinito":
+        return ""
+      default:
+        return "undefined"
+    }
+
+  }
+
+
+  unitTest(calcData)
+  {
+    let newFunctions = _.cloneDeep(this.state.functions)
+    console.log(this.state.functions)
+    for (const fun in this.state.functions)
+    {
+      const actualFun = this.state.functions[fun]
+      newFunctions[fun].correct = true
+      
+
+      const funReturnType = calcData.returnVal2[fun] === "true" || calcData.returnVal2[fun] === "false" ? "boolean" : typeof(calcData.returnVal2[fun]) //Should be something else, not assigned not work
+      if(this.adjustType(actualFun.returnType) !== funReturnType && this.adjustType(actualFun.returnType) !== "")
+      {
+        newFunctions[fun].correct = false
+      }
+      
+      for (const param in actualFun.params)
+      {
+        const actualParam = actualFun.params[param]
+        for(const node in calcData.memoryStates)
+        {
+          const actualNode = calcData.memoryStates[node]
+          if(actualNode.func === fun && actualNode.type === "start") //I check things on the start
+          {
+            if((this.adjustType(actualParam.type) !== typeof(actualNode.memory[fun][0][actualParam.name]) && this.adjustType(actualParam.type) !== ""))
+            {
+              newFunctions[fun].correct = false
+            }
+          }
+        }
+      }
+    }
+    this.setState({
+      functions : newFunctions
+    })
+      //res.returnVal
+  }
+
+
+
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
     try {
@@ -246,10 +321,12 @@ class Flow extends React.Component {
         'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
+
+      this.unitTest(res)
+
       
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
-      console.log(outputToSend)
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
@@ -346,7 +423,8 @@ class Flow extends React.Component {
 
     this.setState({
       newNodeType: '',
-      selectedNodeObj: null
+      selectedNodeObj: null,
+      modifyFunction : false
     }, this.renderDiagram)
   }
 
@@ -357,6 +435,21 @@ class Flow extends React.Component {
       selectedNodeParents: [{ node: parent, branch: branch }]
     })
   }
+
+  updateFunction(data,done){
+    let newFunctions = _.cloneDeep(this.state.functions)
+    newFunctions[this.state.selectedFunc].signature = data.signature
+    newFunctions[this.state.selectedFunc].params = data.functionParameters
+    newFunctions[this.state.selectedFunc].correct = true
+    newFunctions[this.state.selectedFunc].returnType = data.returnType
+    //change function
+    this.setState(
+    {
+      functions:newFunctions
+    })
+    return done()
+  }
+
 
   updateNode (data, done) {
     const selectedFuncNodes = this.state.nodes[this.state.selectedFunc]
@@ -602,7 +695,7 @@ class Flow extends React.Component {
       pushLimit(previousStates, _.cloneDeep(nodes))
 
       nodes[functionName] = []
-      functions[functionName] = { params: data.functionParameters, signature: utils.getFunctionSignature(data.functionName, data.functionParameters) }
+      functions[functionName] = { params: data.functionParameters, signature: utils.getFunctionSignature(data.functionName, data.functionParameters), correct:true, returnType:data.returnType}
       this.setState({
         nodes,
         functions,
@@ -644,10 +737,10 @@ class Flow extends React.Component {
 
   loadExampleProgram () {
     
-    const programNodes = _.cloneDeep(exs.exs[this.state.selectedExampleProgram].nodes)
+    const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
     const checkedNodes = this.findCheckedNodes(programNodes["main"],true)
-    const programFunctions = _.cloneDeep(exs.exs[this.state.selectedExampleProgram].functions)
-    const assignment = exs.exs[this.state.selectedExampleProgram].assignment
+    const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
+    const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
     this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
   }
 
@@ -717,7 +810,8 @@ class Flow extends React.Component {
   shouldShowFunctionDefineModal () {
     return (!_.isNil(this.state.selectedNodeObj) &&
     this.state.selectedNodeObj.type === 'functionCall') ||
-    (this.state.newNodeType === 'functionCall')
+    (this.state.newNodeType === 'functionCall') || 
+    this.state.modifyFunction
   }
 
 
@@ -774,7 +868,7 @@ class Flow extends React.Component {
         <Tabs activeKey={this.state.selectedFunc} onSelect={this.selectFunctionTab}>
         {_.keys(this.state.nodes).map((func, idx) => {
           return (
-            <Tab eventKey={func} title={this.state.functions[func].signature} key={idx}>
+            <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={this.state.functions[func].signature} key={idx}> 
               <h4> Consegna :  { this.state.assignment } </h4>
               <Row>
                 <Col xs={8}>
@@ -809,7 +903,7 @@ class Flow extends React.Component {
           <Row>
             <Col xs={3}>
               <Form.Select value={this.state.selectedExampleProgram} onChange={this.updateSelectedExampleProgram}>
-                {_.keys(exs.exs).map((progName, idx) => {
+                {_.keys(examplePrograms).map((progName, idx) => {
                  // console.log(progName)
                   return (
                     <option key={idx} value={idx}>{idx}</option>
@@ -958,6 +1052,10 @@ class Flow extends React.Component {
             show={this.shouldShowFunctionDefineModal()}
             closeCallback={this.unselectNode}
             addFunctionCallback={this.addFunction}
+            updateNodeCallback={this.updateFunction}
+            functionData={this.state.functions[this.state.selectedFunc]}
+            functionName={this.state.selectedFunc}
+            modifyFunction={this.state.modifyFunction}
           />
         }
       </div>

@@ -1,14 +1,20 @@
 // Programs exported here will be available within the demoloader exercise "?exerciseid=demoloader"
 
 //An admin mode where I can set the correct Nodes when creating the string
-import comm from './communications'
+/*import comm from './communications'
 
 const exs = await comm.getAllExercises()
 
+*/
 
-/*
 //Should have assignment
-module.exports = [{
+module.exports = [
+{
+    'exId': '', 'assignment': 'Test unitari', 'correctNodes': 2, 'type': 'execution',"nodes":{"main":[{"type":"start","nodeType":"start","id":1,"parents":[],"children":{"main":3},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":2,"parents":[{"id":3,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":3,"parents":[{"id":1,"branch":"main"}],"children":{"main":2},"selected":false,"wrong":false,"checked":false,"expressions":["a = 5","S(a)"]}],"S":[{"type":"start","nodeType":"start","id":6,"parents":[],"children":{"main":8},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":7,"parents":[{"id":8,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"output","nodeType":"inputoutput","id":8,"parents":[{"id":6,"branch":"main"}],"children":{"main":7},"selected":false,"wrong":false,"checked":false,"output":"$a"}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"S":{"params":[{"name":"a","type":"Numero"}],"signature":"S(a)", "correct":true}}
+
+},
+
+{
     //Print the first 20 even nodes
     'exId': '', 'assignment': 'Stampa i numeri pari da 0 a 20', 'correctNodes': 2, 'type': 'execution', 'nodes': {'main': [{'type': 'start', 'nodeType': 'start', 'id': 1, 'parents': [], 'children': {'main': 9}, 'selected': false, 'variables': [{'name': 'params', 'op': 'write'}]}, {'type': 'end', 'nodeType': 'end', 'id': 2, 'parents': [{'id': 10002, 'branch': 'main'}], 'children': {'main': -1}, 'selected': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 9, 'parents': [{'id': 1, 'branch': 'main'}], 'children': {'main': 10}, 'selected': false, 'checked': false, 'expressions': ['a = 1'], 'variables': [{'name': 'a', 'op': 'write'}]}, {'type': 'loop', 'nodeType': 'condition', 'id': 10, 'parents': [{'id': 9, 'branch': 'main'}], 'children': {'yes': 11, 'no': 10002, 'main': -1}, 'selected': false, 'checked': false, 'condition': 'a < 20', 'variables': [{'name': 'a', 'op': 'read'}]}, {'type': 'nopNoModal', 'nodeType': 'operation', 'id': 10001, 'nopFor': 10, 'parents': [{'id': 12, 'branch': 'main'}], 'children': {'main': 10}, 'selected': false, 'checked': false}, {'type': 'nop', 'nodeType': 'operation', 'id': 10002, 'nopFor': 10, 'parents': [{'id': 10, 'branch': 'no'}], 'children': {'main': 2}, 'selected': false, 'checked': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 11, 'parents': [{'id': 10, 'branch': 'yes'}], 'children': {'main': 12}, 'selected': false, 'checked': true, 'expressions': ['a = a + 2']}, {'type': 'output', 'nodeType': 'inputoutput', 'id': 12, 'parents': [{'id': 11, 'branch': 'main'}], 'children': {'main': 10001}, 'selected': false, 'checked': true, 'output': '$a \\n'}]}, 'functions': {'main': {'params': [], 'signature': 'main'}, 'ddd': {'params': [], 'signature': 'ddd()'}, 'paolo': {'params': [], 'signature': 'paolo()'}}
 },
@@ -19,6 +25,6 @@ module.exports = [{
     'exId': '', 'assignment': "Trova e stampa il numero maggiore all'interno dell'array", 'correctNodes': 6, 'type': 'execution', 'nodes': {'main': [{'type': 'start', 'nodeType': 'start', 'id': 14, 'parents': [], 'children': {'main': 16}, 'selected': false, 'wrong': false, 'checked': false, 'variables': [{'name': 'params', 'op': 'write'}]}, {'type': 'end', 'nodeType': 'end', 'id': 15, 'parents': [{'id': 21, 'branch': 'main'}], 'children': {'main': -1}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 16, 'parents': [{'id': 14, 'branch': 'main'}], 'children': {'main': 18}, 'selected': false, 'wrong': false, 'checked': false, 'expressions': ['array = [ 21, 5, 8, 7, 12, 4, 19 ]', 'massimo = 0', 'contatore = 0']}, {'type': 'loop', 'nodeType': 'condition', 'id': 18, 'parents': [{'id': 16, 'branch': 'main'}], 'children': {'yes': 19, 'no': 10005, 'main': -1}, 'selected': false, 'wrong': false, 'checked': false, 'condition': 'contatore < 7', 'variables': [{'name': 'contatore', 'op': 'read'}]}, {'type': 'nopNoModal', 'nodeType': 'operation', 'id': 10004, 'nopFor': 18, 'parents': [{'id': 22, 'branch': 'main'}], 'children': {'main': 18}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'nop', 'nodeType': 'operation', 'id': 10005, 'nopFor': 18, 'parents': [{'id': 18, 'branch': 'no'}], 'children': {'main': 21}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'condition', 'nodeType': 'condition', 'id': 19, 'parents': [{'id': 18, 'branch': 'yes'}], 'children': {'yes': 20, 'no': 10006, 'main': -1}, 'selected': false, 'wrong': false, 'checked': false, 'condition': 'array[contatore] > massimo', 'variables': [{'name': 'massimo', 'op': 'read'}]}, {'type': 'nop', 'nodeType': 'operation', 'id': 10006, 'nopFor': 19, 'parents': [{'id': 19, 'branch': 'no'}, {'id': 20, 'branch': 'main'}], 'children': {'main': 22}, 'selected': false, 'wrong': false, 'checked': false}, {'type': 'expression', 'nodeType': 'operation', 'id': 20, 'parents': [{'id': 19, 'branch': 'yes'}], 'children': {'main': 10006}, 'selected': false, 'wrong': false, 'checked': false, 'expressions': ['massimo = array[contatore]'], 'variables': [{'name': 'massimo', 'op': 'write'}]}, {'type': 'output', 'nodeType': 'inputoutput', 'id': 21, 'parents': [{'id': 10005, 'branch': 'main'}], 'children': {'main': 15}, 'selected': false, 'wrong': false, 'checked': false, 'output': '$massimo'}, {'type': 'expression', 'nodeType': 'operation', 'id': 22, 'parents': [{'id': 10006, 'branch': 'main'}], 'children': {'main': 10004}, 'selected': false, 'wrong': false, 'checked': false, 'expressions': ['contatore = contatore + 1'], 'variables': [{'name': 'contatore', 'op': 'write'}, {'name': 'contatore', 'op': 'read'}]}]}, 'functions': {'main': {'params': [], 'signature': 'main'}}
 }
 ]
-*/
 
-export default{ exs }
+
+//export default{ exs }

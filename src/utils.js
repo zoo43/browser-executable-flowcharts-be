@@ -405,7 +405,7 @@ function getFunctionSignature (funName, funParams) {
   if (funName === '') return ''
   let str = funName + '('
   for (let i = 0; i < funParams.length; i++) {
-    str += funParams[i]
+    str += funParams[i].name
     if (i < funParams.length - 1) str += ','
   }
   str += ')'

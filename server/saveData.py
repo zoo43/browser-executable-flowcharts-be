@@ -12,7 +12,6 @@ def removeSpaces(s):
 def saveData(data):
     client = pymongo.MongoClient("mongodb+srv://matteomartini6:admin@cluster0.jpkdcgi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
     db = client["Experiment-Data"]
-
     exercises = db["Exercises"]
     collection = db["Collection"] #Will be lesson number
     if(data["studentId"] != "admin"):

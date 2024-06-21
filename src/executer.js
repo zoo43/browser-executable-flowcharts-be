@@ -11,7 +11,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
     }
 
     for (let i = 0; i < functions[otherFunc].params.length; i++) {
-      const param = functions[otherFunc].params[i]
+      const param = functions[otherFunc].params[i].name
       if (i <= args.length) {
         newScope[param] = args[i]
       } else newScope[param] = undefined
@@ -23,9 +23,10 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
     }
     calcData.scope[otherFunc].push(newScope)
     const funcStartNode = _.find(nodes[otherFunc], n => { return n.type === 'start' })
+
     executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
     const res = _.cloneDeep(calcData.returnVal[otherFunc])
-
+    calcData.returnVal2[otherFunc] = res
     // "Consume" the return value
     calcData.returnVal[otherFunc] = null
 
@@ -36,21 +37,22 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions) {
 }
 
 function getNewCalcData (nodes, functions) {
-  const calcData = { scope: {}, outputs: [], memoryStates: [], returnVal: {}, onNode: {}, callOrder: [] }
+  const calcData = { scope: {}, outputs: [], memoryStates: [], returnVal: {}, onNode: {}, callOrder: [], returnVal2:{} }
   for (const func in nodes) {
     calcData.scope[func] = []
     calcData.onNode[func] = []
     calcData.returnVal[func] = null
+    calcData.returnVal2[func] = null
     if (func !== 'main') continue
 
     calcData.scope[func].push({})
     for (const otherFunc in nodes) {
       if (otherFunc === 'main') continue
 
-      calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions)
+      calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions)     
     }
   }
-
+  
   return calcData
 }
 

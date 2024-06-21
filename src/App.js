@@ -8,7 +8,7 @@ import comm from './communications'
 class App extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { studentId:'' , password:'', logged:false}
+    this.state = { studentId:'' , password:'', logged:true}
     this.checkCredentials = this.checkCredentials.bind(this)
     this.changePassword = this.changePassword.bind(this)
     this.changeId = this.changeId.bind(this)
