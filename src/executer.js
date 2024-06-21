@@ -6,7 +6,7 @@ const parseExpressions = require('./parseExpressions')
 
 const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
-function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[]) {   
+function getExecutableFunction (calcData, otherFunc, nodes, functions) {   
 
     return (...args) => {
       const newScope = {
