@@ -30,12 +30,11 @@ const mermaidOptions = require('./mermaidOptions')
 const executer = require('./executer')
 const examplePrograms = require('./examplePrograms')
 const utils = require('./utils')
-
 const baseState = {
   exerciseid: 0,
   exerciseData: null,
   nodes: { main: [] },
-  functions: { main: { params: [], signature: 'main', correct : true, returnType: 'Indefinito' }},
+  functions: { main: { params: [], signature: 'main', correct : true, returnType: 'Indefinito', correct : true }},
   previousStates: [],
   diagramStr: { main: '' },
   selectedNodeObj: null,
@@ -45,12 +44,15 @@ const baseState = {
   memoryStates: [],
   selectedFunc: 'main',
   selectedExampleProgram: _.keys(examplePrograms)[0],
+  selectedExampleProgram: _.keys(examplePrograms)[0],
   showDemo: true,
   checkedNodes : [],
   assignment: "",
   correctOutput: "",
   correctNodes: 2,
-  modifyFunction: false
+  modifyFunction: false,
+  modifyFunction: false, 
+  testOutput: []
 }
 
 function pushLimit (arr, element) {
@@ -103,6 +105,8 @@ class Flow extends React.Component {
     this.checkSignedNodes = this.checkSignedNodes.bind(this)
     this.findCheckedNodes = this.findCheckedNodes.bind(this)
     this.changeAssignment = this.changeAssignment.bind(this)
+    this.updateFunction = this.updateFunction.bind(this)
+    this.checkTests = this.checkTests.bind(this)
     this.updateFunction = this.updateFunction.bind(this)
     this.undo = this.undo.bind(this)
   }
@@ -225,9 +229,20 @@ class Flow extends React.Component {
     }
     else
     {
+      if(tabKey === this.state.selectedFunc && this.state.selectedFunc!=="main")
+    {
+      this.setState(
+        {
+          modifyFunction : true
+        }
+      )
+    }
+    else
+    {
       this.setState({
-        selectedFunc: tabKey
-      }, this.renderDiagram)
+          selectedFunc: tabKey
+        }, this.renderDiagram)
+    }
     }
   }
 
@@ -310,9 +325,90 @@ class Flow extends React.Component {
 
 
 
+
+  adjustType(variableType)
+  {
+    switch (variableType)
+    {
+      case 'Numero':
+        return "number"
+      case "Stringa":
+        return "string"
+      case "Bool":
+        return "boolean"
+      case "Array":
+        return "object"
+      case "Indefinito":
+        return ""
+      default:
+        return "undefined"
+    }
+
+  }
+
+
+  parameterCheck(calcData)
+  {
+    let newFunctions = _.cloneDeep(this.state.functions)
+    for (const fun in this.state.functions)
+      {
+        const actualFun = this.state.functions[fun]
+        for (const param in actualFun.params)
+        {
+          const actualParam = actualFun.params[param]
+          for(const node in calcData.memoryStates)
+          {
+            const actualNode = calcData.memoryStates[node]
+            if(actualNode.func === fun && actualNode.type === "start") //I check things on the start
+            {
+              if((this.adjustType(actualParam.type) !== typeof(actualNode.memory[fun][0][actualParam.name]) && this.adjustType(actualParam.type) !== ""))
+              {
+                newFunctions[fun].correct = false
+              }
+            }
+          }
+        }
+      }
+      this.setState({
+        functions : newFunctions
+      })
+      //res.returnVal
+  }
+
+
+
+  checkTests()
+  {
+    
+    let resultsForFunction = []
+    for(const fun in this.state.functions)
+    {
+      let results = []
+      const unitTests = this.state.functions[fun].unitTests
+      
+      for(const testNumber in unitTests)
+      {
+        const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
+        
+        const res = executer.executeFromNode(
+          startNode,
+          this.state.nodes,
+          this.state.functions,
+          'main',
+          executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber])
+        )
+        results.push(res.test)
+      }
+      if(results.length!==0)
+        resultsForFunction[fun] = (results)
+    }
+
+    return resultsForFunction
+}
+
+
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
         startNode,
@@ -324,23 +420,19 @@ class Flow extends React.Component {
 
       this.unitTest(res)
 
-      
+
+
+      this.parameterCheck(res)
+      const testResults = this.checkTests()
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
-      
-      //Here I should check if it's correct
-    } catch (err) {
-      let alertMsg = 'Errore di esecuzione'
-      if (err.message === 'too much recursion') {
-        alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
-      }
-      console.log('Error message: ', err.message)
-      alert(alertMsg)
-    }
-    this.setState({nodes: this.state.nodes},this.renderDiagram)
+    this.setState({
+      nodes : this.state.nodes,
+      testOutput : testResults
+    },this.renderDiagram)
   }
 
   showExecutionFeedback (data) {
@@ -424,6 +516,7 @@ class Flow extends React.Component {
     this.setState({
       newNodeType: '',
       selectedNodeObj: null,
+      modifyFunction : false,
       modifyFunction : false
     }, this.renderDiagram)
   }
@@ -446,6 +539,22 @@ class Flow extends React.Component {
     this.setState(
     {
       functions:newFunctions
+    })
+    return done()
+  }
+
+
+  updateFunction(data,done){
+    let newFunctions = _.cloneDeep(this.state.functions)
+    newFunctions[this.state.selectedFunc].signature = data.signature
+    newFunctions[this.state.selectedFunc].params = data.functionParameters
+    newFunctions[this.state.selectedFunc].correct = true
+    newFunctions[this.state.selectedFunc].unitTests = data.unitTests
+    //change function
+    this.setState(
+    {
+      functions:newFunctions,
+      selectedFunc : data.name
     })
     return done()
   }
@@ -754,6 +863,36 @@ class Flow extends React.Component {
     this.setState({correctOutput : this.state.outputToShow})
   }
 
+
+  printTestResults()
+  {      
+    let output = ""
+    Object.entries(this.state.testOutput).map(element => {
+      console.log(element[0])
+      const functionName = element[0]
+      const tests = element[1]
+
+      let result = (<><br/><h4>{functionName}</h4></>)
+      tests.map((test, cont) => {        
+        const parameters = test.test.map((x) =>{
+          return <li> {x.name  + " : " + x.value}</li>
+        })
+        console.log(test)
+        const midResult =(
+        <>
+        <h6 style = {{color: test.correct ? "green" : "red"}}>Test numero {cont+1} : {test.correct? "Passato" : "Non passato"}</h6>
+        {" Risultato previsto: " + test.expectedResult + " Risultato ottenuto: " + test.res + ". I valori in input erano i seguenti : "} <br /><ul>{parameters.map((x) =>{return x})}</ul>
+        </> )
+        result = (<>{result}{midResult}</>)
+      })
+      
+      output = (<>{output}{result}</>)
+    })
+    return output
+  }
+
+
+  
   shouldShowStartModal () {
     return !_.isNil(this.state.selectedNodeObj) &&
       this.state.selectedNodeObj.type === 'start'
@@ -811,11 +950,11 @@ class Flow extends React.Component {
     return (!_.isNil(this.state.selectedNodeObj) &&
     this.state.selectedNodeObj.type === 'functionCall') ||
     (this.state.newNodeType === 'functionCall') || 
+    this.state.modifyFunction || 
     this.state.modifyFunction
+
+    
   }
-
-
-
 
   render () {
     return (
@@ -868,7 +1007,7 @@ class Flow extends React.Component {
         <Tabs activeKey={this.state.selectedFunc} onSelect={this.selectFunctionTab}>
         {_.keys(this.state.nodes).map((func, idx) => {
           return (
-            <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={this.state.functions[func].signature} key={idx}> 
+            <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={this.state.functions[func].signature} key={idx}>  
               <h4> Consegna :  { this.state.assignment } </h4>
               <Row>
                 <Col xs={8}>
@@ -897,6 +1036,10 @@ class Flow extends React.Component {
           <Col xs={1}></Col>
         </Row>
 
+        <hr />
+          <div style={{ marginLeft: '15px' }}>
+            {this.printTestResults()}
+          </div>
         <hr />
 
         {this.state.showDemo &&
@@ -1052,6 +1195,10 @@ class Flow extends React.Component {
             show={this.shouldShowFunctionDefineModal()}
             closeCallback={this.unselectNode}
             addFunctionCallback={this.addFunction}
+            updateNodeCallback={this.updateFunction}
+            functionData={this.state.functions[this.state.selectedFunc]}
+            functionName={this.state.selectedFunc}
+            modifyFunction={this.state.modifyFunction}
             updateNodeCallback={this.updateFunction}
             functionData={this.state.functions[this.state.selectedFunc]}
             functionName={this.state.selectedFunc}
