@@ -30,7 +30,6 @@ const mermaidOptions = require('./mermaidOptions')
 const executer = require('./executer')
 const examplePrograms = require('./examplePrograms')
 const utils = require('./utils')
-
 const baseState = {
   exerciseid: 0,
   exerciseData: null,
@@ -50,7 +49,8 @@ const baseState = {
   assignment: "",
   correctOutput: "",
   correctNodes: 2,
-  modifyFunction: false
+  modifyFunction: false, 
+  testOutput: []
 }
 
 function pushLimit (arr, element) {
@@ -104,6 +104,7 @@ class Flow extends React.Component {
     this.findCheckedNodes = this.findCheckedNodes.bind(this)
     this.changeAssignment = this.changeAssignment.bind(this)
     this.updateFunction = this.updateFunction.bind(this)
+    this.checkTests = this.checkTests.bind(this)
     this.undo = this.undo.bind(this)
   }
 
@@ -299,40 +300,39 @@ class Flow extends React.Component {
   }
 
 
-//Splitto string su +, -, *, / , %, ||, && ,
 
-  checkTests(res)
+  checkTests()
   {
-    //Modify nodes and check returnValue
-    //Will be for every function
-    const unitTests = this.state.functions["dsa"].unitTests
-    for(const testNumber in unitTests)
+    
+    let resultsForFunction = []
+    for(const fun in this.state.functions)
     {
-      const nodes = _.cloneDeep(this.state.nodes)
-      let newFunc = _.cloneDeep(this.state.functions)
-
-      const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
+      let results = []
+      const unitTests = this.state.functions[fun].unitTests
       
-      const res = executer.executeFromNode(
-        startNode,
-        this.state.nodes,
-        this.state.functions,
-        'main',
-        executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[0])
-      )
-      console.log(res)
+      for(const testNumber in unitTests)
+      {
+        const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
+        
+        const res = executer.executeFromNode(
+          startNode,
+          this.state.nodes,
+          this.state.functions,
+          'main',
+          executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber])
+        )
+        results.push(res.test)
+      }
+      if(results.length!==0)
+        resultsForFunction[fun] = (results)
     }
-      
-    const startNode = _.find(this.state.nodes.dsa, { nodeType: 'start' })
-    const rrr = executer.getNewCalcData(this.state.nodes, this.state.functions, unitTests[0])
-    console.log(rrr)
+
+    return resultsForFunction
 }
 
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    
-
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
         startNode,
@@ -344,18 +344,16 @@ class Flow extends React.Component {
 
 
       this.parameterCheck(res)
-      this.checkTests()
-      
+      const testResults = this.checkTests()
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
-      
-      //Here I should check if it's correct
-   
-    
-    this.setState({nodes: this.state.nodes},this.renderDiagram)
+    this.setState({
+      nodes : this.state.nodes,
+      testOutput : testResults
+    },this.renderDiagram)
   }
 
   showExecutionFeedback (data) {
@@ -770,6 +768,36 @@ class Flow extends React.Component {
     this.setState({correctOutput : this.state.outputToShow})
   }
 
+
+  printTestResults()
+  {      
+    let output = ""
+    Object.entries(this.state.testOutput).map(element => {
+      console.log(element[0])
+      const functionName = element[0]
+      const tests = element[1]
+
+      let result = (<><br/><h4>{functionName}</h4></>)
+      tests.map((test, cont) => {        
+        const parameters = test.test.map((x) =>{
+          return <li> {x.name  + " : " + x.value}</li>
+        })
+        console.log(test)
+        const midResult =(
+        <>
+        <h6 style = {{color: test.correct ? "green" : "red"}}>Test numero {cont+1} : {test.correct? "Passato" : "Non passato"}</h6>
+        {" Risultato previsto: " + test.expectedResult + " Risultato ottenuto: " + test.res + ". I valori in input erano i seguenti : "} <br /><ul>{parameters.map((x) =>{return x})}</ul>
+        </> )
+        result = (<>{result}{midResult}</>)
+      })
+      
+      output = (<>{output}{result}</>)
+    })
+    return output
+  }
+
+
+  
   shouldShowStartModal () {
     return !_.isNil(this.state.selectedNodeObj) &&
       this.state.selectedNodeObj.type === 'start'
@@ -831,9 +859,6 @@ class Flow extends React.Component {
 
     
   }
-
-
-
 
   render () {
     return (
@@ -915,6 +940,10 @@ class Flow extends React.Component {
           <Col xs={1}></Col>
         </Row>
 
+        <hr />
+          <div style={{ marginLeft: '15px' }}>
+            {this.printTestResults()}
+          </div>
         <hr />
 
         {this.state.showDemo &&
