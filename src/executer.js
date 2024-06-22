@@ -12,8 +12,13 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
   {
     let expectedResult = 0
     const testParameters = unitTests.map((x)=>{ 
+      if(x.value === "true")
+        x.value = true
+      if(x.value === "false")
+        x.value = false
       return isNaN(Number(x.value)) ? x.value : Number(x.value)
     })
+    console.log(testParameters)
     expectedResult = testParameters.pop()
     return (...args) => {
       const newScope = {
