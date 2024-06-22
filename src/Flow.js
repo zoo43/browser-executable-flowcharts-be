@@ -1007,7 +1007,7 @@ class Flow extends React.Component {
         <Tabs activeKey={this.state.selectedFunc} onSelect={this.selectFunctionTab}>
         {_.keys(this.state.nodes).map((func, idx) => {
           return (
-            <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={this.state.functions[func].signature} key={idx}>  
+            <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={this.state.functions[func].signature} key={idx}>  
               <h4> Consegna :  { this.state.assignment } </h4>
               <Row>
                 <Col xs={8}>
@@ -1195,10 +1195,6 @@ class Flow extends React.Component {
             show={this.shouldShowFunctionDefineModal()}
             closeCallback={this.unselectNode}
             addFunctionCallback={this.addFunction}
-            updateNodeCallback={this.updateFunction}
-            functionData={this.state.functions[this.state.selectedFunc]}
-            functionName={this.state.selectedFunc}
-            modifyFunction={this.state.modifyFunction}
             updateNodeCallback={this.updateFunction}
             functionData={this.state.functions[this.state.selectedFunc]}
             functionName={this.state.selectedFunc}
