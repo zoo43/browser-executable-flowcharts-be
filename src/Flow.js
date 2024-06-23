@@ -772,17 +772,15 @@ class Flow extends React.Component {
   printTestResults()
   {      
     let output = ""
-    Object.entries(this.state.testOutput).map(element => {
-      console.log(element[0])
+    Object.entries(this.state.testOutput).map((element) => {
       const functionName = element[0]
       const tests = element[1]
 
       let result = (<><br/><h4>{functionName}</h4></>)
       tests.map((test, cont) => {        
         const parameters = test.test.map((x) =>{
-          return <li> {x.name  + " : " + x.value}</li>
+          return <li key={x.name}> {x.name  + " : " + x.value}</li>
         })
-        console.log(test)
         const midResult =(
         <>
         <h6 style = {{color: test.correct ? "green" : "red"}}>Test numero {cont+1} : {test.correct? "Passato" : "Non passato"}</h6>

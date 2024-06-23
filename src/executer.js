@@ -7,19 +7,28 @@ const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
 
 function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[]) {   
-  console.log(unitTests)
   if(unitTests.length!==0)
   {
     let expectedResult = 0
     const testParameters = unitTests.map((x)=>{ 
-      if(x.value === "true")
-        x.value = true
-      if(x.value === "false")
-        x.value = false
+      //TO DO: Check booleans
+
+      if(x.value=="true")
+      {
+        console.log("ci siamo")
+        return true
+      }
+      else if(x.value==="false")
+        return false
+
       return isNaN(Number(x.value)) ? x.value : Number(x.value)
     })
+    console.log(testParameters.length)
+
+
     console.log(testParameters)
     expectedResult = testParameters.pop()
+    //testParameters[0]=true
     return (...args) => {
       const newScope = {
         // params: _.cloneDeep(args)
@@ -28,6 +37,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
         const param = functions[otherFunc].params[i].name
         args = testParameters
         if (i <= testParameters.length) {
+          console.log(typeof(testParameters[i]))
           newScope[param] = testParameters[i]
         } else newScope[param] = undefined
       }
@@ -42,8 +52,8 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
       const res = _.cloneDeep(calcData.returnVal[otherFunc])
       calcData.returnVal[otherFunc] = null
       calcData.scope[otherFunc].pop()
-      console.log(res)
-      console.log(expectedResult)
+      if(typeof(expectedResult) === "boolean")
+        expectedResult = expectedResult.toString()
       calcData.test = {
         correct : res === expectedResult,
         res : res,
@@ -65,6 +75,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
       for (let i = 0; i < functions[otherFunc].params.length; i++) {
         const param = functions[otherFunc].params[i].name
         if (i <= args.length) {
+          console.log(args[i])
           newScope[param] = args[i]
         } else newScope[param] = undefined
       }
