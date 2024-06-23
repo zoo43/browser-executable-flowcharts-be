@@ -142,23 +142,6 @@ class ExpressionModal extends React.Component {
 
   showVariableFeedback () {
     return
-    const variablesWrittenElsewhere = utils.getAllWrittenVariables(this.props.nodes)
-    const variablesWrittenHere = _.map(this.getCurrentVariables('write'), v => { return v.name })
-    const writtenVariables = variablesWrittenElsewhere.concat(variablesWrittenHere)
-
-    const parseRes = utils.parseExpression(this.state.currentExpression)
-
-    let variableWarnings = []
-    for (const usedVar of parseRes.usedVariables) {
-      if (usedVar.op === 'read' && writtenVariables.indexOf(usedVar.name) < 0) {
-        variableWarnings.push(utils.getWarningHtml(usedVar.name, 'readUndefined'))
-      }
-      if (usedVar.op === 'execute' && this.props.functions.indexOf(usedVar.name) < 0) {
-        variableWarnings.push(utils.getWarningHtml(usedVar.name, 'executeUndefined'))
-      }
-    }
-
-    this.setState({ variableWarnings })
   }
 
   addExpression () {

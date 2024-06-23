@@ -30,12 +30,13 @@ const baseState = {
   usedVariables: []
 }
 
+/*
 const codeTextStyle = {
   fontFamily: 'monospace',
   fontSize: '15px',
   height: '100%',
   display: 'inline-block'
-}
+}*/
 
 class LoopForModal extends React.Component {
   constructor (props) {
@@ -162,7 +163,8 @@ class LoopForModal extends React.Component {
   }
 
   showVariableFeedback () {
-    const usedVariables = this.state.usedVariables
+    return
+    //const usedVariables = this.state.usedVariables
   }
 
   selectParents (selectedParents) {

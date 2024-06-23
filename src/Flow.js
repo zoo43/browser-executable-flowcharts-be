@@ -22,7 +22,7 @@ import NopModal from './NodeModals/NopModal'
 import comm from './communications'
 import nodesUtils from './nodes'
 import PropTypes from 'prop-types'
-import exs from './examplePrograms'
+//import exs from './examplePrograms'
 
 const _ = require('lodash')
 const config = require('./config')

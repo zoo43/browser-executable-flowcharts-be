@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { SignpostSplit, Plus, Pencil, Trash, ExclamationTriangle } from 'react-bootstrap-icons'
+import { SignpostSplit, Plus, Pencil, Trash } from 'react-bootstrap-icons'
 import AddChildButtons from './AddChildButtons'
 
 const _ = require('lodash')
@@ -100,22 +100,6 @@ class AssertModal extends React.Component {
 
   showVariableFeedback () {
     return
-    const writtenVariables = utils.getAllWrittenVariables(this.props.nodes)
-    const usedVariables = this.state.usedVariables
-
-    let variableWarnings = []
-    for (const usedVar of usedVariables) {
-      if (usedVar.op === 'read' && writtenVariables.indexOf(usedVar.name) < 0) {
-        variableWarnings.push(utils.getWarningHtml(usedVar.name, 'readUndefined'))
-      }
-      if (usedVar.op === 'execute' && this.props.functions.indexOf(usedVar.name) < 0) {
-        variableWarnings.push(utils.getWarningHtml(usedVar.name, 'executeUndefined'))
-      }
-    }
-
-    // console.log(usedVariables, variableWarnings)
-
-    this.setState({ variableWarnings })
   }
 
   selectParents (selectedParents) {

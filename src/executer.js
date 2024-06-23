@@ -13,7 +13,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
     const testParameters = unitTests.map((x)=>{ 
       //TO DO: Check booleans
 
-      if(x.value=="true")
+      if(x.value==="true")
       {
         console.log("ci siamo")
         return true
@@ -166,7 +166,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
       const result = function (str) {
         return eval(str)
       }.call(calcData.scope[func][currentFunc], parsedExpr)
-
+      console.log(result)
       // const lastCall = calcData.callOrder[calcData.callOrder.length - 1]
       // if (lastCall.func !== func || lastCall.lvl < currentFunc) {
       //  calcData.callOrder.push({ func, lvl: currentFunc })

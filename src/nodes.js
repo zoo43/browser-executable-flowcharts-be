@@ -2,7 +2,7 @@ import mermaid from 'mermaid'
 
 const _ = require('lodash')
 const config = require('./config')
-const mermaidOptions = require('./mermaidOptions')
+//const mermaidOptions = require('./mermaidOptions')
 
 let ID = 0
 let NOP_ID = 10000
@@ -97,6 +97,7 @@ function getNodeText (type, data) {
   return newNodeText
 }
 
+/*
 function replaceOccurrence (string, regex, n, replace) {
   let occ = 0
   return string.replace(regex, match => {
@@ -104,7 +105,7 @@ function replaceOccurrence (string, regex, n, replace) {
     if (occ % n === 0) return replace
     return match
    })
-}
+}*/
 
 function cleanupOutputNodeText (text) {
   let dataToOutput = text.replaceAll('\\n', '#92;n')
@@ -364,7 +365,7 @@ function connectNodes (parent, branch, child, nodes) {
   // Remove previous child from parent's children
   parent.children[branch] = -1
 
-  const childPreviousParents = _.cloneDeep(child.parents)
+  //const childPreviousParents = _.cloneDeep(child.parents)
   // Remove previous parent (same branch) from new child, if present
   _.remove(child.parents, { branch: branch })
   // Add new parent to new child
@@ -436,6 +437,7 @@ function convertToNodeLine (node) {
   return nodeStr
 }
 
+/*
 function isAncestorOrSame (origin, node, nodes, visited) {
   if (visited.indexOf(origin) >= 0) return false
   visited.push(origin)
@@ -449,7 +451,7 @@ function isAncestorOrSame (origin, node, nodes, visited) {
 
   return false
 }
-
+*/
 function convertToConnLine (node, nodes) {
   let connStr = ''
   for (const key in node.children) {

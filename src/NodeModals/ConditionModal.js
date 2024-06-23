@@ -103,22 +103,6 @@ class ConditionModal extends React.Component {
 
   showVariableFeedback () {
     return
-    const writtenVariables = utils.getAllWrittenVariables(this.props.nodes)
-    const usedVariables = this.state.usedVariables
-
-    let variableWarnings = []
-    for (const usedVar of usedVariables) {
-      if (usedVar.op === 'read' && writtenVariables.indexOf(usedVar.name) < 0) {
-        variableWarnings.push(utils.getWarningHtml(usedVar.name, 'readUndefined'))
-      }
-      if (usedVar.op === 'execute' && this.props.functions.indexOf(usedVar.name) < 0) {
-        variableWarnings.push(utils.getWarningHtml(usedVar.name, 'executeUndefined'))
-      }
-    }
-
-    // console.log(usedVariables, variableWarnings)
-
-    this.setState({ variableWarnings })
   }
 
   selectParents (selectedParents) {

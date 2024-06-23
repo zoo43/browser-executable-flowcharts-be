@@ -60,8 +60,8 @@ function getExercise (exerciseid, done) {
 function getUserId(done)
 {
   if (!config.communications.enable) return
-  axios.post('flowchart/getUserId').
-    then((response) => {
+  axios.post('flowchart/getUserId')
+  .then((response) => {
       return done(response.data)
     })
     .catch(err => {
