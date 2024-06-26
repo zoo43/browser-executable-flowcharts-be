@@ -15,7 +15,6 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
 
       if(x.value==="true")
       {
-        console.log("ci siamo")
         return true
       }
       else if(x.value==="false")
@@ -23,10 +22,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
 
       return isNaN(Number(x.value)) ? x.value : Number(x.value)
     })
-    console.log(testParameters.length)
 
-
-    console.log(testParameters)
     expectedResult = testParameters.pop()
     //testParameters[0]=true
     return (...args) => {
@@ -37,7 +33,6 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
         const param = functions[otherFunc].params[i].name
         args = testParameters
         if (i <= testParameters.length) {
-          console.log(typeof(testParameters[i]))
           newScope[param] = testParameters[i]
         } else newScope[param] = undefined
       }
@@ -75,7 +70,6 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
       for (let i = 0; i < functions[otherFunc].params.length; i++) {
         const param = functions[otherFunc].params[i].name
         if (i <= args.length) {
-          console.log(args[i])
           newScope[param] = args[i]
         } else newScope[param] = undefined
       }
@@ -166,7 +160,6 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
       const result = function (str) {
         return eval(str)
       }.call(calcData.scope[func][currentFunc], parsedExpr)
-      console.log(result)
       // const lastCall = calcData.callOrder[calcData.callOrder.length - 1]
       // if (lastCall.func !== func || lastCall.lvl < currentFunc) {
       //  calcData.callOrder.push({ func, lvl: currentFunc })

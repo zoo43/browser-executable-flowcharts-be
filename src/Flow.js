@@ -333,6 +333,8 @@ class Flow extends React.Component {
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
+    let testResults = ""
+      try{
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
         startNode,
@@ -341,19 +343,31 @@ class Flow extends React.Component {
         'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )
-
+      
 
       this.parameterCheck(res)
-      const testResults = this.checkTests()
+      testResults = this.checkTests()
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
-    this.setState({
-      nodes : this.state.nodes,
-      testOutput : testResults
-    },this.renderDiagram)
+      }
+      catch(err)
+      {
+        let alertMsg = 'Errore di esecuzione'
+        if (err.message === 'too much recursion') {
+          alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
+        }
+        console.log('Error message: ', err.message)
+        alert(alertMsg)
+      }
+
+      this.setState({
+        nodes : this.state.nodes,
+        testOutput : testResults
+      },this.renderDiagram)
+
   }
 
   showExecutionFeedback (data) {
@@ -433,7 +447,6 @@ class Flow extends React.Component {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     }
-
     this.setState({
       newNodeType: '',
       selectedNodeObj: null,
@@ -451,15 +464,28 @@ class Flow extends React.Component {
 
   updateFunction(data,done){
     let newFunctions = _.cloneDeep(this.state.functions)
-    newFunctions[this.state.selectedFunc].signature = data.signature
-    newFunctions[this.state.selectedFunc].params = data.functionParameters
-    newFunctions[this.state.selectedFunc].correct = true
-    newFunctions[this.state.selectedFunc].unitTests = data.unitTests
+    let functionName = this.state.selectedFunc
+    let newNodes = _.cloneDeep(this.state.nodes)
+    if(data.name !== this.state.selectedFunc)
+      delete newFunctions[this.state.selectedFunc]
+      functionName = data.name
+      const oldNodes = this.state.nodes[this.state.selectedFunc]
+      delete newNodes[this.state.selectedFunc]
+      newNodes[functionName] = oldNodes
+
+    const newFunction = {
+      signature : data.signature,
+      params : data.functionParameters,
+      correct : true,
+      unitTests : data.unitTests
+    }
+    newFunctions[functionName] = newFunction
     //change function
     this.setState(
     {
       functions:newFunctions,
-      selectedFunc : data.name
+      nodes:newNodes,
+      selectedFunc : functionName
     })
     return done()
   }
@@ -784,7 +810,7 @@ class Flow extends React.Component {
         const midResult =(
         <>
         <h6 style = {{color: test.correct ? "green" : "red"}}>Test numero {cont+1} : {test.correct? "Passato" : "Non passato"}</h6>
-        {" Risultato previsto: " + test.expectedResult + " Risultato ottenuto: " + test.res + ". I valori in input erano i seguenti : "} <br /><ul>{parameters.map((x) =>{return x})}</ul>
+        {" Risultato previsto: " + test.expectedResult + " Risultato ottenuto: " + test.res + ". "} <br></br> {"I valori in input erano i seguenti : "} <br /><ul>{parameters.map((x) =>{return x})}</ul>
         </> )
         result = (<>{result}{midResult}</>)
       })
@@ -858,6 +884,7 @@ class Flow extends React.Component {
     
   }
 
+
   render () {
     return (
       <div>
@@ -909,11 +936,11 @@ class Flow extends React.Component {
         <Tabs activeKey={this.state.selectedFunc} onSelect={this.selectFunctionTab}>
         {_.keys(this.state.nodes).map((func, idx) => {
           return (
-            <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={this.state.functions[func].signature} key={idx}> 
+            <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={ this.state.functions[func].signature} key={idx}> 
               <h4> Consegna :  { this.state.assignment } </h4>
               <Row>
                 <Col xs={8}>
-                  <h3>Diagramma - {this.state.functions[this.state.selectedFunc].signature}</h3>
+                  <h3>Diagramma - { this.state.functions[this.state.selectedFunc].signature}</h3>
                   <div className='' id={'flowchartDiv' + func} />
                 </Col>
 

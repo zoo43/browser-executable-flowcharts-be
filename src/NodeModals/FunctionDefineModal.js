@@ -179,6 +179,7 @@ class FunctionDefineModal extends React.Component {
       correct : this.state.correct,
       unitTests : this.removeVoidTests()
     }
+    console.log(data)
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
 
