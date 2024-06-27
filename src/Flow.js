@@ -189,6 +189,7 @@ class Flow extends React.Component {
     newState.assignment = assignment
     nodesUtils.updateBaseId(nodes)
     this.setState(newState, this.renderDiagram)
+
   }
 
   findCheckedNodes(nodes,firstLoad=false)
@@ -303,17 +304,16 @@ class Flow extends React.Component {
 
   checkTests()
   {
-    
     let resultsForFunction = []
     for(const fun in this.state.functions)
     {
       let results = []
-      const unitTests = this.state.functions[fun].unitTests
-      
+      //const fun = "main"
+      const unitTests = _.cloneDeep(this.state.functions[fun].unitTests)
       for(const testNumber in unitTests)
       {
-        const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
-        
+        const startNode = _.find(this.state.nodes['main'], { nodeType: 'start' })    
+        console.log(this.state)
         const res = executer.executeFromNode(
           startNode,
           this.state.nodes,
@@ -325,16 +325,21 @@ class Flow extends React.Component {
       }
       if(results.length!==0)
         resultsForFunction[fun] = (results)
+  
+     
     }
-
     return resultsForFunction
+
+
+
 }
 
 
   executeFlowchart () {
-    console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
+    //console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
+    
     let testResults = ""
-      try{
+
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
         startNode,
@@ -342,26 +347,18 @@ class Flow extends React.Component {
         this.state.functions,
         'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
-      )
-      
+      )  
 
-      this.parameterCheck(res)
       testResults = this.checkTests()
+      console.log(testResults)
+      this.parameterCheck(res)
+      
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
-      }
-      catch(err)
-      {
-        let alertMsg = 'Errore di esecuzione'
-        if (err.message === 'too much recursion') {
-          alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
-        }
-        console.log('Error message: ', err.message)
-        alert(alertMsg)
-      }
+      
 
       this.setState({
         nodes : this.state.nodes,
@@ -397,7 +394,7 @@ class Flow extends React.Component {
 
     this.setState({
       diagramStr
-    }, this.drawFlowChart)
+    }, this.drawFlowChart)    
   }
 
   drawFlowChart () {
@@ -481,6 +478,7 @@ class Flow extends React.Component {
     }
     newFunctions[functionName] = newFunction
     //change function
+
     this.setState(
     {
       functions:newFunctions,
@@ -727,6 +725,7 @@ class Flow extends React.Component {
   }
 
   addFunction (data) {
+   
     const functionName = data.functionName
     if (_.isNil(this.state.nodes[functionName])) {
       const nodes = this.state.nodes
@@ -782,6 +781,7 @@ class Flow extends React.Component {
     const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
     const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
     this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
+    
   }
 
 

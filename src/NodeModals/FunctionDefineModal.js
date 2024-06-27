@@ -53,7 +53,6 @@ class FunctionDefineModal extends React.Component {
     if(this.state.functionParameters !== 0)
     {
       let cont = 0
-      console.log(this.props.functionName)
       const alias = (this.props.functionData.params.length !== 0 && this.props.modifyFunction) ? this.props.functionData.params : this.state.functionParameters
       const defaultTests = alias.map( (param, id) =>
       { cont = id
@@ -179,7 +178,6 @@ class FunctionDefineModal extends React.Component {
       correct : this.state.correct,
       unitTests : this.removeVoidTests()
     }
-    console.log(data)
     this.props.updateNodeCallback(data, () => { return this.props.closeCallback(true) })
   }
 

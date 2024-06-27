@@ -1,59 +1,84 @@
 const _ = require('lodash')
 const utils = require('./utils')
 const parseExpressions = require('./parseExpressions')
-
+const file = require('./externalFile.js')
 
 const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
 
-function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[]) {   
-  if(unitTests.length!==0)
+function convertString(value)
+{
+  if(value==="true")
+  {
+    return true
+  }
+  else if(value==="false")
+    return false
+
+  return isNaN(Number(value)) ? value : Number(value)
+}
+
+function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[],funName="") {  
+  const newUnitTests = _.cloneDeep(unitTests)
+  
+  if(newUnitTests.length!==0 )
   {
     let expectedResult = 0
-    const testParameters = unitTests.map((x)=>{ 
+    const testParameters = newUnitTests.map((x)=>{ 
       //TO DO: Check booleans
-
-      if(x.value==="true")
-      {
-        return true
+      x.value = x.value.trim(' ')
+      if(x.value[0] === '[')
+      { 
+        let s = x.value.split(',')
+        s[0] = s[0].split('[')[1]
+        s[s.length-1] = s[s.length-1].split(']')[0]
+        for(const x in s)
+        {
+          s[x] = convertString(s[x])
+        }
+        return s
       }
-      else if(x.value==="false")
-        return false
-
-      return isNaN(Number(x.value)) ? x.value : Number(x.value)
+      return convertString(x.value)
     })
-
+    
     expectedResult = testParameters.pop()
-    //testParameters[0]=true
     return (...args) => {
       const newScope = {
         // params: _.cloneDeep(args)
       }
       for (let i = 0; i < functions[otherFunc].params.length; i++) {
-        const param = functions[otherFunc].params[i].name
-        args = testParameters
-        if (i <= testParameters.length) {
-          newScope[param] = testParameters[i]
-        } else newScope[param] = undefined
+        if(funName === otherFunc)
+        {
+          const param = functions[otherFunc].params[i].name
+          args = testParameters
+          if (i <= testParameters.length) {
+            newScope[param] = testParameters[i]
+          } else newScope[param] = undefined
+        }
       }
-  
+      
       for (const func in nodes) {
         if (func === 'main') continue
-        newScope[func] = getExecutableFunction(calcData, func, nodes, functions)
+        newScope[func] = getExecutableFunction(calcData, func, nodes, functions,unitTests)
       }
       calcData.scope[otherFunc].push(newScope)
-      const funcStartNode = _.find(nodes[otherFunc], n => { return n.type === 'start' })
+      const funcStartNode = _.cloneDeep(_.find(nodes[otherFunc], n => { return n.type === 'start' }))
+      
       executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
+      
       const res = _.cloneDeep(calcData.returnVal[otherFunc])
+      file.changeVar(res)
+      
       calcData.returnVal[otherFunc] = null
       calcData.scope[otherFunc].pop()
-      if(typeof(expectedResult) === "boolean")
-        expectedResult = expectedResult.toString()
+      //if(typeof(expectedResult) === "boolean")
+       // expectedResult = expectedResult.toString()
+      
       calcData.test = {
         correct : res === expectedResult,
         res : res,
-        expectedResult : unitTests.pop().value,
-        test : unitTests
+        expectedResult : newUnitTests.pop().value,
+        test : newUnitTests
       }
       return res
     }  
@@ -73,17 +98,18 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
           newScope[param] = args[i]
         } else newScope[param] = undefined
       }
-  
       for (const func in nodes) {
         if (func === 'main') continue
         newScope[func] = getExecutableFunction(calcData, func, nodes, functions)
       }
       calcData.scope[otherFunc].push(newScope)
       const funcStartNode = _.find(nodes[otherFunc], n => { return n.type === 'start' })
+      
       executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
       const res = _.cloneDeep(calcData.returnVal[otherFunc])
+      
       // "Consume" the return value
-      calcData.returnVal[otherFunc] = null
+      //calcData.returnVal[otherFunc] = null
   
       // Delete parameters
       calcData.scope[otherFunc].pop()
@@ -92,7 +118,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
   }
 }
 
-function getNewCalcData (nodes, functions,unitTests=[]) {
+function getNewCalcData (nodes, functions,unitTests=[], funName="") {
   const calcData = { scope: {}, outputs: [], memoryStates: [], returnVal: {}, onNode: {}, callOrder: [] }
   for (const func in nodes) {
     calcData.scope[func] = []
@@ -101,12 +127,13 @@ function getNewCalcData (nodes, functions,unitTests=[]) {
     if (func !== 'main') continue
 
     calcData.scope[func].push({})
+    
     for (const otherFunc in nodes) {
       if (otherFunc === 'main') continue
-      calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions,unitTests)
+      calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions,unitTests,funName)
     }
   }
-  
+  console.log(calcData)  
   return calcData
 }
 
@@ -132,7 +159,6 @@ function findUpdatedVariables (previousStates, currentState) {
 
 function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
   const currentFunc = calcData.scope[func].length - 1
-
   if (calcData.callOrder.length === 0) {
     calcData.callOrder.push({ func, lvl: currentFunc })
   } else {
@@ -160,6 +186,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
       const result = function (str) {
         return eval(str)
       }.call(calcData.scope[func][currentFunc], parsedExpr)
+      //console.log(result)
       // const lastCall = calcData.callOrder[calcData.callOrder.length - 1]
       // if (lastCall.func !== func || lastCall.lvl < currentFunc) {
       //  calcData.callOrder.push({ func, lvl: currentFunc })
@@ -202,7 +229,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
       returnValue = _.cloneDeep(calcData.scope[func][currentFunc][returnValue])
     }
     calcData.returnVal[func] = returnValue
-
+    
     // Jump to end node
     nextNode = _.find(nodes[func], { type: 'end' })
   }else if(node.type === 'assertion')
@@ -239,7 +266,8 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
   if (node.type === 'end') {
     calcData.callOrder.pop()
     return calcData
-  } else return executeFromNode(nextNode, nodes, functions, func, calcData)
+  } else{ 
+    return executeFromNode(nextNode, nodes, functions, func, calcData)}
 }
 
 module.exports = {
