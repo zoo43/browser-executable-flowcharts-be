@@ -7,10 +7,11 @@ const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
 
 function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[]) {   
-  if(unitTests.length!==0)
+  const newUnitTests = _.cloneDeep(unitTests)
+  if(newUnitTests.length!==0)
   {
     let expectedResult = 0
-    const testParameters = unitTests.map((x)=>{ 
+    const testParameters = newUnitTests.map((x)=>{ 
       //TO DO: Check booleans
 
       if(x.value==="true")
@@ -39,21 +40,21 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
   
       for (const func in nodes) {
         if (func === 'main') continue
-        newScope[func] = getExecutableFunction(calcData, func, nodes, functions)
+        newScope[func] = getExecutableFunction(calcData, func, nodes, functions,unitTests)
       }
       calcData.scope[otherFunc].push(newScope)
       const funcStartNode = _.find(nodes[otherFunc], n => { return n.type === 'start' })
       executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
       const res = _.cloneDeep(calcData.returnVal[otherFunc])
-      calcData.returnVal[otherFunc] = null
+     // calcData.returnVal[otherFunc] = null
       calcData.scope[otherFunc].pop()
       if(typeof(expectedResult) === "boolean")
         expectedResult = expectedResult.toString()
       calcData.test = {
         correct : res === expectedResult,
         res : res,
-        expectedResult : unitTests.pop().value,
-        test : unitTests
+        expectedResult : newUnitTests.pop().value,
+        test : newUnitTests
       }
       return res
     }  
@@ -83,7 +84,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
       executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
       const res = _.cloneDeep(calcData.returnVal[otherFunc])
       // "Consume" the return value
-      calcData.returnVal[otherFunc] = null
+      //calcData.returnVal[otherFunc] = null
   
       // Delete parameters
       calcData.scope[otherFunc].pop()

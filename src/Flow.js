@@ -313,7 +313,6 @@ class Flow extends React.Component {
       for(const testNumber in unitTests)
       {
         const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
-        
         const res = executer.executeFromNode(
           startNode,
           this.state.nodes,
@@ -322,6 +321,7 @@ class Flow extends React.Component {
           executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber])
         )
         results.push(res.test)
+        console.log(res)
       }
       if(results.length!==0)
         resultsForFunction[fun] = (results)
