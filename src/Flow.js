@@ -815,6 +815,7 @@ class Flow extends React.Component {
 
   submitExercise()
   {
+    //Send to db
     this.setState({
       submitted : true
     })
