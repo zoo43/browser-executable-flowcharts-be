@@ -305,8 +305,10 @@ class Flow extends React.Component {
   {
     
     let resultsForFunction = []
-    for(const fun in this.state.functions)
-    {
+   // for(const fun in this.state.functions)
+    //{
+   const fun = "dsa"
+   //Maybe calcData is over written? It's always the last one that "win"
       let results = []
       const unitTests = this.state.functions[fun].unitTests
       
@@ -318,14 +320,14 @@ class Flow extends React.Component {
           this.state.nodes,
           this.state.functions,
           'main',
-          executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber])
+          executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber],fun)
         )
         results.push(res.test)
         console.log(res)
       }
       if(results.length!==0)
         resultsForFunction[fun] = (results)
-    }
+    //}
 
     return resultsForFunction
 }
@@ -931,6 +933,8 @@ class Flow extends React.Component {
             <Button variant='primary' onClick={this.executeFlowchart}>
               <Play /> Esegui
             </Button>
+            <Col xs={4} style={{ textAlign: 'right' }}>
+            </Col>
           </Col>
         </Row>
         <Tabs activeKey={this.state.selectedFunc} onSelect={this.selectFunctionTab}>

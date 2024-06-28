@@ -6,7 +6,7 @@ const parseExpressions = require('./parseExpressions')
 const outputVariableRegex = /\$([a-zA-Z]+[a-zA-Z\d_]*(\[[a-zA-Z\d_]*\])*)/g
 
 
-function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[]) {   
+function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=[],fun="") { 
   const newUnitTests = _.cloneDeep(unitTests)
   if(newUnitTests.length!==0)
   {
@@ -23,18 +23,20 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
 
       return isNaN(Number(x.value)) ? x.value : Number(x.value)
     })
-
+    
     expectedResult = testParameters.pop()
     //testParameters[0]=true
+    console.log(calcData)
     return (...args) => {
       const newScope = {
         // params: _.cloneDeep(args)
       }
       for (let i = 0; i < functions[otherFunc].params.length; i++) {
         const param = functions[otherFunc].params[i].name
-        args = testParameters
+        if(fun !== "" && fun === otherFunc)
+          args = testParameters
         if (i <= testParameters.length) {
-          newScope[param] = testParameters[i]
+          newScope[param] = args[i]
         } else newScope[param] = undefined
       }
   
@@ -56,7 +58,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
         expectedResult : newUnitTests.pop().value,
         test : newUnitTests
       }
-      return res
+      //return res
     }  
   }
   
@@ -93,7 +95,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
   }
 }
 
-function getNewCalcData (nodes, functions,unitTests=[]) {
+function getNewCalcData (nodes, functions,unitTests=[],fun="") {
   const calcData = { scope: {}, outputs: [], memoryStates: [], returnVal: {}, onNode: {}, callOrder: [] }
   for (const func in nodes) {
     calcData.scope[func] = []
@@ -104,7 +106,7 @@ function getNewCalcData (nodes, functions,unitTests=[]) {
     calcData.scope[func].push({})
     for (const otherFunc in nodes) {
       if (otherFunc === 'main') continue
-      calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions,unitTests)
+      calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions,unitTests,fun)
     }
   }
   
@@ -159,6 +161,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
       const parsedExpr = parseExpressions(expr)
 
       const result = function (str) {
+
         return eval(str)
       }.call(calcData.scope[func][currentFunc], parsedExpr)
       // const lastCall = calcData.callOrder[calcData.callOrder.length - 1]
@@ -199,6 +202,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
   } else if (node.type === 'returnValue') {
     const returnType = node.returnType
     let returnValue = node.returnValue
+    console.log(calcData)
     if (returnType === 'variableName') {
       returnValue = _.cloneDeep(calcData.scope[func][currentFunc][returnValue])
     }
