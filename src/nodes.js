@@ -490,13 +490,16 @@ function convertToDiagramStrMermaidJS (nodes, clickable) {
   let diagramStr = 'flowchart TD\n'
   for (const node of nodes) {
     let nodeStr = node.id
-    if (node.nodeType === 'condition') {
+    if (node.nodeType === 'condition' && node.type!=="assertion") {
       nodeStr += '{{' + getNodeTextMermaid(node.type, node) + '}}'
     } else if (['nop', 'nopNoModal'].indexOf(node.type) >= 0) {
       nodeStr += '[' + getNodeTextMermaid(node.type, node) + ']'
     } else if (['start', 'end'].indexOf(node.type) >= 0) {
-      nodeStr += '([' + getNodeTextMermaid(node.type, node) + '])'
-    } else {
+      nodeStr += '([' + getNodeTextMermaid(node.type, node) + '])'  
+    } 
+    else if (['assertion'].indexOf(node.type) >= 0) {
+      nodeStr += '[' + getNodeTextMermaid(node.type, node) + ']'}
+    else {
       nodeStr += '(' + getNodeTextMermaid(node.type, node) + ')'
     }
     if (node.children.main >= 0) {
