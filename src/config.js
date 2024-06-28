@@ -1,9 +1,10 @@
 const config = {
   communications: {
     enable: false,
-    printErrors: false
+    printErrors: false,
   },
-  renderer: 'mermaid' // flowchartJS
+  renderer: 'mermaid', // flowchartJS
+  freeMode: false
 }
 
 module.exports = config
