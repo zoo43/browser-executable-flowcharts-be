@@ -165,6 +165,10 @@ class Flow extends React.Component {
       newNodeParent: null
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -245,6 +249,10 @@ class Flow extends React.Component {
       selectedFunc: 'main'
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -357,6 +365,11 @@ class Flow extends React.Component {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
+
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
       
 
@@ -442,6 +455,10 @@ class Flow extends React.Component {
 
     if (updated) {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
     }
     this.setState({
@@ -527,6 +544,10 @@ class Flow extends React.Component {
       previousStates
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -560,6 +581,10 @@ class Flow extends React.Component {
       previousStates
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -591,6 +616,10 @@ class Flow extends React.Component {
       previousStates
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -626,6 +655,10 @@ class Flow extends React.Component {
       previousStates
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -661,6 +694,10 @@ class Flow extends React.Component {
       previousStates
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -690,6 +727,10 @@ class Flow extends React.Component {
       previousStates
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -719,6 +760,10 @@ class Flow extends React.Component {
       previousStates
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+      if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+        {
+          alert("Problemi con l'id, avvisa il professore")
+        }
       comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
       this.renderDiagram()
     })
@@ -742,6 +787,10 @@ class Flow extends React.Component {
       }, () => {
         this.setupFunctionBaseNodes(functionName)
         const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
+        if(this.props.studentId==="Nan" || this.props.studentId==="" || this.props.studentId=== "undefined")
+          {
+            alert("Problemi con l'id, avvisa il professore")
+          }
         comm.updateFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
         this.renderDiagram()
       })
