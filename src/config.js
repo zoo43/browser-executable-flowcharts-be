@@ -3,7 +3,8 @@ const config = {
     enable: true,
     printErrors: false
   },
-  renderer: 'mermaid' // flowchartJS
+  renderer: 'mermaid', // flowchartJS
+  freeMode: false
 }
 
 module.exports = config

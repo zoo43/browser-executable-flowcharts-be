@@ -6,7 +6,7 @@ import Tab from 'react-bootstrap/Tab'
 import ButtonGroup from 'react-bootstrap/ButtonGroup'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { Play, ArrowCounterclockwise, Plus, Trash, Check } from 'react-bootstrap-icons'
+import { Play, ArrowCounterclockwise, Plus, Trash, Check, Envelope } from 'react-bootstrap-icons'
 import mermaid from 'mermaid'
 import MemoryStates from './MemoryStates'
 import StartModal from './NodeModals/StartModal'
@@ -52,7 +52,8 @@ const baseState = {
   correctNodes: 2,
   modifyFunction: false, 
   testOutput: [],
-  checkTraining: false
+  checkTraining: false,
+  submitted: false
 }
 
 function pushLimit (arr, element) {
@@ -108,6 +109,8 @@ class Flow extends React.Component {
     this.updateFunction = this.updateFunction.bind(this)
     this.checkTests = this.checkTests.bind(this)
     this.undo = this.undo.bind(this)
+    this.submitExercise = this.submitExercise.bind(this)
+    this.changeExercise = this.changeExercise.bind(this)
   }
 
   componentDidMount () {
@@ -177,15 +180,21 @@ class Flow extends React.Component {
   }
 
   updateSelectedExampleProgram (ev) {
+    let newSelectedExampleProgram = this.state.selectedExampleProgram
+    if(config.freeMode)
+    {
+      newSelectedExampleProgram = ev.target.value
+    }
     this.setState({
-      selectedExampleProgram: ev.target.value
-    })
+      selectedExampleProgram: newSelectedExampleProgram
+    }) 
   }
 
   loadPredefinedNodes (nodes, functions, checkedNodes, assignment) {
     const showDemo = _.clone(this.state.showDemo)
     const newState = _.cloneDeep(baseState)
     newState.exerciseid = _.clone(this.state.selectedExampleProgram)
+    newState.selectedExampleProgram = _.clone(this.state.selectedExampleProgram)
     newState.exerciseData = _.clone(this.state.exerciseData)
     newState.nodes = nodes
     newState.functions = functions
@@ -322,8 +331,10 @@ class Flow extends React.Component {
   checkTests()
   {
     let resultsForFunction = []
-    for(const fun in this.state.functions)
-    {
+   // for(const fun in this.state.functions)
+    //{
+   const fun = "dsa"
+   //Maybe calcData is over written? It's always the last one that "win"
       let results = []
       //const fun = "main"
       const unitTests = _.cloneDeep(this.state.functions[fun].unitTests)
@@ -335,20 +346,17 @@ class Flow extends React.Component {
           this.state.nodes,
           this.state.functions,
           'main',
-          executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber])
+          executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber],fun)
         )
         results.push(res.test)
+        console.log(res)
       }
       if(results.length!==0)
         resultsForFunction[fun] = (results)
   
-     
+      return resultsForFunction
     }
-    return resultsForFunction
-
-
-
-}
+    
 
 
   executeFlowchart () {
@@ -875,6 +883,13 @@ class Flow extends React.Component {
     }
     const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
     const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
+    if(!config.freeMode)
+    {
+      this.setState(
+        {
+          selectedExampleProgram : this.state.selectedExampleProgram
+        })
+    }
     this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
     
   }
@@ -889,6 +904,26 @@ class Flow extends React.Component {
     this.setState({correctOutput : this.state.outputToShow})
   }
 
+
+  submitExercise()
+  {
+    //Send to db
+    this.setState({
+      submitted : true
+    })
+  }
+
+  changeExercise()
+  {
+
+    const newProgram = Number(this.state.selectedExampleProgram)+1
+    this.loadExampleProgram(newProgram)
+    this.setState({
+        selectedExampleProgram : newProgram,
+        submitted : false
+      })
+
+  }
 
   printTestResults()
   {      
@@ -1026,6 +1061,8 @@ class Flow extends React.Component {
             <Button variant='primary' onClick={this.executeFlowchart} disabled={this.state.checkTraining}>
               <Play /> Esegui
             </Button>
+            <Col xs={4} style={{ textAlign: 'right' }}>
+            </Col>
           </Col>
         </Row>
         <Tabs activeKey={this.state.selectedFunc} onSelect={this.selectFunctionTab}>
@@ -1079,7 +1116,10 @@ class Flow extends React.Component {
               </Form.Select>
             </Col>
             <Col xs={3}>
-              <Button variant='primary' onClick={this.loadExampleProgram}>
+              <Button variant='primary' disabled={!this.state.submitted || config.freeMode} onClick={this.changeExercise}>
+                Passa al prossimo esercizio
+              </Button>
+              <Button variant='dark' hidden={!config.freeMode} onClick={this.loadExampleProgram}>
                 Carica demo
               </Button>
             </Col>
@@ -1089,7 +1129,13 @@ class Flow extends React.Component {
                 value={this.state.assignment}
                 onChange={this.changeAssignment}
                 hidden={true}
-              />
+                />
+            </Col>
+
+            <Col xs={6} style={{ textAlign: 'right' }}>
+              <Button variant='info' onClick={this.submitExercise} disabled={this.state.submitted || config.freeMode}>
+                <Envelope /> Consegna Esercizio
+              </Button>
             </Col>
           </Row>
         }

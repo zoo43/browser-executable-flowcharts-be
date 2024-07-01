@@ -80,7 +80,7 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
         expectedResult : newUnitTests.pop().value,
         test : newUnitTests
       }
-      return res
+      //return res
     }  
   }
   
@@ -183,6 +183,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
       const parsedExpr = parseExpressions(expr)
 
       const result = function (str) {
+
         return eval(str)
       }.call(calcData.scope[func][currentFunc], parsedExpr)
       console.log(result)
@@ -224,6 +225,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
   } else if (node.type === 'returnValue') {
     const returnType = node.returnType
     let returnValue = node.returnValue
+    console.log(calcData)
     if (returnType === 'variableName') {
       returnValue = _.cloneDeep(calcData.scope[func][currentFunc][returnValue])
     }
