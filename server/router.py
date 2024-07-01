@@ -14,7 +14,11 @@ CORS(app)
 
 userCount = 0
 
+#TrainingCheckNodes
+#Exercises -> Pre-test
+#
 
+exDbName = "TrainingCheckNodes"
 
 app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
@@ -113,7 +117,7 @@ def getFlowchart():
 @jwt_required() 
 def getAllExercises():
     if(request.method == "GET"):
-        exercises = getAll()
+        exercises = getAll(exDbName)
         print(exercises)
         return exercises
 
@@ -123,7 +127,7 @@ def getAllExercises():
 def getExecution():
    # saveFile(decodeData(request))
     if(request.method == "POST"):
-        res = saveData(decodeData(request))
+        res = saveData(decodeData(request),exDbName)
         s = "Il programma è corretto" if res else "Il programma non è corretto"
         return s
         

@@ -131,6 +131,7 @@ class ConditionModal extends React.Component {
   }
 
   updateNode () {
+    
     const data = {
       id: this.props.node.id,
       parents: _.clone(this.state.currentlySelectedParents),

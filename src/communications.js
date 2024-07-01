@@ -23,7 +23,6 @@ function login(id, pass, done)
 {
   axios.post('/token', { studentId: id, password: pass })
   .then(response => {
-    console.log(response)
     window.sessionStorage.setItem("accessToken", response.data.access_token)
     window.sessionStorage.setItem("studentId", response.data.studentId)
     return done()
@@ -32,7 +31,6 @@ function login(id, pass, done)
   .catch(err => {
     if (config.communications.printErrors) {
       console.error(err)
-      console.log("Ciao")
     }
     alert ("Password o id errati")
     return
@@ -85,7 +83,6 @@ function getInTouch (exerciseid,done) {
 
 function executeFlowchart (data, nodes, functions,done) {
   const oldData = data
-  console.log(data)
   if (config.communications.enable)
   {
     if(data.studentId !== "admin")
@@ -104,7 +101,6 @@ function executeFlowchart (data, nodes, functions,done) {
       data.functions = functions
     }
     data.type = "execution"
-    console.log(data)
     axios.post("/flowchart/executeFlowchart", data)
     .then((response) => {
       return(done(response.data))

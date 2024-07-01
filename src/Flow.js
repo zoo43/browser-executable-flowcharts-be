@@ -243,9 +243,16 @@ class Flow extends React.Component {
     pushLimit(previousStates, _.cloneDeep(nodes))
 
     delete nodes[this.state.selectedFunc]
+
+    const functions = _.cloneDeep(this.state.functions)
+    delete functions[this.state.selectedFunc]
+
+
+
     this.setState({
       nodes,
       previousStates,
+      functions,
       selectedFunc: 'main'
     }, () => {
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes}
@@ -321,7 +328,6 @@ class Flow extends React.Component {
       for(const testNumber in unitTests)
       {
         const startNode = _.find(this.state.nodes['main'], { nodeType: 'start' })    
-        console.log(this.state)
         const res = executer.executeFromNode(
           startNode,
           this.state.nodes,
@@ -358,7 +364,6 @@ class Flow extends React.Component {
       )  
 
       testResults = this.checkTests()
-      console.log(testResults)
       this.parameterCheck(res)
       
       const outputToSend = this.showExecutionFeedback(res)
@@ -815,7 +820,15 @@ class Flow extends React.Component {
   checkSignedNodes()
   {
     const checkedNodes = this.state.checkedNodes //Checked nodes signed by me
-    const signedNodes = this.findCheckedNodes(this.state.nodes["main"]) //Signed signed by user
+    const signedNodes = [] //Signed signed by user
+    for(const x in this.state.nodes)
+    {
+      this.findCheckedNodes(this.state.nodes[x],false).map((element) =>
+      {
+        signedNodes.push(element)
+      }) 
+    }
+
     let correctNodesCounter = 0
     checkedNodes.forEach((id) =>
     { 
@@ -827,6 +840,11 @@ class Flow extends React.Component {
     })
     
     alert("Hai segnato " + signedNodes.length + " nodi e " + correctNodesCounter + " di questi sono corretti su un totale di " + checkedNodes.length + " nodi corretti")
+    if(signedNodes.length === correctNodesCounter === checkedNodes.length)
+    {
+      //enable execution
+    }
+  
   }
 
 
@@ -839,9 +857,15 @@ class Flow extends React.Component {
 
 
   loadExampleProgram () {
-    console.log(examplePrograms)
     const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
-    const checkedNodes = this.findCheckedNodes(programNodes["main"],true)
+    let checkedNodes = []
+    for(const x in programNodes)
+    {
+      this.findCheckedNodes(programNodes[x],true).map((element) =>
+      {
+        checkedNodes.push(element)
+      }) 
+    }
     const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
     const assignment = examplePrograms[this.state.selectedExampleProgram].assignment
     this.loadPredefinedNodes(programNodes, programFunctions, checkedNodes, assignment)
@@ -1057,6 +1081,7 @@ class Flow extends React.Component {
                 type="text"
                 value={this.state.assignment}
                 onChange={this.changeAssignment}
+                hidden={true}
               />
             </Col>
           </Row>

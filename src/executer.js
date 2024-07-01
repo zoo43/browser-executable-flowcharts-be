@@ -133,7 +133,6 @@ function getNewCalcData (nodes, functions,unitTests=[], funName="") {
       calcData.scope[func][0][otherFunc] = getExecutableFunction(calcData, otherFunc, nodes, functions,unitTests,funName)
     }
   }
-  console.log(calcData)  
   return calcData
 }
 

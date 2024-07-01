@@ -280,6 +280,7 @@ function updateNodeContents (nodeObj, data) {
   } else if (nodeObj.type === 'condition') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
+    nodeObj.checked = data.checked
   } else if (nodeObj.type === 'assertion') {
     nodeObj.condition = data.condition
     nodeObj.variables = data.variables
@@ -427,6 +428,7 @@ function convertToNodeLine (node) {
     }
     if (node.selected) nodeStr += '|selected'
     if (node.wrong) nodeStr += '|wrong'
+    if (node.checked) nodeStr += '|checked'
     else if (node.type === 'nop') nodeStr += '|nop'
     nodeStr += ':$nodeClickCallback'
   } else {

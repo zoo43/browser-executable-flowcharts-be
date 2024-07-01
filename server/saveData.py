@@ -3,11 +3,9 @@ import datetime
 import pytz
 from datetime import datetime, timezone, timedelta
 
-#TrainingCheckNodes
-#Exercises -> Pre-test
-#
 
-exDbName = "TrainingCheckNodes"
+
+
 
 def removeSpaces(s):
     s = s.replace("\n" , "")
@@ -15,7 +13,7 @@ def removeSpaces(s):
     s = s.replace("&nbsp;","")
     return s
 
-def saveData(data):
+def saveData(data, exDbName):
     client = pymongo.MongoClient("mongodb+srv://matteomartini6:admin@cluster0.jpkdcgi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
     db = client["Experiment-Data"]
     exercises = db[exDbName]
