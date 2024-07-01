@@ -85,6 +85,7 @@ function getInTouch (exerciseid,done) {
 
 function executeFlowchart (data, nodes, functions,done) {
   const oldData = data
+  console.log(data)
   if (config.communications.enable)
   {
     if(data.studentId !== "admin")
@@ -103,6 +104,7 @@ function executeFlowchart (data, nodes, functions,done) {
       data.functions = functions
     }
     data.type = "execution"
+    console.log(data)
     axios.post("/flowchart/executeFlowchart", data)
     .then((response) => {
       return(done(response.data))
@@ -136,14 +138,14 @@ function updateFlowchart (data, nodes, functions) {
       //output
     }
     data.type = "modification"
-    axios.post("/flowchart/updateFlowchart", data)
+    /*axios.post("/flowchart/updateFlowchart", data)
     .then(() => {
     })
     .catch(err => {
       if (config.communications.printErrors) {
         console.error(err)
       }
-    })
+    })*/
   }
 }
 

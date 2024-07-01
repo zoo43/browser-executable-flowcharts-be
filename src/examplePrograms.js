@@ -1,14 +1,14 @@
 // Programs exported here will be available within the demoloader exercise "?exerciseid=demoloader"
 
 //An admin mode where I can set the correct Nodes when creating the string
-/*import comm from './communications'
+import comm from './communications'
 
 const exs = await comm.getAllExercises()
 
-*/
+
 
 //Should have assignment
-module.exports = [
+const local = [
 {"nodes":{"main":[{"type":"start","nodeType":"start","id":1,"parents":[],"children":{"main":3},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":2,"parents":[{"id":3,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":3,"parents":[{"id":1,"branch":"main"}],"children":{"main":2},"selected":false,"wrong":false,"checked":false,"expressions":["ris = fun(true,4,5)","res = sum(4,3)"]}],"fun":[{"type":"start","nodeType":"start","id":4,"parents":[],"children":{"main":6},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":5,"parents":[{"id":10001,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"condition","nodeType":"condition","id":6,"parents":[{"id":4,"branch":"main"}],"children":{"yes":7,"no":9,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"a == true","variables":[{"name":"a","op":"read"}]},{"type":"nop","nodeType":"operation","id":10001,"nopFor":6,"parents":[{"id":8,"branch":"main"},{"id":9,"branch":"main"}],"children":{"main":5},"selected":false,"wrong":false,"checked":false,"unreachable":true},{"type":"expression","nodeType":"operation","id":7,"parents":[{"id":6,"branch":"yes"}],"children":{"main":8},"selected":false,"wrong":false,"checked":false,"expressions":["somma = b+c"],"variables":[{"name":"somma","op":"write"},{"name":"b","op":"read"},{"name":"c","op":"read"}]},{"type":"returnValue","nodeType":"operation","id":8,"parents":[{"id":7,"branch":"main"}],"children":{"main":10001},"selected":false,"wrong":false,"checked":false,"returnType":"variableName","returnValue":"somma"},{"type":"returnValue","nodeType":"operation","id":9,"parents":[{"id":6,"branch":"no"}],"children":{"main":10001},"selected":false,"wrong":false,"checked":false,"returnType":"bool","returnValue":false}],"sum":[{"type":"start","nodeType":"start","id":11,"parents":[],"children":{"main":13},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":12,"parents":[{"id":14,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":13,"parents":[{"id":11,"branch":"main"}],"children":{"main":14},"selected":false,"wrong":false,"checked":false,"expressions":["somma = a + b"],"variables":[{"name":"somma","op":"write"},{"name":"a","op":"read"},{"name":"b","op":"read"}]},{"type":"returnValue","nodeType":"operation","id":14,"parents":[{"id":13,"branch":"main"}],"children":{"main":12},"selected":false,"wrong":false,"checked":false,"returnType":"variableName","returnValue":"somma"}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"fun":{"params":[{"name":"a","type":"Indefinito"},{"name":"b","type":"Indefinito"},{"name":"c","type":"Indefinito"}],"signature":"fun(a,b,c)","correct":true,"unitTests":[[{"id":"1","name":"a","value":"true"},{"id":"1","name":"b","value":"2"},{"id":"2","name":"c","value":"2"},{"id":"3","name":"Ritorno","value":"4"}],[{"id":"0","name":"a","value":"false"},{"id":"1","name":"b","value":"2"},{"id":"2","name":"c","value":"2"},{"id":"3","name":"Ritorno","value":"false"}],[{"id":"0","name":"a","value":"false"},{"id":"1","name":"b","value":"2"},{"id":"2","name":"c","value":"2"},{"id":"3","name":"Ritorno","value":"4"}]]},"sum":{"params":[{"name":"a","type":"Indefinito"},{"name":"b","type":"Indefinito"}],"signature":"sum(a,b)","correct":true,"unitTests":[[{"id":"1","name":"a","value":"2"},{"id":"1","name":"b","value":"2"},{"id":"2","name":"Ritorno","value":"4"}]]}}},
 {
     //1  Divisione senza /
@@ -23,8 +23,7 @@ module.exports = [
 //3  Numero maggiore in array
 {"nodes":{"main":[{"type":"start","nodeType":"start","id":14,"parents":[],"children":{"main":16},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":15,"parents":[{"id":10009,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":16,"parents":[{"id":14,"branch":"main"}],"children":{"main":24},"selected":false,"wrong":false,"checked":false,"expressions":["array1 = [5,6,7,8,9,10,11]","array2 = [15,6,7,8,9,10,11]","array3 = [15,6,7,8,9,10,22]","contatore = 0","array = [array1, array2, array3]"]},{"type":"loop","nodeType":"condition","id":24,"parents":[{"id":16,"branch":"main"}],"children":{"yes":45,"no":10009,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"contatore < 3","variables":[{"name":"contatore","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10008,"nopFor":24,"parents":[{"id":43,"branch":"main"}],"children":{"main":24},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10009,"nopFor":24,"parents":[{"id":24,"branch":"no"}],"children":{"main":15},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":43,"parents":[{"id":45,"branch":"main"}],"children":{"main":10008},"selected":false,"wrong":false,"checked":false,"expressions":["trovaMaggiore(array[contatore])"],"variables":[{"name":"trovaMaggiore","op":"execute"}]},{"type":"expression","nodeType":"operation","id":45,"parents":[{"id":24,"branch":"yes"}],"children":{"main":43},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = contatore + 1"],"variables":[{"name":"contatore","op":"write"},{"name":"contatore","op":"read"}]}],"trovaMaggiore":[{"type":"start","nodeType":"start","id":35,"parents":[],"children":{"main":37},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":36,"parents":[{"id":42,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":37,"parents":[{"id":35,"branch":"main"}],"children":{"main":38},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = 0","elementi = 7"]},{"type":"loop","nodeType":"condition","id":38,"parents":[{"id":37,"branch":"main"}],"children":{"yes":39,"no":10015,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"contatore < elementi","variables":[{"name":"contatore","op":"read"},{"name":"elementi","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10014,"nopFor":38,"parents":[{"id":10016,"branch":"main"}],"children":{"main":38},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10015,"nopFor":38,"parents":[{"id":38,"branch":"no"}],"children":{"main":42},"selected":false,"wrong":false,"checked":false},{"type":"condition","nodeType":"condition","id":39,"parents":[{"id":38,"branch":"yes"}],"children":{"yes":40,"no":10016,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"arr[contatore] > maggiore","variables":[{"name":"maggiore","op":"read"}]},{"type":"nop","nodeType":"operation","id":10016,"nopFor":39,"parents":[{"id":39,"branch":"no"},{"id":40,"branch":"main"}],"children":{"main":10014},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":40,"parents":[{"id":39,"branch":"yes"}],"children":{"main":10016},"selected":false,"wrong":false,"checked":false,"expressions":["maggiore = arr[contatore]","contatore = contatore + 1"]},{"type":"output","nodeType":"inputoutput","id":42,"parents":[{"id":10015,"branch":"main"}],"children":{"main":36},"selected":false,"wrong":false,"checked":false,"output":"$massimo"}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"trovaMaggiore":{"params":[{"name":"arr","type":"Indefinito"}],"signature":"trovaMaggiore(arr)","correct":true,"unitTests":[]}}},
 //4  mcm
-{"nodes":{"main":[{"type":"start","nodeType":"start","id":6,"parents":[],"children":{"main":8},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":7,"parents":[{"id":10006,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":8,"parents":[{"id":6,"branch":"main"}],"children":{"main":16},"selected":false,"wrong":false,"checked":false,"expressions":["a = [15,4,27]","b = [5,10,5]"]},{"type":"expression","nodeType":"operation","id":16,"parents":[{"id":8,"branch":"main"}],"children":{"main":17},"selected":false,"wrong":false,"checked":false,"expressions":["elementi = 3","contatore = 0"]},{"type":"loop","nodeType":"condition","id":17,"parents":[{"id":16,"branch":"main"}],"children":{"yes":25,"no":10006,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"contatore < elementi","variables":[{"name":"contatore","op":"read"},{"name":"elementi","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10005,"nopFor":17,"parents":[{"id":31,"branch":"main"}],"children":{"main":17},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10006,"nopFor":17,"parents":[{"id":17,"branch":"no"}],"children":{"main":7},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":25,"parents":[{"id":17,"branch":"yes"}],"children":{"main":26},"selected":false,"wrong":false,"checked":false,"expressions":["multiploA = a[contatore]","multiploB = b[contatore]"]},{"type":"loop","nodeType":"condition","id":26,"parents":[{"id":25,"branch":"main"}],"children":{"yes":27,"no":10011,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"multiploA != multiploB","variables":[{"name":"multiploA","op":"read"},{"name":"multiploB","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10010,"nopFor":26,"parents":[{"id":33,"branch":"main"}],"children":{"main":26},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10011,"nopFor":26,"parents":[{"id":26,"branch":"no"}],"children":{"main":30},"selected":false,"wrong":false,"checked":false},{"type":"condition","nodeType":"condition","id":27,"parents":[{"id":26,"branch":"yes"}],"children":{"yes":28,"no":29,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"multiploA < multiploB","variables":[{"name":"multiploA","op":"read"},{"name":"multiploB","op":"read"}]},{"type":"nop","nodeType":"operation","id":10012,"nopFor":27,"parents":[{"id":28,"branch":"main"},{"id":29,"branch":"main"}],"children":{"main":33},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":28,"parents":[{"id":27,"branch":"yes"}],"children":{"main":10012},"selected":false,"wrong":false,"checked":false,"expressions":["multiploB = multiploB + b[contatore]"],"variables":[{"name":"multiploB","op":"write"},{"name":"multiploB","op":"read"}]},{"type":"expression","nodeType":"operation","id":29,"parents":[{"id":27,"branch":"no"}],"children":{"main":10012},"selected":false,"wrong":false,"checked":false,"expressions":["multiploA = multiploA + a[contatore]"]},{"type":"output","nodeType":"inputoutput","id":30,"parents":[{"id":10011,"branch":"main"}],"children":{"main":31},"selected":false,"wrong":false,"checked":false,"output":"$multiploA"},{"type":"expression","nodeType":"operation","id":31,"parents":[{"id":30,"branch":"main"}],"children":{"main":10005},"selected":false,"wrong":false,"checked":false,"expressions":["contatore =  contatore + 1"],"variables":[{"name":"contatore","op":"write"},{"name":"contatore","op":"read"}]},{"type":"expression","nodeType":"operation","id":33,"parents":[{"id":10012,"branch":"main"}],"children":{"main":10010},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = contatore + 1"],"variables":[{"name":"contatore","op":"write"},{"name":"contatore","op":"read"}]}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"divisione":{"params":[{"name":"numeratore","type":"Indefinito"},{"name":"denominatore","type":"Indefinito"}],"signature":"divisione(numeratore,denominatore)","correct":true,"unitTests":[]}}},
-
+{"nodes":{"main":[{"type":"start","nodeType":"start","id":6,"parents":[],"children":{"main":8},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":7,"parents":[{"id":10006,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":8,"parents":[{"id":6,"branch":"main"}],"children":{"main":16},"selected":false,"wrong":false,"checked":false,"expressions":["a = [15,4,27]","b = [5,10,5]"]},{"type":"expression","nodeType":"operation","id":16,"parents":[{"id":8,"branch":"main"}],"children":{"main":17},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = 0"]},{"type":"loop","nodeType":"condition","id":17,"parents":[{"id":16,"branch":"main"}],"children":{"yes":35,"no":10006,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"arr[contatore] != undefined"},{"type":"nopNoModal","nodeType":"operation","id":10005,"nopFor":17,"parents":[{"id":31,"branch":"main"}],"children":{"main":17},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10006,"nopFor":17,"parents":[{"id":17,"branch":"no"}],"children":{"main":7},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":31,"parents":[{"id":36,"branch":"main"}],"children":{"main":10005},"selected":false,"wrong":false,"checked":false,"expressions":["contatore =  contatore + 1"],"variables":[{"name":"contatore","op":"write"},{"name":"contatore","op":"read"}]},{"type":"expression","nodeType":"operation","id":35,"parents":[{"id":17,"branch":"yes"}],"children":{"main":36},"selected":false,"wrong":false,"checked":false,"expressions":["risultato = mcm(a[contatore], b[contatore])"],"variables":[{"name":"risultato","op":"write"},{"name":"mcm","op":"execute"}]},{"type":"output","nodeType":"inputoutput","id":36,"parents":[{"id":35,"branch":"main"}],"children":{"main":31},"selected":false,"wrong":false,"checked":false,"output":"$risultato\\n"}],"mcm":[{"type":"start","nodeType":"start","id":37,"parents":[],"children":{"main":41},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":38,"parents":[{"id":44,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"loop","nodeType":"condition","id":39,"parents":[{"id":41,"branch":"main"}],"children":{"yes":40,"no":10015,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"multiploA != multiploB"},{"type":"nopNoModal","nodeType":"operation","id":10014,"nopFor":39,"parents":[{"id":10016,"branch":"main"}],"children":{"main":39},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10015,"nopFor":39,"parents":[{"id":39,"branch":"no"}],"children":{"main":44},"selected":false,"wrong":false,"checked":false},{"type":"condition","nodeType":"condition","id":40,"parents":[{"id":39,"branch":"yes"}],"children":{"yes":42,"no":43,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"multiploA > multiploB","variables":[{"name":"multiploA","op":"read"},{"name":"multiploB","op":"read"}]},{"type":"nop","nodeType":"operation","id":10016,"nopFor":40,"parents":[{"id":42,"branch":"main"},{"id":43,"branch":"main"}],"children":{"main":10014},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":41,"parents":[{"id":37,"branch":"main"}],"children":{"main":39},"selected":false,"wrong":false,"checked":false,"expressions":["multiploA = a","multiploB = b"],"variables":[{"name":"multiploA","op":"write"},{"name":"a","op":"read"},{"name":"multiploB","op":"write"},{"name":"b","op":"read"}]},{"type":"expression","nodeType":"operation","id":42,"parents":[{"id":40,"branch":"yes"}],"children":{"main":10016},"selected":false,"wrong":false,"checked":false,"expressions":["multiploB = multiploB + b"],"variables":[{"name":"multiploB","op":"write"},{"name":"multiploB","op":"read"},{"name":"b","op":"read"}]},{"type":"expression","nodeType":"operation","id":43,"parents":[{"id":40,"branch":"no"}],"children":{"main":10016},"selected":false,"wrong":false,"checked":false,"expressions":["multiploA = multiploA + a"],"variables":[{"name":"multiploA","op":"write"},{"name":"multiploA","op":"read"},{"name":"a","op":"read"}]},{"type":"returnValue","nodeType":"operation","id":44,"parents":[{"id":10015,"branch":"main"}],"children":{"main":38},"selected":false,"wrong":false,"checked":false,"returnType":"variableName","returnValue":"multiploA"}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"divisione":{"params":[{"name":"numeratore","type":"Indefinito"},{"name":"denominatore","type":"Indefinito"}],"signature":"divisione(numeratore,denominatore)","correct":true,"unitTests":[]},"mcm":{"params":[{"name":"a","type":"Indefinito"},{"name":"b","type":"Indefinito"}],"signature":"mcm(a,b)","correct":true,"unitTests":[]}}},
 //5  MCD
 {"nodes":{"main":[{"type":"start","nodeType":"start","id":6,"parents":[],"children":{"main":8},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":7,"parents":[{"id":10006,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":8,"parents":[{"id":6,"branch":"main"}],"children":{"main":16},"selected":false,"wrong":false,"checked":false,"expressions":["a = [16,4,27]","b = [5,10,5]"]},{"type":"expression","nodeType":"operation","id":16,"parents":[{"id":8,"branch":"main"}],"children":{"main":17},"selected":false,"wrong":false,"checked":false,"expressions":["elementi = 1","contatore = 0"]},{"type":"loop","nodeType":"condition","id":17,"parents":[{"id":16,"branch":"main"}],"children":{"yes":18,"no":10006,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"contatore < elementi","variables":[{"name":"contatore","op":"read"},{"name":"elementi","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10005,"nopFor":17,"parents":[{"id":18,"branch":"main"}],"children":{"main":17},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10006,"nopFor":17,"parents":[{"id":17,"branch":"no"}],"children":{"main":7},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":18,"parents":[{"id":17,"branch":"yes"}],"children":{"main":10005},"selected":false,"wrong":false,"checked":false,"expressions":["trovaMCD(a[contatore],b[contatore])","contatore = contatore + 1"]}],"trovaMCD":[{"type":"start","nodeType":"start","id":25,"parents":[],"children":{"main":27},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":26,"parents":[{"id":32,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":27,"parents":[{"id":25,"branch":"main"}],"children":{"main":28},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = 1","MCD = 0"]},{"type":"loop","nodeType":"condition","id":28,"parents":[{"id":27,"branch":"main"}],"children":{"yes":30,"no":10011,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"contatore<b"},{"type":"nopNoModal","nodeType":"operation","id":10010,"nopFor":28,"parents":[{"id":29,"branch":"main"}],"children":{"main":28},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10011,"nopFor":28,"parents":[{"id":28,"branch":"no"}],"children":{"main":32},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":29,"parents":[{"id":10012,"branch":"main"}],"children":{"main":10010},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = contatore + 1"]},{"type":"condition","nodeType":"condition","id":30,"parents":[{"id":28,"branch":"yes"}],"children":{"yes":31,"no":10012,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"(a && b) %contatore == 0","variables":[{"name":"a","op":"read"},{"name":"b","op":"read"},{"name":"contatore","op":"read"}]},{"type":"nop","nodeType":"operation","id":10012,"nopFor":30,"parents":[{"id":30,"branch":"no"},{"id":31,"branch":"main"}],"children":{"main":29},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":31,"parents":[{"id":30,"branch":"yes"}],"children":{"main":10012},"selected":false,"wrong":false,"checked":false,"expressions":["MCD = contatore"],"variables":[{"name":"MCD","op":"write"},{"name":"contatore","op":"read"}]},{"type":"output","nodeType":"inputoutput","id":32,"parents":[{"id":10011,"branch":"main"}],"children":{"main":26},"selected":false,"wrong":false,"checked":false,"output":"$contatore"}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"divisione":{"params":[{"name":"numeratore","type":"Indefinito"},{"name":"denominatore","type":"Indefinito"}],"signature":"divisione(numeratore,denominatore)","correct":true,"unitTests":[]},"trovaMCD":{"params":[{"name":"a","type":"Indefinito"},{"name":"b","type":"Indefinito"}],"signature":"trovaMCD(a,b)","correct":true,"unitTests":[]}}},
 
@@ -62,5 +61,181 @@ module.exports = [
 {"nodes":{"main":[{"type":"start","nodeType":"start","id":6,"parents":[],"children":{"main":8},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":7,"parents":[{"id":10015,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":8,"parents":[{"id":6,"branch":"main"}],"children":{"main":35},"selected":false,"wrong":false,"checked":false,"expressions":["arr = [\"paolo\",\"anna\",\"ilxli\",\"ilxsli\"]","contatore = 0"]},{"type":"loop","nodeType":"condition","id":35,"parents":[{"id":8,"branch":"main"}],"children":{"yes":39,"no":10015,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"arr[contatore] != undefined","variables":[{"name":"undefined","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10014,"nopFor":35,"parents":[{"id":79,"branch":"main"}],"children":{"main":35},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10015,"nopFor":35,"parents":[{"id":35,"branch":"no"}],"children":{"main":7},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":39,"parents":[{"id":35,"branch":"yes"}],"children":{"main":79},"selected":false,"wrong":false,"checked":false,"expressions":["ris = palindromo(arr[contatore])","contatore = contatore + 1"]},{"type":"output","nodeType":"inputoutput","id":79,"parents":[{"id":39,"branch":"main"}],"children":{"main":10014},"selected":false,"wrong":false,"checked":false,"output":"$ris"}],"palindromo":[{"type":"start","nodeType":"start","id":60,"parents":[],"children":{"main":62},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":61,"parents":[{"id":78,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":62,"parents":[{"id":60,"branch":"main"}],"children":{"main":65},"selected":false,"wrong":false,"checked":false,"expressions":["lunghezza = 0"]},{"type":"loop","nodeType":"condition","id":65,"parents":[{"id":62,"branch":"main"}],"children":{"yes":66,"no":10026,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"str[lunghezza]!=undefined","variables":[{"name":"undefined","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10025,"nopFor":65,"parents":[{"id":66,"branch":"main"}],"children":{"main":65},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10026,"nopFor":65,"parents":[{"id":65,"branch":"no"}],"children":{"main":67},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":66,"parents":[{"id":65,"branch":"yes"}],"children":{"main":10025},"selected":false,"wrong":false,"checked":false,"expressions":["lunghezza = lunghezza + 1"],"variables":[{"name":"lunghezza","op":"write"},{"name":"lunghezza","op":"read"}]},{"type":"expression","nodeType":"operation","id":67,"parents":[{"id":10026,"branch":"main"}],"children":{"main":68},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = 0"],"variables":[{"name":"contatore","op":"write"}]},{"type":"loop","nodeType":"condition","id":68,"parents":[{"id":67,"branch":"main"}],"children":{"yes":76,"no":10028,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"contatore < lunghezza"},{"type":"nopNoModal","nodeType":"operation","id":10027,"nopFor":68,"parents":[{"id":69,"branch":"main"}],"children":{"main":68},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10028,"nopFor":68,"parents":[{"id":68,"branch":"no"}],"children":{"main":78},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":69,"parents":[{"id":10029,"branch":"main"}],"children":{"main":10027},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = contatore + 1"],"variables":[{"name":"contatore","op":"write"},{"name":"contatore","op":"read"}]},{"type":"condition","nodeType":"condition","id":70,"parents":[{"id":76,"branch":"main"}],"children":{"yes":77,"no":10029,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"str[limiteSinistro] != str[limiteDestro]","variables":[]},{"type":"nop","nodeType":"operation","id":10029,"nopFor":70,"parents":[{"id":70,"branch":"no"},{"id":77,"branch":"main"}],"children":{"main":69},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":76,"parents":[{"id":68,"branch":"yes"}],"children":{"main":70},"selected":false,"wrong":false,"checked":false,"expressions":["limiteDestro= str[lunghezza-contatore]","limiteSinistro = str[contatore]"]},{"type":"returnValue","nodeType":"operation","id":77,"parents":[{"id":70,"branch":"yes"}],"children":{"main":10029},"selected":false,"wrong":false,"checked":false,"returnType":"bool","returnValue":false},{"type":"returnValue","nodeType":"operation","id":78,"parents":[{"id":10028,"branch":"main"}],"children":{"main":61},"selected":false,"wrong":false,"checked":false,"returnType":"bool","returnValue":"true"}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"divisione":{"params":[{"name":"numeratore","type":"Indefinito"},{"name":"denominatore","type":"Indefinito"}],"signature":"divisione(numeratore,denominatore)","correct":true,"unitTests":[]},"converti":{"params":[{"name":"numero","type":"Indefinito"}],"signature":"converti(numero)","correct":true,"unitTests":[]},"potenza":{"params":[{"name":"base","type":"Indefinito"},{"name":"esponente","type":"Indefinito"}],"signature":"potenza(base,esponente)","correct":true,"unitTests":[]},"palindromo":{"params":[{"name":"str","type":"Indefinito"}],"signature":"palindromo(str)","correct":true,"unitTests":[]}}}
 
 ]
+
+export default{ exs , local}
+
+/* Numeri pari da 0 a 20
+
+{
+  "_id": {
+    "$oid": "666d6798e47c4055b6dfe03b"
+  },
+  "studentId": "admin",
+  "exId": "0",
+  "assignment": "Stampa i numeri pari da 0 a 20",
+  "correctNodes": 2,
+  "output": "0&nbsp;<br/>2&nbsp;<br/>4&nbsp;<br/>6&nbsp;<br/>8&nbsp;<br/>10&nbsp;<br/>12&nbsp;<br/>14&nbsp;<br/>16&nbsp;<br/>18&nbsp;<br/>20&nbsp;<br/>",
+  "nodes": {
+    "main": [
+      {
+        "type": "start",
+        "nodeType": "start",
+        "id": 1,
+        "parents": [],
+        "children": {
+          "main": 9
+        },
+        "selected": false,
+        "variables": [
+          {
+            "name": "params",
+            "op": "write"
+          }
+        ]
+      },
+      {
+        "type": "end",
+        "nodeType": "end",
+        "id": 2,
+        "parents": [
+          {
+            "id": 10002,
+            "branch": "main"
+          }
+        ],
+        "children": {
+          "main": -1
+        },
+        "selected": false
+      },
+      {
+        "type": "expression",
+        "nodeType": "operation",
+        "id": 9,
+        "parents": [
+          {
+            "id": 1,
+            "branch": "main"
+          }
+        ],
+        "children": {
+          "main": 10
+        },
+        "selected": false,
+        "checked": false,
+        "expressions": [
+          "a = 1"
+        ]
+      },
+      {
+        "type": "loop",
+        "nodeType": "condition",
+        "id": 10,
+        "parents": [
+          {
+            "id": 9,
+            "branch": "main"
+          }
+        ],
+        "children": {
+          "yes": 14,
+          "no": 10002,
+          "main": -1
+        },
+        "selected": false,
+        "checked": false,
+        "condition": "a < 20"
+      },
+      {
+        "type": "nopNoModal",
+        "nodeType": "operation",
+        "id": 10001,
+        "nopFor": 10,
+        "parents": [
+          {
+            "id": 11,
+            "branch": "main"
+          }
+        ],
+        "children": {
+          "main": 10
+        },
+        "selected": false,
+        "checked": false
+      },
+      {
+        "type": "nop",
+        "nodeType": "operation",
+        "id": 10002,
+        "nopFor": 10,
+        "parents": [
+          {
+            "id": 10,
+            "branch": "no"
+          }
+        ],
+        "children": {
+          "main": 2
+        },
+        "selected": false,
+        "checked": false
+      },
+      {
+        "type": "expression",
+        "nodeType": "operation",
+        "id": 11,
+        "parents": [
+          {
+            "id": 14,
+            "branch": "main"
+          }
+        ],
+        "children": {
+          "main": 10001
+        },
+        "selected": false,
+        "checked": true,
+        "expressions": [
+          "a = a + 2"
+        ]
+      },
+      {
+        "type": "output",
+        "nodeType": "inputoutput",
+        "id": 14,
+        "parents": [
+          {
+            "id": 10,
+            "branch": "yes"
+          }
+        ],
+        "children": {
+          "main": 11
+        },
+        "selected": false,
+        "wrong": false,
+        "checked": true,
+        "output": "$a \\n"
+      }
+    ]
+  },
+  "functions": {
+    "main": {
+      "params": [],
+      "signature": "main"
+    },
+    "ddd": {
+      "params": [],
+      "signature": "ddd()"
+    },
+    "paolo": {
+      "params": [],
+      "signature": "paolo()"
+    }
+  },
+  "type": "execution"
+}
+
+*/
 
 //export default{ exs }

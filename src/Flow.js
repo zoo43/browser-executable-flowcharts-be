@@ -22,13 +22,13 @@ import NopModal from './NodeModals/NopModal'
 import comm from './communications'
 import nodesUtils from './nodes'
 import PropTypes from 'prop-types'
-//import exs from './examplePrograms'
+import all from './examplePrograms'
 
 const _ = require('lodash')
 const config = require('./config')
 const mermaidOptions = require('./mermaidOptions')
 const executer = require('./executer')
-const examplePrograms = require('./examplePrograms')
+const examplePrograms = all.exs
 const utils = require('./utils')
 const baseState = {
   exerciseid: 0,
@@ -344,10 +344,10 @@ class Flow extends React.Component {
 
 
   executeFlowchart () {
-    //console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
-    
+    console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
+  
     let testResults = ""
-
+    try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
         startNode,
@@ -363,6 +363,7 @@ class Flow extends React.Component {
       
       const outputToSend = this.showExecutionFeedback(res)
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
+
       if(data.studentId === "admin")
         data.output = this.state.correctOutput
       if(this.props.studentId==="NaN" || this.props.studentId==="" || this.props.studentId=== "undefined")
@@ -373,6 +374,20 @@ class Flow extends React.Component {
       comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
       
 
+      } catch (err) {
+        if(this.props.studentId === "admin")
+          {
+            const dd = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": this.state.correctOutput}
+            comm.executeFlowchart(dd, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
+          }
+        let alertMsg = 'Errore di esecuzione'
+        if (err.message === 'too much recursion') {
+          alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
+        }
+        console.log('Error message: ', err.message)
+        alert(alertMsg)
+      }
+      
       this.setState({
         nodes : this.state.nodes,
         testOutput : testResults
@@ -824,7 +839,7 @@ class Flow extends React.Component {
 
 
   loadExampleProgram () {
-    
+    console.log(examplePrograms)
     const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
     const checkedNodes = this.findCheckedNodes(programNodes["main"],true)
     const programFunctions = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].functions)
@@ -986,7 +1001,7 @@ class Flow extends React.Component {
         {_.keys(this.state.nodes).map((func, idx) => {
           return (
             <Tab tabClassName={this.state.functions[func].correct ? "true" : "false"} eventKey={func} title={ this.state.functions[func].signature} key={idx}> 
-              <h4> Consegna :  { this.state.assignment } </h4>
+              <h4> Consegna :  </h4> { this.state.assignment } 
               <Row>
                 <Col xs={8}>
                   <h3>Diagramma - { this.state.functions[this.state.selectedFunc].signature}</h3>
