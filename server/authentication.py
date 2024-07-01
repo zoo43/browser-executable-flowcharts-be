@@ -11,7 +11,7 @@ def checkCredentials(data):
     users = db["Account"]
     print(id)
     print(password)
-    res = users.find_one({'userId' : id , 'password' : password})
+    res = users.find_one({'studentId' : id , 'password' : password})
 
     if res == None: 
         return False

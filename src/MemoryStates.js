@@ -5,7 +5,7 @@ import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons'
-import Multiselect from 'multiselect-react-dropdown';
+import Multiselect from 'multiselect-react-dropdown'
 import nodesUtils from './nodes'
 
 const _ = require('lodash')

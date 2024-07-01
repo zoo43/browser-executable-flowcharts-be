@@ -30,6 +30,7 @@ const mermaidOptions = require('./mermaidOptions')
 const executer = require('./executer')
 const examplePrograms = all.exs
 const utils = require('./utils')
+
 const baseState = {
   exerciseid: 0,
   exerciseData: null,
@@ -50,7 +51,8 @@ const baseState = {
   correctOutput: "",
   correctNodes: 2,
   modifyFunction: false, 
-  testOutput: []
+  testOutput: [],
+  checkTraining: true
 }
 
 function pushLimit (arr, element) {
@@ -840,9 +842,13 @@ class Flow extends React.Component {
     })
     
     alert("Hai segnato " + signedNodes.length + " nodi e " + correctNodesCounter + " di questi sono corretti su un totale di " + checkedNodes.length + " nodi corretti")
-    if(signedNodes.length === correctNodesCounter === checkedNodes.length)
+    if(signedNodes.length === correctNodesCounter && correctNodesCounter === checkedNodes.length)
     {
-      //enable execution
+      this.setState(
+        {
+          checkTraining : false
+        }, this.renderDiagram()
+      )
     }
   
   }
@@ -998,7 +1004,7 @@ class Flow extends React.Component {
               <Button variant='dark' onClick={() => { this.addNode('functionCall') }}>
                 <Plus /> Aggiungi funzione
               </Button>
-              <Button variant='success' onClick={() => { this.checkSignedNodes() }}>
+              <Button variant='success' hidden={!this.state.checkTraining} onClick={() => { this.checkSignedNodes() }}>
                 <Check /> Controlla Nodi Segnati
               </Button>
               {this.state.selectedFunc !== 'main' &&
@@ -1016,7 +1022,7 @@ class Flow extends React.Component {
           </Col>
           <Col xs={4} style={{ textAlign: 'right' }}>
             <p className="mx-2" style={{ fontWeight: 'bold' , display:'inline'}}> Id: {this.props.studentId} </p>
-            <Button variant='primary' onClick={this.executeFlowchart}>
+            <Button variant='primary' onClick={this.executeFlowchart} disabled={this.state.checkTraining}>
               <Play /> Esegui
             </Button>
           </Col>
