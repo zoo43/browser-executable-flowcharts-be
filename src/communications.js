@@ -3,8 +3,10 @@ import axios from 'axios'
 const _ = require('lodash')
 const config = require('./config')
 const exercises = require('./exercises')
-axios.defaults.baseURL = 'http://127.0.0.1:5000';
+axios.defaults.baseURL = 'http://contabile.e-fermi.it:11387'
 axios.defaults.headers.common['Authorization'] = "Bearer " + window.sessionStorage.getItem("accessToken")
+
+
 
 
 async function getAllExercises()

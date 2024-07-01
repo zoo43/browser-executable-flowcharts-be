@@ -3,6 +3,9 @@
 //An admin mode where I can set the correct Nodes when creating the string
 import comm from './communications'
 
+
+
+
 const exs = await comm.getAllExercises()
 
 
@@ -64,7 +67,6 @@ const local = [
 {"nodes":{"main":[{"type":"start","nodeType":"start","id":1,"parents":[],"children":{"main":3},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":2,"parents":[{"id":10009,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":3,"parents":[{"id":1,"branch":"main"}],"children":{"main":20},"selected":false,"wrong":false,"checked":false,"expressions":["arr = [1,2,3,4,5]","contatore = 0"]},{"type":"loop","nodeType":"condition","id":20,"parents":[{"id":3,"branch":"main"}],"children":{"yes":21,"no":10009,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"arr[contatore] != undefined","variables":[{"name":"undefined","op":"read"}]},{"type":"nopNoModal","nodeType":"operation","id":10008,"nopFor":20,"parents":[{"id":22,"branch":"main"}],"children":{"main":20},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10009,"nopFor":20,"parents":[{"id":20,"branch":"no"}],"children":{"main":2},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":21,"parents":[{"id":20,"branch":"yes"}],"children":{"main":22},"selected":false,"wrong":false,"checked":false,"expressions":["ris = fattoriale(arr[contatore])","contatore = contatore + 1"]},{"type":"output","nodeType":"inputoutput","id":22,"parents":[{"id":21,"branch":"main"}],"children":{"main":10008},"selected":false,"wrong":false,"checked":false,"output":"$ris\\n"}],"fattoriale":[{"type":"start","nodeType":"start","id":4,"parents":[],"children":{"main":6},"selected":false,"wrong":false,"checked":false,"variables":[{"name":"params","op":"write"}]},{"type":"end","nodeType":"end","id":5,"parents":[{"id":18,"branch":"main"}],"children":{"main":-1},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":6,"parents":[{"id":4,"branch":"main"}],"children":{"main":7},"selected":false,"wrong":false,"checked":false,"expressions":["contatore = 0","fattoriale = 1"]},{"type":"loop","nodeType":"condition","id":7,"parents":[{"id":6,"branch":"main"}],"children":{"yes":8,"no":10002,"main":-1},"selected":false,"wrong":false,"checked":false,"condition":"contatore < numero"},{"type":"nopNoModal","nodeType":"operation","id":10001,"nopFor":7,"parents":[{"id":8,"branch":"main"}],"children":{"main":7},"selected":false,"wrong":false,"checked":false},{"type":"nop","nodeType":"operation","id":10002,"nopFor":7,"parents":[{"id":7,"branch":"no"}],"children":{"main":18},"selected":false,"wrong":false,"checked":false},{"type":"expression","nodeType":"operation","id":8,"parents":[{"id":7,"branch":"yes"}],"children":{"main":10001},"selected":false,"wrong":false,"checked":false,"expressions":["fattoriale = fattoriale * (numero-contatore)","contatore = contatore + 1"]},{"type":"returnValue","nodeType":"operation","id":18,"parents":[{"id":10002,"branch":"main"}],"children":{"main":5},"selected":false,"wrong":false,"checked":false,"returnType":"variableName","returnValue":"fattoriale"}]},"functions":{"main":{"params":[],"signature":"main","correct":true},"fattoriale":{"signature":"fattoriale(numero)","params":[{"name":"numero","type":"Indefinito"}],"correct":true,"unitTests":[]}}}
 ]
 
-export default{ exs , local}
 
 /* Numeri pari da 0 a 20
 
@@ -241,3 +243,4 @@ export default{ exs , local}
 */
 
 //export default{ exs }
+export default{ exs , local}

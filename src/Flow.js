@@ -52,7 +52,7 @@ const baseState = {
   correctNodes: 2,
   modifyFunction: false, 
   testOutput: [],
-  checkTraining: true
+  checkTraining: false
 }
 
 function pushLimit (arr, element) {
@@ -828,6 +828,7 @@ class Flow extends React.Component {
       this.findCheckedNodes(this.state.nodes[x],false).map((element) =>
       {
         signedNodes.push(element)
+        return
       }) 
     }
 

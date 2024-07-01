@@ -103,7 +103,6 @@ class LoopModal extends React.Component {
 
   showVariableFeedback () {
     return
-    const usedVariables = this.state.usedVariables
   }
 
   selectParents (selectedParents) {

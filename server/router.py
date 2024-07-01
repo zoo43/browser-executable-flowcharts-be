@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from saveData import saveData
 from exercises import getAll
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, \
@@ -10,6 +10,8 @@ from authentication import checkCredentials
 
 app = Flask(__name__)
 CORS(app)
+cors = CORS(app, resources={r"/token": {"origins": "*"}})
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 userCount = 0
@@ -18,7 +20,7 @@ userCount = 0
 #Exercises -> Pre-test
 #
 
-exDbName = "TrainingCheckNodes"
+exDbName = "Exercises"
 
 app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
@@ -45,6 +47,7 @@ def refresh_expiring_jwts(response):
 
 
 @app.route('/token', methods=["POST"])
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def create_token():
     id = decodeData(request)["studentId"]
     response = {}
@@ -130,5 +133,5 @@ def getExecution():
         res = saveData(decodeData(request),exDbName)
         s = "Il programma è corretto" if res else "Il programma non è corretto"
         return s
-        
-        
+
+app.run(host="0.0.0.0" , port="11387")
