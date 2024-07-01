@@ -9,7 +9,9 @@ def checkCredentials(data):
     client = pymongo.MongoClient("mongodb+srv://matteomartini6:admin@cluster0.jpkdcgi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
     db = client["Experiment-Data"]
     users = db["Account"]
-    res = users.find_one({'studentId' : id , 'password' : password})
+    print(id)
+    print(password)
+    res = users.find_one({'userId' : id , 'password' : password})
 
     if res == None: 
         return False
