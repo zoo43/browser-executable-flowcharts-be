@@ -5,10 +5,12 @@ import Col from 'react-bootstrap/Col'
 import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import { ArrowLeft, ArrowRight } from 'react-bootstrap-icons'
+import Multiselect from 'multiselect-react-dropdown';
 import nodesUtils from './nodes'
 
 const _ = require('lodash')
 const utils = require('./utils')
+
 
 class MemoryStates extends React.Component {
   constructor (props) {
@@ -17,13 +19,17 @@ class MemoryStates extends React.Component {
     this.state = {
       currentState: -1,
       diagrams: [],
-      nodes: this.props.nodes
+      nodes: this.props.nodes,
+      filter: [],
+      options:[]
     }
 
     this.goToState = this.goToState.bind(this)
     this.goToPreviousState = this.goToPreviousState.bind(this)
     this.goToNextState = this.goToNextState.bind(this)
     this.drawFlowCharts = this.drawFlowCharts.bind(this)
+    this.filterMemory = this.filterMemory.bind(this)
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates)
   }
 
   componentDidMount () {
@@ -50,10 +56,12 @@ class MemoryStates extends React.Component {
     this.goToState(currentState + 1)
   }
 
+  //If I have a filter on, I call this method to shows only the variables that I want to. I Should assign the filter on a var on the event to keep this so that the filter can remain
   goToState (idx) {
-    const currentState = this.props.memoryStates[idx]
+    let currentState = this.props.memoryStates[idx]
 
     const diagrams = []
+    
     for (const openFunc of currentState.callOrder) {
       const nodes = _.cloneDeep(this.props.nodes[openFunc.func])
       const highlightNode = currentState.onNode[openFunc.func][openFunc.lvl]
@@ -81,17 +89,76 @@ class MemoryStates extends React.Component {
         alert("Attenzione, hai appena cancellato o modificato un nodo senza eseguire il flowchart, la visualizzazione del menù passo-passo non sarà corretta prima di una nuova esecuzione")
       }
     }
-
+    
+    const variables = this.getVariablesName(idx)
     this.setState({
       currentState: idx,
+      options:variables,
       diagrams
     }, this.drawFlowCharts)
+
+    
   }
 
   drawFlowCharts () {
     const diagrams = {}
     for (const diagramIdx in this.state.diagrams) diagrams[diagramIdx] = this.state.diagrams[diagramIdx].str
     nodesUtils.drawFlowCharts(diagrams, 'diagramDiv', '', true)
+  }
+
+
+  getVariablesName(idx)
+  {
+    let variablesName = []
+    const currentState = idx//Start is -1
+    let cont = 1
+    for(const [func, functionMemory] of Object.entries(this.props.memoryStates[currentState].memory))
+    {
+      for (const stringToAdd in functionMemory[0])
+      { 
+        if (typeof(functionMemory[0][stringToAdd]) !== 'function')
+        {
+          variablesName.push({"value":func + " : "+stringToAdd, "function":func,"id":cont}) //id is not used, but in the future may be useful
+          cont++
+        }
+      }      
+    }
+    return variablesName
+  }
+
+  filterMemory(ev)
+  {
+    this.filteredMemoryStates = _.cloneDeep(this.props.memoryStates) //I restore the old variables to apply the new filter
+    let filter = []
+    if(ev.length!==0)
+    {
+      filter = ev.map((x) => ({"value":x["value"].split(":")[1].trim(" "), "func" : x["value"].split(":")[0].trim(" ")}))
+      for (const memoryStateIndex in this.filteredMemoryStates) //for each state in the memory, With that I can change the state and still see the filter)
+      {
+        for(const [func,functionMemory] of Object.entries(this.filteredMemoryStates[memoryStateIndex].memory))
+        {
+          if( functionMemory.length > 0 ) //This is for the case that in a function there are no variables
+          {
+            const oldVars = functionMemory[0] // Think on what to do on different levels
+            functionMemory[0] = {} //I empty the filtered memory to add the new Variables that pass the filter
+            for(const [variableName,variableValue] of Object.entries(oldVars))
+            {
+              filter.forEach((element) => { //for each element of the filter
+                if(variableName=== element["value"] && func === element["func"])
+                  functionMemory[0][variableName] = variableValue
+              }) 
+            }
+          }
+        }
+      }
+
+    }
+
+    this.setState(
+      {
+        filter:filter
+      } 
+    )
   }
 
   render () {
@@ -138,8 +205,19 @@ class MemoryStates extends React.Component {
             </Col>
             <Col xs={3} style={{ borderLeft: '2px solid black' }}>
               <h3>Memoria</h3>
+
+              <Multiselect
+              options={this.state.options} // Options to display in the dropdown
+              groupBy={"function"}
+              onSelect={this.filterMemory} // Function will trigger on select event
+              onRemove={this.filterMemory} // Same as above because the event will be the new selected variables
+              displayValue="value"
+              isObject={true}
+              showCheckbox
+              />
+
               {this.state.currentState >= 0 &&
-                <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.props.memoryStates[this.state.currentState]) }}></div>
+                <div dangerouslySetInnerHTML={{ __html: utils.translateMemoryStateToHtml(this.filteredMemoryStates[this.state.currentState])}}></div>
               }
             </Col>
           </Row>

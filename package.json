@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@coreui/coreui": "^5.0.1",
+    "@coreui/react": "^5.0.0",
+    "@syncfusion/ej2-react-dropdowns": "^25.2.3",
+    "@syncfusion/ej2-react-grids": "^25.2.3",
     "acorn": "^8.11.3",
     "axios": "1.6.2",
     "cdbreact": "^1.5.19",
@@ -10,11 +14,14 @@
     "express": "^4.19.2",
     "lodash": "^4.17.21",
     "mermaid": "^10.8.0",
+    "multiselect-react-dropdown": "^2.0.25",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
     "react-bootstrap-icons": "^1.10.3",
+    "react-bootstrap-multiselect": "^2.4.1",
     "react-dom": "^18.2.0",
+    "react-multi-select-component": "^4.3.4",
     "react-scripts": "^5.0.1"
   },
   "scripts": {
