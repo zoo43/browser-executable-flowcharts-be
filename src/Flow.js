@@ -53,7 +53,7 @@ const baseState = {
   correctNodes: 2,
   modifyFunction: false, 
   testOutput: [],
-  checkTraining: false,
+  checkTraining: true,
   submitted: false
 }
 
@@ -369,9 +369,13 @@ class Flow extends React.Component {
 
   removeSpaces(s)
   {
-    s = s.replace(new RegExp(this.escapeRegExp("<br/>"), 'g'), "")
-    s = s.replace(new RegExp(this.escapeRegExp("&nbsp;<br/>"), 'g'), "")
-    s = s.replace(new RegExp(this.escapeRegExp("&nbsp;"), 'g'), "")
+    if(s!=undefined)
+    {
+      s = s.replace(new RegExp(this.escapeRegExp("<br/>"), 'g'), "")
+      s = s.replace(new RegExp(this.escapeRegExp("&nbsp;<br/>"), 'g'), "")
+      s = s.replace(new RegExp(this.escapeRegExp("&nbsp;"), 'g'), "")
+      
+    }
     return s
   }
 
@@ -389,11 +393,11 @@ try {
         'main',
         executer.getNewCalcData(this.state.nodes, this.state.functions)
       )  
-
+      const outputToSend = this.showExecutionFeedback(res)
       testResults = this.checkTests()
       this.parameterCheck(res)
       
-      const outputToSend = this.showExecutionFeedback(res)
+      
       const data = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": outputToSend}
 
       if(data.studentId === "admin")
@@ -448,7 +452,7 @@ try {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
-    
+    console.log(data.memoryStates)
     this.setState({ outputToShow: fullOutput, memoryStates:data.memoryStates })
     return fullOutput
   }
