@@ -18,7 +18,7 @@ userCount = 0
 
 #TrainingCheckNodes
 #Exercises -> Pre-test
-#
+#Homework -> hw
 
 exDbName = "Exercises"
 
@@ -85,7 +85,7 @@ def hello_world():
 @jwt_required() 
 def getInTouch():
     if(request.method == "POST"):
-        print(decodeData(request))#["exId'] should be NONE_DATA
+       # print(decodeData(request))#["exId'] should be NONE_DATA
         return "ok"
 
 
@@ -95,7 +95,7 @@ def getUserId():
     global userCount
     if(request.method == "POST"):
         userCount += 1
-        print("users : " + str(userCount))
+       # print("users : " + str(userCount))
         return {"userId" : userCount}
 
 
@@ -113,7 +113,7 @@ def getFlowchart():
     if(request.method == "POST"):
       #  print(decodeData(request))#['exId'] ['nodes'] ['functions'] ['userId']
         dataToSend = decodeData(request)
-        saveData(dataToSend)
+        saveData(dataToSend,exDbName)
         return "success"
 
 @app.route("/flowchart/getExercises", methods = ["GET"])
@@ -121,7 +121,6 @@ def getFlowchart():
 def getAllExercises():
     if(request.method == "GET"):
         exercises = getAll(exDbName)
-        print(exercises)
         return exercises
 
 #similar on above but happens on execution 

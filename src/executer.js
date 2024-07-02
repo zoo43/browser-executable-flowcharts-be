@@ -225,7 +225,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
   } else if (node.type === 'returnValue') {
     const returnType = node.returnType
     let returnValue = node.returnValue
-    console.log(calcData)
+    //console.log(calcData)
     if (returnType === 'variableName') {
       returnValue = _.cloneDeep(calcData.scope[func][currentFunc][returnValue])
     }

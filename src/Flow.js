@@ -30,6 +30,7 @@ const mermaidOptions = require('./mermaidOptions')
 const executer = require('./executer')
 const examplePrograms = all.exs
 const utils = require('./utils')
+let useless = true
 
 const baseState = {
   exerciseid: 0,
@@ -44,7 +45,7 @@ const baseState = {
   outputToShow: '',
   memoryStates: [],
   selectedFunc: 'main',
-  selectedExampleProgram: _.keys(examplePrograms)[0],
+  selectedExampleProgram: 1,
   showDemo: true,
   checkedNodes : [],
   assignment: "",
@@ -337,6 +338,7 @@ class Flow extends React.Component {
    //Maybe calcData is over written? It's always the last one that "win"
       let results = []
       //const fun = "main"
+      try{
       const unitTests = _.cloneDeep(this.state.functions[fun].unitTests)
       for(const testNumber in unitTests)
       {
@@ -349,21 +351,36 @@ class Flow extends React.Component {
           executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber],fun)
         )
         results.push(res.test)
-        console.log(res)
+        //console.log(res)
       }
       if(results.length!==0)
         resultsForFunction[fun] = (results)
   
       return resultsForFunction
     }
+    catch(err){
+      console.log(err)
+    }
+}
     
+ escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+} 
+
+  removeSpaces(s)
+  {
+    s = s.replace(new RegExp(this.escapeRegExp("<br/>"), 'g'), "")
+    s = s.replace(new RegExp(this.escapeRegExp("&nbsp;<br/>"), 'g'), "")
+    s = s.replace(new RegExp(this.escapeRegExp("&nbsp;"), 'g'), "")
+    return s
+  }
 
 
   executeFlowchart () {
     console.log(JSON.stringify({ nodes: this.state.nodes, functions: this.state.functions }))
   
     let testResults = ""
-    try {
+try {
       const startNode = _.find(this.state.nodes.main, { nodeType: 'start' })
       const res = executer.executeFromNode(
         startNode,
@@ -386,23 +403,34 @@ class Flow extends React.Component {
           alert("Problemi con l'id, avvisa il professore")
         }
 
-      comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
-      
+      comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
 
-      } catch (err) {
-        if(this.props.studentId === "admin")
-          {
-            const dd = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": this.state.correctOutput}
-            comm.executeFlowchart(dd, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
-          }
-        let alertMsg = 'Errore di esecuzione'
-        if (err.message === 'too much recursion') {
-          alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
-        }
-        console.log('Error message: ', err.message)
-        alert(alertMsg)
+      const correct = this.removeSpaces(examplePrograms[this.state.selectedExampleProgram].output)
+      const actual = this.removeSpaces(outputToSend)
+      console.log(correct)
+      console.log(actual)
+      if(correct === actual)
+      {
+        alert ("Il programma è corretto")
+      }
+      else
+      {
+        alert("Il programma non è corretto")
       }
       
+}catch (err) {
+  if(this.props.studentId === "admin")
+    {
+      const dd = {"studentId":this.props.studentId, "exId" : this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": this.state.correctOutput}
+      comm.executeFlowchart(dd, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions))
+    }
+  let alertMsg = 'Errore di esecuzione'
+  if (err.message === 'too much recursion') {
+    alertMsg += ': il diagramma sta eseguendo troppi cicli, potrebbe mancare un aggiornamento di variabile.'
+  }
+  console.log('Error message: ', err.message)
+  alert(alertMsg)}
+
       this.setState({
         nodes : this.state.nodes,
         testOutput : testResults
@@ -873,6 +901,7 @@ class Flow extends React.Component {
 
   loadExampleProgram () {
     const programNodes = _.cloneDeep(examplePrograms[this.state.selectedExampleProgram].nodes)
+    useless = true
     let checkedNodes = []
     for(const x in programNodes)
     {
@@ -907,6 +936,9 @@ class Flow extends React.Component {
 
   submitExercise()
   {
+    const data = {"studentId":this.props.studentId, "submitted":true, "exId": this.state.exerciseid , "assignment" : this.state.assignment, "correctNodes" : this.state.correctNodes, "output": this.state.outputToShow}
+
+    comm.executeFlowchart(data, _.cloneDeep(this.state.nodes), _.cloneDeep(this.state.functions), res => {alert(res)})
     //Send to db
     this.setState({
       submitted : true
@@ -922,12 +954,13 @@ class Flow extends React.Component {
         selectedExampleProgram : newProgram,
         submitted : false
       })
-
   }
 
   printTestResults()
   {      
     let output = ""
+    if(typeof(this.state.testOutput) !== "undefined")
+    {
     Object.entries(this.state.testOutput).map((element) => {
       const functionName = element[0]
       const tests = element[1]
@@ -948,6 +981,8 @@ class Flow extends React.Component {
       output = (<>{output}{result}</>)
     })
     return output
+    }
+    else return ""
   }
 
 
@@ -1034,6 +1069,9 @@ class Flow extends React.Component {
         <Row>
           <Col xs={8}>
             <ButtonGroup>
+                <Button variant='primary' hidden={useless} onClick={this.loadExampleProgram}>
+                  Start
+                </Button>
               <Button variant='secondary' disabled={this.state.previousStates.length === 0} onClick={this.undo}>
                 <ArrowCounterclockwise/> Undo
               </Button>
@@ -1116,24 +1154,16 @@ class Flow extends React.Component {
               </Form.Select>
             </Col>
             <Col xs={3}>
-              <Button variant='primary' disabled={!this.state.submitted || config.freeMode} onClick={this.changeExercise}>
+              <Button variant='primary' disabled={!this.state.submitted} hidden = {config.freeMode} onClick={this.changeExercise}>
                 Passa al prossimo esercizio
               </Button>
               <Button variant='dark' hidden={!config.freeMode} onClick={this.loadExampleProgram}>
                 Carica demo
               </Button>
             </Col>
-            <Col xs={3}>
-              <input
-                type="text"
-                value={this.state.assignment}
-                onChange={this.changeAssignment}
-                hidden={true}
-                />
-            </Col>
 
             <Col xs={6} style={{ textAlign: 'right' }}>
-              <Button variant='info' onClick={this.submitExercise} disabled={this.state.submitted || config.freeMode}>
+              <Button variant='info' onClick={this.submitExercise} hidden = {config.freeMode} disabled={this.state.submitted}>
                 <Envelope /> Consegna Esercizio
               </Button>
             </Col>

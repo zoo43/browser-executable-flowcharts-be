@@ -4,7 +4,7 @@ const config = {
     printErrors: false
   },
   renderer: 'mermaid', // flowchartJS
-  freeMode: false
+  freeMode: true
 }
 
 module.exports = config
