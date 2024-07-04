@@ -67,17 +67,17 @@ function getExecutableFunction (calcData, otherFunc, nodes, functions,unitTests=
       executeFromNode(funcStartNode, nodes, functions, otherFunc, calcData)
       
       const res = _.cloneDeep(calcData.returnVal[otherFunc])
-      file.changeVar(res)
+     // file.changeVar(res)
       
       calcData.returnVal[otherFunc] = null
       calcData.scope[otherFunc].pop()
       //if(typeof(expectedResult) === "boolean")
        // expectedResult = expectedResult.toString()
-      
+      console.log(expectedResult)
       calcData.test = {
         correct : res === expectedResult,
         res : res,
-        expectedResult : newUnitTests.pop().value,
+        expectedResult : expectedResult,
         test : newUnitTests
       }
       //return res
@@ -186,7 +186,7 @@ function executeFromNode (node, nodes, functions, func, calcData, unitTests) {
 
         return eval(str)
       }.call(calcData.scope[func][currentFunc], parsedExpr)
-      console.log(result)
+    //  console.log(result)
       // const lastCall = calcData.callOrder[calcData.callOrder.length - 1]
       // if (lastCall.func !== func || lastCall.lvl < currentFunc) {
       //  calcData.callOrder.push({ func, lvl: currentFunc })

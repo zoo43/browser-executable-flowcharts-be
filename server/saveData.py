@@ -18,7 +18,7 @@ def saveData(data, exDbName):
     client = pymongo.MongoClient("mongodb+srv://matteomartini6:admin@cluster0.jpkdcgi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
     db = client["Experiment-Data"]
     exercises = db[exDbName]
-    collection = db["TrainingSessionCollection"] #Will be lesson number
+    collection = db["PostTestCollection"] #Will be lesson number
     if(data["studentId"] != "admin"):
         data["timestamp"] = datetime.today() 
         collection.insert_one(data)

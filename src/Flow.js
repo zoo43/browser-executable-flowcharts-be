@@ -28,9 +28,9 @@ const _ = require('lodash')
 const config = require('./config')
 const mermaidOptions = require('./mermaidOptions')
 const executer = require('./executer')
-const examplePrograms = all.exs
+let examplePrograms = all.exs
 const utils = require('./utils')
-let useless = true
+let useless = config.freeMode
 
 const baseState = {
   exerciseid: 0,
@@ -45,7 +45,7 @@ const baseState = {
   outputToShow: '',
   memoryStates: [],
   selectedFunc: 'main',
-  selectedExampleProgram: 1,
+  selectedExampleProgram: 0,
   showDemo: true,
   checkedNodes : [],
   assignment: "",
@@ -53,7 +53,7 @@ const baseState = {
   correctNodes: 2,
   modifyFunction: false, 
   testOutput: [],
-  checkTraining: true,
+  checkTraining: false,
   submitted: false
 }
 
@@ -115,6 +115,8 @@ class Flow extends React.Component {
   }
 
   componentDidMount () {
+    if(this.props.studentId =="admin")
+      examplePrograms = all.local
     if (config.renderer === 'mermaid') {
       mermaid.initialize(mermaidOptions.initialize)
     }
@@ -332,13 +334,15 @@ class Flow extends React.Component {
   checkTests()
   {
     let resultsForFunction = []
-   // for(const fun in this.state.functions)
-    //{
-   const fun = "dsa"
+    
+    for(const fun in this.state.functions)
+    {
+   //const fun = "dsa"
    //Maybe calcData is over written? It's always the last one that "win"
       let results = []
       //const fun = "main"
-      try{
+      if(this.state.functions[fun].unitTests !== "undefined")
+      {
       const unitTests = _.cloneDeep(this.state.functions[fun].unitTests)
       for(const testNumber in unitTests)
       {
@@ -351,16 +355,13 @@ class Flow extends React.Component {
           executer.getNewCalcData(this.state.nodes, this.state.functions,unitTests[testNumber],fun)
         )
         results.push(res.test)
-        //console.log(res)
+        console.log(res)
       }
       if(results.length!==0)
         resultsForFunction[fun] = (results)
-  
-      return resultsForFunction
+      }
     }
-    catch(err){
-      console.log(err)
-    }
+    return resultsForFunction
 }
     
  escapeRegExp(string) {
@@ -395,6 +396,7 @@ try {
       )  
       const outputToSend = this.showExecutionFeedback(res)
       testResults = this.checkTests()
+      console.log(testResults)
       this.parameterCheck(res)
       
       
@@ -411,8 +413,6 @@ try {
 
       const correct = this.removeSpaces(examplePrograms[this.state.selectedExampleProgram].output)
       const actual = this.removeSpaces(outputToSend)
-      console.log(correct)
-      console.log(actual)
       if(correct === actual)
       {
         alert ("Il programma è corretto")
@@ -440,7 +440,7 @@ try {
         testOutput : testResults
       },this.renderDiagram)
 
-  }
+    }
 
   showExecutionFeedback (data) {
     // Handle "console" output
@@ -452,7 +452,6 @@ try {
     fullOutput = fullOutput.replaceAll('\\n', '<br/>')
     // Spaces
     fullOutput = fullOutput.replaceAll(' ', '&nbsp;')
-    console.log(data.memoryStates)
     this.setState({ outputToShow: fullOutput, memoryStates:data.memoryStates })
     return fullOutput
   }

@@ -103,7 +103,6 @@ function executeFlowchart (data, nodes, functions,done) {
       data.functions = functions
     }
     data.type = "execution"
-    console.log(data)
     axios.post("/flowchart/executeFlowchart", data)
     .then(() => {
       return

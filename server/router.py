@@ -19,8 +19,10 @@ userCount = 0
 #TrainingCheckNodes
 #Exercises -> Pre-test
 #Homework -> hw
+#PostTestExercises post test
 
-exDbName = "TrainingCheckNodes"
+
+exDbName = "UnitTraining"
 
 app.config["JWT_SECRET_KEY"] = "please-remember-to-change-me"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
