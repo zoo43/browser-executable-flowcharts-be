@@ -183,6 +183,7 @@ function checkIfOnlyAddingParents (oldParents, newParents) {
 
 function translateMemoryStateToHtml (memoryState) {
   let htmlStr = ''
+  try{
   for (const func in memoryState.memory) {
     htmlStr += '<strong> --- ' + func + ' --- </strong><br/>'
     htmlStr += '<p style="font-family=monospace;">'
@@ -204,6 +205,10 @@ function translateMemoryStateToHtml (memoryState) {
     }
     htmlStr += '</p><hr/>'
     htmlStr += "</div>"
+  }
+  } 
+  catch (err){
+    console.log(err)
   }
   return htmlStr
 }
